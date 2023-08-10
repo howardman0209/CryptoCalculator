@@ -1,0 +1,725 @@
+<resources>
+    <string name="app_name" translatable="false">Crypto Calculator</string>
+    <string name="subtype_en_US" translatable="false">English (US)</string>
+
+    <!--    common-->
+    <string name="label_login">Login</string>
+    <string name="label_password">Password</string>
+    <string name="label_email">Email</string>
+    <string name="label_setting">Settings</string>
+    <string name="label_unknown">Unknown</string>
+    <string name="label_off">off</string>
+    <string name="other">Other</string>
+    <string name="label_loading">Loading…</string>
+
+    <!--    bottom navigation tab label-->
+    <string name="label_bottom_nav_tab1" translatable="false">tab1</string>
+    <string name="label_bottom_nav_tab2" translatable="false">tab2</string>
+    <string name="label_bottom_nav_tab3" translatable="false">tab3</string>
+    <string name="label_bottom_nav_tab4" translatable="false">tab4</string>
+
+    <!--    activity / fragment label-->
+    <string name="label_activity_test" translatable="false">TestActivity</string>
+    <string name="label_fragment_test" translatable="false">TestFragment</string>
+    <string name="label_fragment_home" translatable="false">HomeFragment</string>
+    <string name="label_fragment_more" translatable="false">MoreFragment</string>
+
+
+    <!--    text label-->
+    <string name="label_remember_me">Remember me</string>
+    <string name="label_logout">Confirm logout?</string>
+
+    <!--    button text label-->
+    <string name="label_button_test">Test Button</string>
+    <string name="button_filter">Filter</string>
+    <string name="button_back">Back</string>
+    <string name="button_exit">Exit</string>
+    <string name="button_ok">OK</string>
+    <string name="button_print">Print</string>
+    <string name="button_qr_receipt">QR</string>
+    <string name="button_refresh">Refresh</string>
+    <string name="button_send">Send</string>
+    <string name="button_submit">Submit</string>
+    <string name="button_share">Share</string>
+    <string name="button_update_order">Update order</string>
+    <string name="label_button_test_1">Test Button 1</string>
+    <string name="label_button_test_2">Test Button 2</string>
+    <string name="label_button_test_3">Test Button 3</string>
+    <string name="label_button_test_4">Test Button 4</string>
+    <string name="label_button_test_5">Test Button 5</string>
+    <string name="label_button_test_6">Test Button 6</string>
+    <string name="label_button_test_7">Test Button 7</string>
+    <string name="label_button_test_8">Test Button 8</string>
+
+    <!--    hint text-->
+    <string name="label_slogan">Slogan</string>
+    <string name="label_title">Title</string>
+
+    <string name="button_cancel">Cancel</string>
+    <string name="button_confirm">Confirm</string>
+    <string name="button_remove">Remove</string>
+    <string name="button_dismiss">Dismiss</string>
+    <string name="button_login">Login</string>
+    <string name="button_logout">Logout</string>
+    <string name="button_request">Request</string>
+    <string name="button_gallery">Gallery</string>
+    <string name="button_register">Register</string>
+    <string name="button_start_new_sale">Start new sale</string>
+
+    <string name="transaction_status_approved">Approved</string>
+    <string name="transaction_status_completed">Completed</string>
+    <string name="transaction_status_declined">Declined</string>
+    <string name="transaction_status_error">Error</string>
+    <string name="transaction_status_offline">Approved (Offline)</string>
+    <string name="transaction_status_processing">Processing</string>
+    <string name="transaction_status_reverse">Reversed</string>
+    <string name="transaction_status_refunded">Refunded</string>
+    <string name="transaction_status_voided">Voided</string>
+    <string name="transaction_type_auth">Auth</string>
+    <string name="transaction_type_capture">Capture</string>
+    <string name="transaction_type_offline">Offline</string>
+    <string name="transaction_type_refund">Refund</string>
+    <string name="transaction_type_sale">Sale</string>
+    <string name="transaction_type_void">Void</string>
+
+    <!--    error-->
+    <string name="label_decode_image_fail">Fail to decode image</string>
+    <string name="label_transaction_error_idle_timeout">Idle timeout</string>
+
+    <!--    notification channel id-->
+    <string name="notification_channel_id" translatable="false">notification_channel_id</string>
+
+    <!--    account type-->
+    <string name="account_type" translatable="false">Spectra Dummy</string>
+
+    <!--    rationale-->
+    <string name="label_rationale_location">"Allow location permission to perform transaction"</string>
+    <string name="label_rationale_bluetooth">"Allow device location permission to discover bluetooth device"</string>
+    <string name="label_rationale_phone_state">"Allow read phone state permission to get device’s serial number"</string>
+    <string name="label_rationale_camera">"Allow camera permission to take picture, barcode or QR code"</string>
+    <string name="label_rationale_file">"Allow files and media permission to save images to your device"</string>
+    <string name="label_rationale_file_read">"Allow read files and media permission to read images from your device"</string>
+    <string name="label_rationale_stats">"Allow permission to perform transaction"</string>
+    <string name="label_rationale_notification">"Allow device notification permission to push notification to your device"</string>
+
+    <string name="label_checking_basic_config">Checking basic config…</string>
+    <string name="label_powered_by_spectra">Powered by Spectra Technologies</string>
+
+    <!--    e-donation options-->
+    <string name="label_e_donation">E - Donation</string>
+    <string name="label_e_donation_option" translatable="false">$ %1$s</string>
+
+    <string name="label_e_donation_option_1">Donate Option 1</string>
+    <string name="label_e_donation_option_2">Donate Option 2</string>
+    <string name="label_e_donation_option_3">Donate Option 3</string>
+    <string name="label_e_donation_option_4">Donate Option 4</string>
+
+    <string name="default_e_donation_option_1" translatable="false">$ 1</string>
+    <string name="default_e_donation_option_2" translatable="false">$ 5</string>
+    <string name="default_e_donation_option_3" translatable="false">$ 10</string>
+    <string name="default_e_donation_option_4" translatable="false">$ 20</string>
+    <string name="label_e_donation_option_custom">Custom</string>
+
+    <!--    sale-->
+    <string name="label_total_amount">Total amount</string>
+    <string name="label_check_result">Check result</string>
+    <string name="label_input_email">Please enter your email</string>
+    <string name="label_input_hint">Enter here</string>
+    <string name="label_input_phone">Please enter your phone no.</string>
+    <string name="label_input_customer_info">Please fill in customer info</string>
+    <string name="label_present_qr">Present QR</string>
+    <string name="label_scan_qr_desc">Align QR code within the frame to scan</string>
+    <string name="label_scan_code_get_receipt">Scan below QR to get receipt</string>
+    <string name="label_scan_code_get_pay_link">Scan below QR to get pay link</string>
+    <string name="label_sending">Sending…</string>
+    <string name="label_sent">Receipt sent!</string>
+    <string name="label_sms_receipt">SMS</string>
+    <string name="var_approval">Approval: %1$s</string>
+    <string name="var_change">Change: %1$s</string>
+    <string name="var_multiplication_sign" translatable="false">✕ %1$d</string>
+    <string name="var_trace">Trace: %1$s</string>
+    <string name="label_need_receipt">Need receipt?</string>
+
+    <!-- Sale - QR fragment -->
+    <string name="button_scan_qr">Scan QR</string>
+    <string name="label_invalid_qr">Invalid QR code</string>
+    <string name="label_null_qr_desc">QR code cannot be null</string>
+    <string name="label_qr_choose_payment_method">Choose one of the payment scheme</string>
+    <string name="label_scan_present_qr_to_pay">Show below QR to customer to scan</string>
+    <string name="label_scan_to_pay">Scan to pay</string>
+    <string name="label_save_qr_location_success">QR code saved to：</string>
+    <string name="label_save_file_failed">Save file failed</string>
+
+    <string name="var_last_try_passcode_warning">%1$s remaining passcode attempts before locked for %2$s minutes.</string>
+    <string name="label_passcode_updated">Passcode updated</string>
+    <string name="var_qr_valid_until">QR valid until: %s</string>
+
+    <string name="label_disclaimer_standard">I agree to pay the above total amount according to card issuer agreement.</string>
+    <string name="label_sign_here">Please sign here</string>
+
+    <!-- Transaction Result Activity -->
+    <string name="transaction_fail_error_message">Transaction aborted</string>
+
+    <!--result message-->
+    <string name="error_result_customer_abort">Transaction aborted</string>
+    <string name="error_result_operation_timeout">Idle timeout</string>
+    <string name="error_result_nfc_disabled">NFC disabled</string>
+    <string name="error_result_requirement_not_meet">Device requirement not meet</string>
+    <string name="error_result_pending_reversal_upload_fail">Pending reversal upload fail</string>
+    <string name="error_result_txn_amount_exceed_app_limit">Amount exceed application limit</string>
+    <string name="error_result_please_retry">Error issue. Please Click Retry Button</string>
+
+    <!-- Common Payment Method -->
+    <string name="payment_method_alipay">Alipay</string>
+    <string name="payment_method_amex">American Express</string>
+    <string name="payment_method_cash">Cash</string>
+    <string name="payment_method_cup">UnionPay</string>
+    <string name="payment_method_fps">FPS</string>
+    <string name="payment_method_jcb" translatable="false">JCB</string>
+    <string name="payment_method_master" translatable="false">Mastercard</string>
+    <string name="payment_method_octopus">Octopus</string>
+    <string name="payment_method_diners" translatable="false">Diners</string>
+    <string name="payment_method_discover" translatable="false">Discover</string>
+    <string name="payment_method_eps">EPS</string>
+    <string name="payment_method_zelle" translatable="false">Zelle</string>
+    <string name="payment_method_maestro" translatable="false">Maestro</string>
+    <string name="payment_method_easycard">EasyCard</string>
+    <string name="payment_method_visa" translatable="false">Visa</string>
+    <string name="payment_method_wechat">WeChat Pay</string>
+    <string name="payment_method_upi_qr">UnionPay QR</string>
+    <string name="payment_method_payme" translatable="false">PayMe</string>
+    <string name="payment_method_yuu" translatable="false">Yuu</string>
+
+    <!-- Entry Mode -->
+    <string name="entry_mode_contactless">Contactless</string>
+    <string name="entry_mode_chip">Chip</string>
+    <string name="entry_mode_magstripe">Swipe</string>
+    <string name="entry_mode_manual">Manual</string>
+    <string name="entry_mode_fallback">Fallback</string>
+    <string name="entry_mode_qr_present">Merchant QR Present</string>
+    <string name="entry_mode_qr_scan">Customer QR Present</string>
+    <string name="entry_mode_ecommerce">Ecommerce</string>
+    <string name="entry_mode_octopus">Octopus</string>
+    <string name="entry_mode_cash">Cash</string>
+
+    <!--Purchase Fragment-->
+    <string name="label_authorizing">"Authorizing"</string>
+    <string name="label_card_detected">"Card reading, please hold steady"</string>
+    <string name="label_card_inserted">"Card reading, please keep card inserted"</string>
+    <string name="label_remove_card_use_swipe">"Remove card and try swipe"</string>
+    <string name="label_card_read">"Card read OK, can remove card"</string>
+    <string name="label_card_try_again">"Please try again"</string>
+    <string name="label_present_card">"Tap to pay"</string>
+    <string name="label_wait_attestation_end">"Attestation in progress"</string>
+    <string name="label_wait_registration_end">"Registration in progress"</string>
+    <string name="label_wait_request_IK">"Loading encryption key"</string>
+    <string name="label_wait_request_PinKey">"Loading pin key"</string>
+    <string name="var_comm_progress_connecting_countdown">"Connecting host… %1$ss"</string>
+    <string name="var_comm_progress_wait_data_countdown">"Waiting host reply… %1$ss"</string>
+    <string name="label_fail_no_license">Fail no license</string>
+    <string name="label_emv_err_default">"Error %1$s"</string>
+    <string name="label_emv_err_see_phone">Refer to payment device</string>
+    <string name="label_emv_err_card_not_support">Card not supported</string>
+    <string name="label_emv_err_card_not_accept">Card not accepted</string>
+    <string name="label_emv_err_read_failed">Card read failed</string>
+    <string name="label_app_bar_title_waiting_card">"Card - %1$s"</string>
+    <string name="label_app_bar_title_qr_payment">"QR wallet - %1$s"</string>
+    <string name="label_app_bar_title_cash">"Cash - %1$s"</string>
+
+    <!--    dialog-->
+    <string name="label_enter_the_donation_amount">Enter the donation amount</string>
+    <string name="label_result_auto_dismiss_timeout">Result screen timeout (ms)</string>
+    <string name="label_result_screen_timeout_min" translatable="false">0s</string>
+    <string name="label_result_screen_timeout_max" translatable="false">10s</string>
+    <string name="label_result_screen_setting">Result screen setting</string>
+    <string name="label_result_screen_auto_dismiss">Auto dismiss</string>
+    <string name="label_input_your_slogan">Input your slogan</string>
+    <string name="label_hint_text">Hint Text</string>
+
+    <!--    snackbar-->
+    <string name="snackbar_pin_entry_last_chance">"PIN entry last chance"</string>
+
+    <!--    QuickLaunch-->
+    <string name="label_hello">Hello,</string>
+    <string name="transaction_type_instalment">Instalment</string>
+    <string name="transaction_type_donation">Donation</string>
+    <string name="label_report">Report</string>
+    <string name="button_activate">Activate</string>
+    <string name="button_settlement">Settlement</string>
+    <string name="var_shop_name" translatable="false">\@%1$s</string>
+
+    <!--    MainMenu-->
+    <string name="label_payment">Payment</string>
+    <string name="label_home">Home</string>
+    <string name="label_help">Help</string>
+    <string name="label_promotion">Promotion</string>
+    <string name="label_more">More</string>
+
+    <!-- More Fragment -->
+    <string name="label_app_settings">App settings</string>
+    <string name="label_account">Account</string>
+    <string name="label_account_level_basic">SoéPay Basic</string>
+    <string name="label_account_level_enterprise" translatable="false">SoéPay TOPS</string>
+    <string name="label_upgrade">Upgrade</string>
+    <string name="label_night_mode">Night mode</string>
+    <string name="label_select_card_app">Select card app</string>
+    <string name="label_select_shop">Select shop</string>
+    <string name="label_shop">Shop</string>
+    <string name="label_subscription_plan">Subscription plan</string>
+    <string name="label_switch_shop">Switch shop</string>
+    <string name="label_username">Username</string>
+    <string name="message_update_user_name">Update username successfully, might take up to 15 min to be effective.</string>
+    <string name="label_printing_config">Print copy option</string>
+    <string name="var_printing_copy">Print copy - %1$s</string>
+    <string name="label_printing_config_customer">Customer copy only</string>
+    <string name="label_printing_config_merchant">Merchant copy only</string>
+    <string name="label_printing_config_both">Both copies</string>
+    <string name="label_printing_time_interval">Receipt time interval</string>
+    <string name="label_auto_print_receipt">Auto print receipt after transaction completed</string>
+    <string name="label_printing_time_interval_min" translatable="false">0s</string>
+    <string name="label_printing_time_interval_max" translatable="false">10s</string>
+    <string name="label_create_category">Create category</string>
+    <string name="label_edit_category">Edit category</string>
+    <string name="label_product_category_empty_error">Product category cannot be empty</string>
+    <string name="label_calculator_keypad">Calculator keypad</string>
+    <string name="label_view_own_history">View own history only</string>
+    <string name="label_skip_success_animation">Skip animation under ECR</string>
+    <string name="var_result_auto_dismiss_timeout">Result screen timeout: %1$sms</string>
+    <string name="label_signature_on_paper">Signature on paper</string>
+
+    <string name="label_edit_shop_name">Edit shop name</string>
+    <!-- Language -->
+    <string name="label_language">Language</string>
+    <string name="label_language_en" translatable="false">English</string>
+    <string name="label_language_tc" translatable="false">繁體中文</string>
+    <string name="label_language_jp" translatable="false">日本語</string>
+    <string name="label_select_language">Select language</string>
+    <string-array name="language_selection">
+        <item>@string/label_language_en</item>
+        <item>@string/label_language_tc</item>
+        <item>@string/label_language_jp</item>
+    </string-array>
+
+    <!-- Printer -->
+    <string name="button_discover">Discover</string>
+    <string name="button_turn_on_bluetooth">Turn on Bluetooth</string>
+    <string name="label_connect">Connect</string>
+    <string name="label_connected">"Connected"</string>
+    <string name="label_connecting_printer">Connecting printer…</string>
+    <string name="label_disconnect">Disconnect</string>
+    <string name="label_disconnected">"Disconnected"</string>
+    <string name="label_discovered_devices">Discovered printers</string>
+    <string name="label_forget_device">Forget printer</string>
+    <string name="label_manage_printers">Manage printers</string>
+    <string name="label_my_printers">My printers</string>
+    <string name="label_no_paired_device">No paired device</string>
+    <string name="label_pairing">"Pairing device please wait…"</string>
+    <string name="label_print_error_with_message">"Print receipt failed (%1$s)"</string>
+    <string name="label_print_in_progress">Printing receipt…</string>
+    <string name="label_print_status">Print status</string>
+    <string name="label_print_success">"Receipt printed"</string>
+    <string name="label_printer_connect_failed">Printer connect failed</string>
+    <string name="label_printer_low_battery">Low battery</string>
+    <string name="label_printer_low_battery_msg">Low battery please re-charge the bluetooth printer.</string>
+    <string name="label_printer_manage_msg">Please go to “Manage printers” to set up your printer first.</string>
+    <string name="label_printer_not_found">Printer not found</string>
+    <string name="label_printer_out_of_paper">Out of paper</string>
+    <string name="label_printer_out_of_paper_msg">Please replace the paper roll and retry.</string>
+    <string name="label_printer_overheat_msg">Please use other receipt type or retry to print after 5 mins.</string>
+    <string name="label_printer_reboot_msg">Please reboot the bluetooth printer.</string>
+    <string name="label_reboot_bp80">Reboot printer</string>
+    <string name="label_please_wait">Please wait</string>
+    <string name="label_old_version">Old version</string>
+    <string name="label_version" translatable="false">Version</string>
+    <string name="label_contact_cs">Please contact customer service</string>
+    <string name="label_start_search_printer">Start find a Bluetooth printer nearby.</string>
+    <string name="label_test_printing">Test printing</string>
+    <string name="print_done">Done</string>
+    <string name="print_retry">Retry</string>
+    <string name="var_discovering">Discovering… finish in %1$ss</string>
+    <string name="var_second">%ss</string>
+
+    <!-- Shop Info -->
+    <string name="label_merchant">Merchant</string>
+    <string name="label_shop_info">Shop information</string>
+    <string name="label_shop_config">Shop configuration</string>
+    <string name="label_shop_currency">Shop currency</string>
+    <string name="label_shop_name">Shop name</string>
+    <string name="label_shop_tel">Shop tel.</string>
+    <string name="label_update_shop_info_success">Update shop information success</string>
+
+    <!-- User/ Device List -->
+    <string name="label_user_device_list">User &amp; device</string>
+    <string name="label_user_email">User email</string>
+    <string name="label_device">Device</string>
+
+    <!-- Password - merchant password dialogue -->
+    <string name="label_merchant_passcode_current">Current merchant passcode</string>
+    <string name="label_merchant_passcode_incorrect">merchant passcode incorrect</string>
+    <string name="label_merchant_passcode_new">New merchant passcode</string>
+    <string name="label_merchant_passcode_confirm">Confirm new merchant passcode</string>
+    <string name="label_merchant_passcode_saved">merchant passcode saved</string>
+    <string name="label_merchant_passcode_time_lock">merchant passcode incorrect, please try again after %1$s seconds</string>
+    <string name="label_merchant_passcode_too_short">Length too short</string>
+    <string name="label_merchant_passcode_enter">Enter merchant passcode</string>
+    <string name="label_merchant_passcode_change">Change merchant passcode</string>
+
+    <!-- POS - Create, Edit -->
+    <string name="button_save">Save</string>
+    <string name="label_barcode">Barcode</string>
+    <string name="label_coach_mark">Coach mark</string>
+    <string name="label_create_item">Create item</string>
+    <string name="label_create_coupon">Create coupon</string>
+    <string name="label_input_coupon_sn">Please input coupon serial no.</string>
+    <string name="label_serial_number">Serial no.</string>
+    <string name="label_remove_coupon">Remove coupon?</string>
+    <string name="label_edit_item">Edit item</string>
+    <string name="label_edit_coupon">Edit coupon</string>
+    <string name="label_coupon_qr_code">Coupon Qr Code</string>
+    <string name="label_voucher_format" translatable="false">{\"SID\":\"%1$s\",\"QrCode\":\"%2$s\"}</string>
+    <string name="label_coupon_format" translatable="false">{\"pid\":\"%1$s\",\"sn\":\"%2$s\"}</string>
+    <string name="label_create_product_category">Create category</string>
+    <string name="label_delete_item_confirmation">Remove item?</string>
+    <string name="label_duplicated_item">Barcode duplicated with product “%1$s”</string>
+    <string name="label_empty_card_title">The cart is empty</string>
+    <string name="label_empty_inventory">No item</string>
+    <string name="label_empty_category">No category</string>
+    <string name="label_empty_coupon">No coupon</string>
+    <string name="label_item_field_required">Required</string>
+    <string name="label_item_field_price_type">Price should be any positive or negative number</string>
+    <string name="label_item_category_manage">Product &amp; category management</string>
+<!--    <string name="label_coupon_manage">Coupon management</string>-->
+    <string name="label_item_manage">Product</string>
+    <string name="label_category_manage">Category</string>
+    <string name="label_coupon_manage">Coupon</string>
+    <string name="label_generate_coupon_qr">Generate QR</string>
+    <string name="label_remove_category">Remove category?</string>
+    <string name="label_item_preview">Item preview</string>
+    <string name="label_name">Name</string>
+    <string name="label_price">Price</string>
+    <string name="label_weight">Weight</string>
+    <string name="label_prompt_input">Please provide all required info</string>
+    <string name="var_amount" translatable="false">%1$s %2$s</string>
+    <string name="label_decode_barcode_fail">Cannot decode barcode</string>
+
+    <!-- Password - Common -->
+    <string name="label_action_result">Action result</string>
+    <string name="label_change_pw">Change password</string>
+    <string name="label_change_password_fail">Change password fail</string>
+    <string name="label_change_password_success">Change password success</string>
+    <string name="label_confirm_password">Confirm password</string>
+    <string name="label_current_password">Current password</string>
+    <string name="label_username_not_valid">Invalid username</string>
+    <string name="label_email_not_valid">Invalid email</string>
+    <string name="label_phone_not_valid">Invalid phone number</string>
+    <string name="label_forget_password_check_email_description">Please check email and reset password</string>
+    <string name="label_forgot_password_header">Don\'t worry! Just provide your email and we\'ll send you a link to reset your password.</string>
+    <string name="label_new_password">New password</string>
+    <string name="label_not_meet_password_policy">Password must be at least 7 characters, including 1 number</string>
+    <string name="label_password_not_match">Password not match</string>
+    <string name="label_please_enter_old_password">Please enter old password</string>
+    <string name="label_edit_username">Edit username</string>
+    <string name="label_reset_password">Reset password</string>
+    <string name="label_reset_password_fail">Reset password fail</string>
+    <string name="label_reset_password_success">Reset password success</string>
+    <string name="var_back_to_login">Back to login in … %1$ss"</string>
+
+    <!-- Trouble Shoot -->
+    <string name="label_trouble_shoot">Troubleshoot</string>
+    <string name="label_section_permission">Permission Status</string>
+    <string name="label_section_config">Config</string>
+    <string name="label_section_card_agent">Card Agent</string>
+    <string name="label_section_pin_key">PIN key</string>
+    <string name="label_permission">Permission</string>
+    <string name="label_system_status">System status</string>
+    <string name="label_app_versions">App version</string>
+    <string name="label_reader_status">Reader status</string>
+    <string name="label_permission_camera">Camera</string>
+    <string name="label_permission_storage">Storage</string>
+    <string name="label_permission_location">Location</string>
+    <string name="label_permission_granted">Granted</string>
+    <string name="label_permission_not_granted">Not granted</string>
+
+    <string name="label_card_agent" translatable="false">Card agent</string>
+    <string name="label_reactivate">Re-activate</string>
+    <string name="label_confirm_update_emv_config">Confirm activation?</string>
+    <string name="label_emv_config">Load default EMV parameters</string>
+    <string name="label_emv_config_loaded" translatable="false">Test config loaded</string>
+    <string name="label_emv_config_load_failed" translatable="false">Test config load failed</string>
+    <string name="label_capk_config_loaded" translatable="false">CAPK loaded</string>
+    <string name="label_capk_config_load_failed" translatable="false">CAPK load failed</string>
+    <string name="label_login_by_device_model">Login by device model</string>
+    <string name="label_product_image" translatable="false">Product image</string>
+    <string name="label_select_emv_config" translatable="false">Select EMV config</string>
+    <string name="var_transaction_updated">Transaction %1$s</string>
+
+    <!-- Register -->
+    <string name="button_install">Install</string>
+    <string name="label_checking_status_contextual">We\'re checking the registration status. Please wait, it may take up to a minute.</string>
+    <string name="label_checking_ta_register_status">Checking registration status…</string>
+    <string name="label_prompt_install_ta_contextual">One more thing to go. Please install or update the app below.</string>
+    <string name="label_register_failed">Register failed</string>
+    <string name="label_register_success">Register success</string>
+    <string name="label_register_ta">Registering card payment app…</string>
+    <string name="label_ta_register_failed">Registration failed</string>
+    <string name="label_ta_register_failed_contextual">Sorry, we couldn\'t register your app at this moment, please try again later.\n\nIf this happens again, please contact our support.</string>
+    <string name="var_register_error">Error: %1$s\nMessage: %2$s</string>
+    <string name="var_unexpected_response">Unexpected response: %1$s</string>
+
+    <!-- Common Keypad-->
+    <string name="label_keypad_0" translatable="false">0</string>
+    <string name="label_keypad_00" translatable="false">00</string>
+    <string name="label_keypad_dp" translatable="false">.</string>
+    <string name="label_keypad_1" translatable="false">1</string>
+    <string name="label_keypad_2" translatable="false">2</string>
+    <string name="label_keypad_3" translatable="false">3</string>
+    <string name="label_keypad_4" translatable="false">4</string>
+    <string name="label_keypad_5" translatable="false">5</string>
+    <string name="label_keypad_6" translatable="false">6</string>
+    <string name="label_keypad_7" translatable="false">7</string>
+    <string name="label_keypad_8" translatable="false">8</string>
+    <string name="label_keypad_9" translatable="false">9</string>
+    <string name="label_keypad_back" translatable="false">←</string>
+    <string name="label_pre_amount_10" translatable="false">+$10</string>
+    <string name="label_pre_amount_20" translatable="false">+$20</string>
+    <string name="label_pre_amount_50" translatable="false">+$50</string>
+    <string name="label_pre_amount_100" translatable="false">+$100</string>
+    <string name="label_pre_amount_500" translatable="false">+$500</string>
+
+    <!--    Sale Activity-->
+    <string name="button_charge">Charge %1$s</string>
+    <string name="button_clear">Clear</string>
+    <string name="label_last_receipt">Last receipt</string>
+    <string name="label_abort">Abort</string>
+    <string name="label_add_note">Add note</string>
+    <string name="label_add_reference">Add reference</string>
+    <string name="label_block_refresh_produce_list">Cart is not empty, can\'t refresh product list</string>
+    <string name="label_clear_all_items_desc">The cart will be empty.</string>
+    <string name="label_clear_all_items_title">Clear all items?</string>
+    <string name="label_description">Enter your message</string>
+    <string name="label_dollar_sign" translatable="false">$</string>
+    <string name="label_empty_cart">Looks like you haven\'t added anything yet</string>
+    <string name="label_input">Input</string>
+    <string name="label_leave_transaction">Transaction Abort</string>
+    <string name="label_payment_app_not_installed">Payment App not installed.\nPlease contact support.</string>
+    <string name="label_pos" translatable="false">POS</string>
+    <string name="label_total">Total: </string>
+    <string name="label_try_another_payment">Please try another payment method</string>
+    <string name="label_uncategorized">Uncategorized</string>
+    <string name="label_upload_order_fail">Fail to create order record</string>
+
+    <!-- DCC -->
+    <string name="label_default_currency">Default currency</string>
+    <string name="label_dcc_title">Dynamic Currency Conversion</string>
+    <string name="label_fx_rate_title">Conversion rate:</string>
+    <string name="label_choose_currency">Choose currency</string>
+    <string name="label_dcc_currency">DCC currency</string>
+    <string name="label_dcc_mode">DCC mode</string>
+    <string name="label_ecr_mode">ECR mode</string>
+    <string name="label_fx_rate" translatable="false">1 %1$s = %2$s %3$s</string>
+    <string name="label_amount_with_currency" translatable="false">%1$s: $%2$s</string>
+
+    <!-- Report -->
+    <string name="label_transaction">Transaction</string>
+    <string name="label_this_user_only">This user only</string>
+    <string name="label_custom_report">Custom report</string>
+    <string name="label_all_users">All users</string>
+    <string name="label_data_last_update">Data updated: %1$s</string>
+    <string name="label_report_range" translatable="false">%1$s - %2$s</string>
+    <string name="label_voided_transactions">Voided transactions</string>
+    <string name="label_report_sale">Sale</string>
+    <string name="label_report_refund">Refund</string>
+    <string name="label_report_auth_comp">Auth comp</string>
+    <string name="label_report_void_sale">Void sale</string>
+    <string name="label_report_void_refund">Void refund</string>
+    <string name="label_report_void_auth_comp">Void auth comp</string>
+    <string name="label_details_report">Transaction details</string>
+    <string name="label_product_report">Product</string>
+    <string name="label_transaction_summary">Transaction summary</string>
+    <string name="label_product_summary">Product summary</string>
+    <string name="label_product_details">Product details</string>
+    <string name="label_payment_method_summary">Payment method summary</string>
+    <string name="label_sale_by_payment">Sale</string>
+    <string name="label_refund_by_payment">Refund</string>
+    <string name="label_auth_comp_by_payment">Auth complete</string>
+    <string name="label_void_sale_by_payment">Void sale</string>
+    <string name="label_void_refund_by_payment">Void refund</string>
+    <string name="label_void_auth_comp_by_payment">Void complete</string>
+    <string name="label_avg_net_sale_amount">Average: Sale</string>
+    <string name="label_report_refund_total">Total: Refund</string>
+    <string name="label_report_auth_comp_total">Total: Auth complete</string>
+    <string name="label_report_void_sale_amount">Total: Void sale</string>
+    <string name="label_report_void_refund_amount">Total: Void refund</string>
+    <string name="label_report_void_auth_comp_amount">Total: Void complete</string>
+    <string name="label_net_amount">Net amount</string>
+    <string name="label_sale_by_product">Sale by product</string>
+    <string name="label_sale_by_category">Sale by category</string>
+    <string name="label_product_sold">Product sold</string>
+    <string name="label_product_detail_trace">Trace</string>
+    <string name="label_product_detail_approval_code">Approval</string>
+    <string name="label_product_detail_date_time">Date/ time</string>
+    <string name="label_product_detail_payment_method">Payment</string>
+    <string name="label_product_detail_account">Account</string>
+    <string name="label_product_detail_payment_type">Transaction</string>
+    <string name="label_product_detail_amount">Amount</string>
+    <string name="label_product_detail_confirm_print">page > 5, print?</string>
+    <string name="label_product_detail_product_name">Product</string>
+    <string name="label_product_detail_quantity">Quantity</string>
+    <string name="label_product_detail_total">Total</string>
+    <string name="label_category">Category</string>
+
+    <string name="api_response_already_exists">Already exists</string>
+    <string name="label_scan_from_gallery">Open gallery</string>
+
+    <!-- Sale - Bar Code Scan fragment -->
+    <string name="label_item_not_found">Item Not Found</string>
+    <string name="label_item_added">%1$s added</string>
+    <string name="label_coupon_added">Coupon added</string>
+    <string name="label_coupon_removed">Coupon removed</string>
+    <string name="label_coupon_applied">Coupon is already used</string>
+    <string name="label_coupon_not_need">Coupon is not needed</string>
+    <string name="label_unqualified_shop">Unqualified Shop</string>
+
+
+    <!-- Sale - select instrument -->
+    <string name="button_update">Update</string>
+    <string name="instrument_card">Card</string>
+    <string name="instrument_qr_wallet">QR wallet</string>
+    <string name="label_device_not_eligible_desc">The contactless payment may not be compatible with your device. Please contact our support before upgrading.</string>
+    <string name="label_device_not_eligible_title">Oops! Device not supported</string>
+    <string name="label_device_nfc_disabled_title">NFC Disabled</string>
+    <string name="label_device_nfc_disabled_desc">NFC is disabled. Please enable NFC in your phone.</string>
+    <string name="label_device_amount_exceed_app_limit_title">Invalid amount</string>
+    <string name="label_device_amount_exceed_app_limit_desc">Transaction amount exceed app limit</string>
+
+    <string name="label_go_premium_desc">Upgrade plan to accept contactless and QR wallet</string>
+    <string name="label_go_premium_title">Looking for other options?</string>
+    <string name="label_payment_method_not_support">Payment not support</string>
+    <string name="label_prompt_install_ta">Card payment app not found</string>
+    <string name="label_prompt_update_ta">Card payment app need update</string>
+    <string name="label_prompt_register_ta">Card payment app not registered</string>
+    <string name="label_select_payment">Select payment</string>
+    <string name="label_tap_to_pay">Tap to pay</string>
+    <string name="label_pay_by_link">Pay by link</string>
+
+    <!-- Sale - cash fragment -->
+    <string name="button_cash_exact">Exact</string>
+    <string name="label_cash_changed">"Cash changed"</string>
+    <string name="label_cash_received">Cash received</string>
+
+    <!-- History -->
+    <string name="button_reset">Reset</string>
+    <string name="button_search">Search</string>
+    <string name="label_amount">Amount</string>
+    <string name="label_amount_end">To</string>
+    <string name="label_amount_start">From</string>
+    <string name="label_date_range">Date range</string>
+    <string name="label_history">History</string>
+    <string name="label_keyword">Keyword (trace, RRN)</string>
+    <string name="label_payment_method">Payment method</string>
+    <string name="label_entry_mode">Entry mode</string>
+    <string name="label_settlement_status">Settlement status</string>
+    <string name="label_settlement_status_not_settled">Not settled</string>
+    <string name="label_settlement_status_settled">Settled</string>
+    <string name="label_transaction_record">Transaction record</string>
+    <string name="label_transaction_status">Transaction status</string>
+    <string name="label_transaction_type">Transaction type</string>
+    <string name="var_display_date_range" translatable="false">%1$s - %2$s</string>
+    <string name="var_transaction_action" translatable="false">%1$s %2$s?</string>
+    <string name="var_display_exact_amount" translatable="false">$%1$s</string>
+    <string name="var_two_strings" translatable="false">%1$s %2$s</string>
+    <string name="var_three_strings" translatable="false">%1$s %2$s(%3$s)</string>
+    <string name="var_two_strings_with_parenthesis" translatable="false">%1$s (%2$s)</string>
+
+    <!-- History - txn details -->
+    <string name="label_aid" translatable="false">AID</string>
+    <string name="label_app_name" translatable="false">App name</string>
+    <string name="label_appr_code">Approval code</string>
+    <string name="label_batch">Batch</string>
+    <string name="label_capture_confirm_message">Complete the authorization?</string>
+    <string name="label_empty_state">Oops, there\'s no transaction</string>
+    <string name="label_item_list">Item list</string>
+    <string name="label_mid">MID</string>
+    <string name="label_rrn">RRN</string>
+    <string name="label_tc" translatable="false">TC</string>
+    <string name="label_tvr" translatable="false">TVR</string>
+    <string name="label_tsi" translatable="false">TSI</string>
+    <string name="label_atc" translatable="false">ATC</string>
+    <string name="label_qrc_voucher_no" translatable="false">Voucher No</string>
+    <string name="label_pos_ref" translatable="false">POS Ref</string>
+    <string name="label_tid">TID</string>
+    <string name="label_trace">Trace</string>
+    <string name="label_amex_trace" translatable="false">ROC</string>
+    <string name="label_operator">Operator</string>
+    <string name="label_txn_details">Transaction details</string>
+    <string name="label_void_refund_warn_message">You will NOT receive the fund after this. Proceed?</string>
+    <string name="label_txn_details_save_success">Receipt saved to: %1$s</string>
+    <string name="label_txn_details_save_fail">Save receipt fail</string>
+    <string name="save_without_permission">Please allow storage permission in order to download and share images</string>
+    <string name="share_file_fail">Unable to share file/ image</string>
+    <string name="label_transaction_already_settle">Already settled</string>
+
+    <!--CVM result text-->
+    <string name="cvm_result_offline_pin">Verified by PIN</string>
+    <string name="cvm_result_offline_pin_and_signature">Verified by PIN &amp; signature</string>
+    <string name="cvm_result_signature">Verified by signature</string>
+    <string name="cvm_result_cdcvm">Verified by CDCVM</string>
+    <string name="cvm_result_stt">No signature required (STT)</string>
+    <string name="cvm_result_no_need">No signature required</string>
+
+    <!--Statistic fragment-->
+    <string name="label_fetching_data">Fetching data</string>
+    <string name="label_this_week">This week</string>
+    <string name="label_last_week">Last week</string>
+    <string name="label_this_month">This month</string>
+    <string name="label_last_month">Last month</string>
+    <string name="label_this_quarter">This quarter</string>
+    <string name="label_last_quarter">Last quarter</string>
+    <string name="label_this_year">This year</string>
+    <string name="label_last_year">Last year</string>
+    <string name="label_marker_text" translatable="false">%1$s\n%2$s</string>
+    <string name="label_pie_chart_center_text">Total: \n%1$s</string>
+    <string name="label_report_no_chart_data">No chart data available</string>
+    <string name="label_statistic">Statistic</string>
+    <string name="label_today">Today</string>
+    <string name="label_total_refund">Total refund amount</string>
+    <string name="label_total_void">Total void amount</string>
+    <string name="label_yesterday">Yesterday</string>
+
+    <!-- Apollo receipt -->
+    <string name="label_built_in_printer">Built-in printer</string>
+    <string name="label_use_built_in_printer">Use built-in printer</string>
+    <string name="label_battery_too_low">Battery too low. Please charge.</string>
+
+    <string name="label_device_checking_desc_failed">Oops, the below checks failed. This might hinder you to use the SoftPOS Tap to Phone feature.</string>
+    <string name="label_device_checking_desc_success">Great! Looks like your device passes all checks.</string>
+    <string name="label_device_checking_result">Device checking result</string>
+    <string name="button_device_check">Device check</string>
+    <string name="label_darkness">Darkness</string>
+    <string name="label_darkness_lighter">Lighter</string>
+    <string name="label_darkness_medium">Medium</string>
+    <string name="label_darkness_darker">Darker</string>
+    <string name="prompt_please_wait_message">Please wait.</string>
+
+    <!--    card reader-->
+    <string name="emv_label_card_reader_connecting">"Connecting reader"</string>
+    <string name="emv_label_card_reader_error">"Card reader error"</string>
+    <string name="emv_label_chip_card_detected">"Chip card detected"</string>
+    <string name="emv_label_ctl_read_success">"Card read OK"</string>
+    <string name="emv_label_insert">"Insert"</string>
+    <string name="emv_label_insert_or_swipe">"Insert or swipe"</string>
+    <string name="emv_label_swipe">"Swipe"</string>
+    <string name="emv_label_tap">"Tap"</string>
+    <string name="emv_label_tap_or_insert">"Tap or insert"</string>
+    <string name="emv_label_tap_or_swipe">"Tap or swipe"</string>
+    <string name="emv_label_tap_swipe_insert">"Tap, insert or swipe"</string>
+    <string name="emv_nfc_multiple_card">"Multiple cards detected"</string>
+    <string name="emv_no_emv_apps">"No EMV apps"</string>
+    <string name="emv_pin_incorrect">"PIN incorrect"</string>
+    <string name="emv_present_card_again">"Present card again"</string>
+    <string name="emv_label_bad_swipe">"Bad swipe and try again"</string>
+
+    <string name="label_account_credit" translatable="false">"Credit card"</string>
+    <string name="label_account_current" translatable="false">"Checking"</string>
+    <string name="label_account_saving" translatable="false">"Saving"</string>
+</resources>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--Typography-->
+
+    <!--Material’s type system supports 13 categories that, when combined, form the typescale. -->
+    <!--This typescale is evident in the variety of text styles and sizes that appear on screen, -->
+    <!--ranging from body copy to buttons. Type appears across the UI, in places such as in -->
+    <!--components and on surfaces.-->
+
+    <!--These styles should be used throughout your app when creating text views so all your -->
+    <!--text is consistently styled and easily updated if design or product needs change. Each -->
+    <!--style in the type scale can be customized by defining a style and overriding that -->
+    <!--style's Material Theme attribute (?textAppearanceHeadline1, ?textAppearanceBody2, etc.) -->
+    <!--in your app's theme. In this project, type attributes have already been overridden in -->
+    <!--themes.xml and are set to the styles in this file, types.xml. These ?textAppearance* -->
+    <!--theme attributes should be used in your layouts to set a TextView’s appearance instead -->
+    <!--of fully qualified style references and in favor of manually setting text properties.-->
+
+    <!--Type on Android is themed by defining a custom TextAppearance for each type scale style. -->
+    <!--Use standard TextAppearance attributes such as textSize, textColor, fontFamily, -->
+    <!--letterSpacing, etc. to define a custom appearance for each and see how they are -->
+    <!--applied globally across your app.-->
+
+    <style name="TextAppearance.Crypto.Calculator" parent="" />
+
+    <style name="TextAppearance.Crypto.Calculator.Headline1" parent="TextAppearance.MaterialComponents.Headline1">
+        <item name="fontFamily">@font/inter_bold</item>
+        <item name="android:letterSpacing">-0.0125</item>
+        <item name="android:textSize">@dimen/font_size_h1</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.Headline2" parent="TextAppearance.MaterialComponents.Headline2">
+        <item name="fontFamily">@font/inter_semibold</item>
+        <item name="android:letterSpacing">-0.0125</item>
+        <item name="android:textSize">@dimen/font_size_h2</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.Headline3" parent="TextAppearance.MaterialComponents.Headline3">
+        <item name="fontFamily">@font/inter_bold</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="android:textSize">@dimen/font_size_h3</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.Headline4" parent="TextAppearance.MaterialComponents.Headline4">
+        <item name="fontFamily">@font/inter_semibold</item>
+        <item name="android:textSize">@dimen/font_size_h4</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.Headline5" parent="TextAppearance.MaterialComponents.Headline5">
+        <item name="fontFamily">@font/inter_semibold</item>
+        <item name="android:textSize">@dimen/font_size_h5</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.Headline6" parent="TextAppearance.MaterialComponents.Headline6">
+        <item name="fontFamily">@font/inter_semibold</item>
+        <item name="android:textSize">@dimen/font_size_h6</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.Subtitle1">
+        <item name="fontFamily">@font/inter_medium</item>
+        <item name="android:textSize">@dimen/font_size_body_l</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.Subtitle2">
+        <item name="fontFamily">@font/inter_medium</item>
+        <item name="android:textSize">@dimen/font_size_body_m</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.Body1">
+        <item name="fontFamily">@font/inter_medium</item>
+        <item name="android:textSize">@dimen/font_size_body_l</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.Body2">
+        <item name="fontFamily">@font/inter_medium</item>
+        <item name="android:textSize">@dimen/font_size_body_m</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.Caption">
+        <item name="fontFamily">@font/inter_semibold</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="android:textSize">@dimen/font_size_body_s</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.Terms">
+        <item name="fontFamily">@font/inter_medium</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="android:textSize">@dimen/font_size_body_xs</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.Overline">
+        <item name="fontFamily">@font/inter_semibold</item>
+        <item name="android:textSize">@dimen/font_size_body_s</item>
+        <item name="android:letterSpacing">0.125</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.Button">
+        <item name="fontFamily">@font/inter_semibold</item>
+        <item name="android:textSize">@dimen/font_size_body_l</item>
+        <item name="android:letterSpacing">0.0075</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+    <style name="TextAppearance.Crypto.Calculator.TextButton">
+        <item name="fontFamily">@font/inter_semibold</item>
+        <item name="android:textSize">@dimen/font_size_body_m</item>
+        <item name="android:letterSpacing">0.015</item>
+        <item name="android:fontFeatureSettings">ss01,ss04</item>
+    </style>
+
+</resources>

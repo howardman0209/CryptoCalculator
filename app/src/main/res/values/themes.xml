@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--theme attributes, see https://www.youtube.com/watch?v=Owkf8DhAOSo-->
+    <!--top-level theme-->
+    <style name="Theme.Crypto.Calculator.DayNight" parent="Base.V24.Theme.Crypto.Calculator" />
+
+    <!--light mode theme-->
+    <style name="Base.V24.Theme.Crypto.Calculator" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+
+        <!--System/Platform attributes-->
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!--<item name="android:windowBackground">?android:colorBackground</item>-->
+        <item name="android:statusBarColor">@color/so_transparent</item>
+        <item name="android:navigationBarColor">@color/so_dark</item>
+
+        <!--In general our UI do not support touch at the same time and thus we should not-->
+        <!--allow this from happening to prevent many unforeseeable issues-->
+        <item name="android:splitMotionEvents">false</item>
+        <item name="android:windowEnableSplitTouch">false</item>
+
+        <!--Material color attributes (base spectra theme) -->
+        <!--colorPrimary colors map to components and elements, such as app bars and buttons. -->
+        <!--colorSecondary colors are most often used as accents on components, such as FABs and -->
+        <!--selection controls.-->
+        <item name="colorPrimary">@color/theme_yellow_500</item>
+        <item name="colorPrimaryVariant">@color/theme_yellow_800</item>
+        <item name="colorOnPrimary">@color/so_white</item>
+
+        <item name="colorSecondary">@color/theme_purple_500</item>
+        <item name="colorSecondaryVariant">@color/theme_purple_800</item>
+        <item name="colorOnSecondary">@color/so_white</item>
+
+        <item name="colorError">@color/generic_red</item>
+        <item name="colorOnError">@color/so_white</item>
+
+        <item name="colorApproval">@color/generic_green</item>
+        <item name="colorOnApproval">@color/so_white</item>
+
+        <item name="colorNeutral">@color/so_dark</item>
+        <item name="colorOnNeutral">@color/so_white</item>
+
+        <!--colorBackground appears behind scrollable content and is used for the default window-->
+        <!--background. colorSurface is mapped to the surface of components such as cards, sheets-->
+        <!--and menus. colorError is used to indicate an csl_error state for components such as-->
+        <!--text fields.-->
+        <item name="android:colorBackground">@color/so_white_variant</item>
+        <item name="colorOnBackground">@color/so_dark</item>
+
+        <item name="colorSurface">@color/so_white</item>
+        <item name="colorOnSurface">@color/so_dark</item>
+
+        <!--Faded colors for ripple, disabled color-->
+        <!--<item name="colorPrimaryFaded">@color/lc533_living_coral</item>-->
+        <!--<item name="colorSecondaryFaded">@color/b533_neon_blue</item>-->
+        <!--<item name="colorSurfaceFaded">@color/n033_white_disabled</item>-->
+        <!--<item name="colorOnSurfaceFaded">@color/n933_dark_grey_disabled</item>-->
+
+        <!--text colors-->
+        <item name="android:textColor">@color/neutral_emphasis_high</item>
+        <item name="android:textColorPrimary">@color/neutral_emphasis_high</item>
+        <item name="android:textColorSecondary">@color/neutral_emphasis_medium</item>
+
+        <!--Set ripple color-->
+        <!--<item name="colorControlHighlight">?colorOnSurfaceFaded</item>-->
+
+        <!--Material type attributes-->
+        <item name="textAppearanceHeadline1">@style/TextAppearance.Crypto.Calculator.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.Crypto.Calculator.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.Crypto.Calculator.Headline3</item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.Crypto.Calculator.Headline4</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.Crypto.Calculator.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.Crypto.Calculator.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.Crypto.Calculator.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.Crypto.Calculator.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.Crypto.Calculator.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.Crypto.Calculator.Body2</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.Crypto.Calculator.Caption</item>
+        <item name="textAppearanceTerms">@style/TextAppearance.Crypto.Calculator.Terms</item>
+        <item name="textAppearanceButton">@style/TextAppearance.Crypto.Calculator.Button</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.Crypto.Calculator.Overline</item>
+        <item name="textAppearanceTextButton">@style/TextAppearance.Crypto.Calculator.TextButton</item>
+        <item name="android:includeFontPadding">false</item>
+
+        <!--Material shape attributes-->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Crypto.Calculator.Small.Rounded</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Crypto.Calculator.Medium</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Crypto.Calculator.Medium</item>
+
+        <!--Color alpha-->
+        <item name="alphaEmphasisHigh">0.92</item>
+        <item name="alphaEmphasisMedium">0.64</item>
+        <item name="alphaEmphasisLow">0.24</item>
+        <item name="alphaEmphasisDisabled">0.12</item>
+
+        <!--Override the actual material component/ view class-->
+
+        <!--Bottom sheet-->
+        <!--<item name="bottomSheetDialogTheme">@style/ThemeOverlay.Crypto.Calculator.BottomSheetDialog</item>-->
+
+        <!--Toolbar style, top app bar-->
+        <item name="appBarLayoutStyle">@style/Widget.Crypto.Calculator.AppBarLayout</item>
+        <item name="toolbarStyle">@style/Widget.Crypto.Calculator.Toolbar</item>
+        <item name="actionBarTheme">@style/Widget.Crypto.Calculator.Toolbar</item>
+        <item name="actionOverflowButtonStyle">@style/Widget.Crypto.Calculator.ActionButton.Overflow</item>
+        <item name="toolbarNavigationButtonStyle">@style/Widget.Crypto.Calculator.Toolbar.Button.Navigation</item>
+
+        <item name="tooltipStyle">@style/Widget.Crypto.Calculator.Tooltip</item>
+
+        <!--Bottom navigation-->
+        <item name="bottomNavigationStyle">@style/Widget.Crypto.Calculator.BottomNavigationView</item>
+
+        <!--Tab layout-->
+        <item name="tabStyle">@style/Widget.Crypto.Calculator.TabLayout</item>
+
+        <!--Button style-->
+        <item name="materialButtonStyle">@style/Widget.Crypto.Calculator.Button.Flat</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.Crypto.Calculator.Button.Outlined</item>
+        <item name="borderlessButtonStyle">@style/Widget.Crypto.Calculator.Button.TextButton</item>
+
+        <!--FAB style-->
+        <item name="floatingActionButtonStyle">@style/Widget.Crypto.Calculator.FloatingActionButton</item>
+        <item name="extendedFloatingActionButtonStyle">@style/Widget.Crypto.Calculator.ExtendedFloatingActionButton</item>
+
+        <!--Snackbar style-->
+        <item name="snackbarStyle">@style/Widget.Crypto.Calculator.Snackbar</item>
+        <item name="snackbarButtonStyle">@style/Widget.Crypto.Calculator.SnackbarButton</item>
+
+        <!--Control style-->
+        <item name="checkboxStyle">@style/Widget.Crypto.Calculator.Checkbox</item>
+        <item name="radioButtonStyle">@style/Widget.Crypto.Calculator.RadioButton</item>
+        <item name="switchStyle">@style/Widget.Crypto.Calculator.Switch</item>
+
+        <!--Text input style-->
+        <!--<item name="textInputStyle">@style/Widget.Crypto.Calculator.TextInputLayout</item>-->
+        <!--<item name="editTextStyle">@style/Widget.Crypto.Calculator.TextInputEditText</item>-->
+        <!--<item name="android:editTextStyle">@style/Widget.Crypto.Calculator.EditText</item>-->
+
+        <!--Card style-->
+        <!--<item name="materialCardViewStyle">@style/Widget.Crypto.Calculator.Card</item>-->
+
+        <!--Dialog style-->
+        <item name="alertDialogTheme">@style/ThemeOverlay.Crypto.Calculator.MaterialAlertDialog</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.Crypto.Calculator.MaterialAlertDialog</item>
+
+        <!--Navigation drawer, but we don't use that much-->
+        <!--<item name="navigationViewStyle">@style/Widget.Crypto.Calculator.NavigationView</item>-->
+    </style>
+
+    <!--Theme overlay-->
+    <!--the overlay on override the defined attributes-->
+
+    <!--for dialog, it has no inheritance from the app theme-->
+    <!--so we need to setup the themeoverlay, and set it in the material theme-->
+    <!--Dialog style overlay-->
+    <style name="ThemeOverlay.Crypto.Calculator.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="windowNoTitle">true</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/Widget.Crypto.Calculator.DialogTitle</item>
+        <item name="materialAlertDialogBodyTextStyle">?textAppearanceBody1</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Crypto.Calculator.DialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Crypto.Calculator.DialogButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.Crypto.Calculator.DialogButton</item>
+        <item name="android:textColor">@color/neutral_emphasis_medium</item>
+        <!--<item name="android:minWidth">312dp</item>-->
+    </style>
+
+    <style name="Widget.Crypto.Calculator.DialogTitle" parent="TextAppearance.Crypto.Calculator.Headline5">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/neutral_emphasis_high</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.DialogButton" parent="Widget.Crypto.Calculator.Button.TextButton">
+        <item name="android:minHeight">@dimen/min_touch_area_dense</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:insetTop">4dp</item>
+        <item name="android:insetBottom">4dp</item>
+        <item name="android:insetLeft">4dp</item>
+        <item name="android:insetRight">4dp</item>
+    </style>
+
+    <!--For full screen dialog (like config update or printing), need to set this theme in the manifests-->
+    <style name="Theme.Crypto.Calculator.DialogActivity" parent="Theme.MaterialComponents.DayNight.Dialog">
+        <item name="windowNoTitle">true</item>
+        <item name="android:theme">@style/Theme.Crypto.Calculator.DayNight</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.Crypto.Calculator.DialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.Crypto.Calculator.DialogButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.Crypto.Calculator.DialogButton</item>
+    </style>
+
+    <!--For DialogFragment, unused now-->
+    <!--    <style name="Theme.Crypto.Calculator.ProgressDialog" parent="Theme.Crypto.Calculator.DayNight">-->
+    <!--        <item name="android:windowNoTitle">true</item>-->
+    <!--        <item name="android:windowActionBar">false</item>-->
+    <!--        <item name="android:windowFullscreen">true</item>-->
+    <!--        <item name="android:windowIsFloating">false</item>-->
+    <!--    </style>-->
+
+</resources>

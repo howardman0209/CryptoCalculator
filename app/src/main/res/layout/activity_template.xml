@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="view"
+            type="com.crypto.calculator.ui.view.activity.TemplateActivity" />
+
+        <variable
+            name="viewModel"
+            type="com.crypto.calculator.ui.viewModel.TemplateViewModel" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="@dimen/space_default"
+            tools:ignore="HardcodedText">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Logo"
+                android:textAppearance="?textAppearanceHeadline3" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:src="@drawable/ic_android"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Colors"
+                android:textAppearance="?textAppearanceHeadline3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Brand color"
+                android:textAppearance="?textAppearanceHeadline5" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_half"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="@dimen/min_touch_area_dense"
+                    android:layout_height="@dimen/min_touch_area_dense"
+                    android:background="?colorPrimary" />
+
+                <View
+                    android:layout_width="@dimen/min_touch_area_dense"
+                    android:layout_height="@dimen/min_touch_area_dense"
+                    android:layout_marginStart="@dimen/space_half"
+                    android:background="?colorSecondary" />
+
+                <View
+                    android:layout_width="@dimen/min_touch_area_dense"
+                    android:layout_height="@dimen/min_touch_area_dense"
+                    android:layout_marginStart="@dimen/space_half"
+                    android:background="?colorNeutral" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Utility color (text)"
+                android:textAppearance="?textAppearanceHeadline5" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_half"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="@dimen/min_touch_area_dense"
+                    android:layout_height="@dimen/min_touch_area_dense"
+                    android:background="@color/so_white"
+                    android:backgroundTint="@color/neutral_emphasis_high" />
+
+                <View
+                    android:layout_width="@dimen/min_touch_area_dense"
+                    android:layout_height="@dimen/min_touch_area_dense"
+                    android:layout_marginStart="@dimen/space_half"
+                    android:background="@color/so_white"
+                    android:backgroundTint="@color/neutral_emphasis_medium" />
+
+                <View
+                    android:layout_width="@dimen/min_touch_area_dense"
+                    android:layout_height="@dimen/min_touch_area_dense"
+                    android:layout_marginStart="@dimen/space_half"
+                    android:background="@color/so_white"
+                    android:backgroundTint="@color/neutral_emphasis_low" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Utility color (status)"
+                android:textAppearance="?textAppearanceHeadline5" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_half"
+                android:orientation="horizontal">
+
+                <View
+                    android:layout_width="@dimen/min_touch_area_dense"
+                    android:layout_height="@dimen/min_touch_area_dense"
+                    android:background="?colorApproval" />
+
+                <View
+                    android:layout_width="@dimen/min_touch_area_dense"
+                    android:layout_height="@dimen/min_touch_area_dense"
+                    android:layout_marginStart="@dimen/space_half"
+                    android:background="?colorError" />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Buttons"
+                android:textAppearance="?textAppearanceHeadline3" />
+
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Primary button" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Crypto.Calculator.Button.Flat.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Secondary button" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Crypto.Calculator.Button.Flat.Tertiary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Tertiary button" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Crypto.Calculator.Button.Flat.Error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Error button" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Quick launch action"
+                android:textAppearance="?textAppearanceHeadline3" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Crypto.Calculator.Button.Flat.QuickLaunch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Quick launch actions"
+                app:icon="@drawable/ic_tran_payment" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Text Buttons"
+                android:textAppearance="?textAppearanceHeadline3" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Crypto.Calculator.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Primary button" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Crypto.Calculator.Button.TextButton.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Secondary button" />
+
+            <com.google.android.material.button.MaterialButton
+                style="@style/Widget.Crypto.Calculator.Button.TextButton.Tertiary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Tertiary button" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="Animation"
+                android:textAppearance="?textAppearanceHeadline3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_default"
+                android:text="General loading"
+                android:textAppearance="?textAppearanceHeadline5" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:layout_width="@dimen/animation_loading_size_default"
+                android:layout_height="@dimen/animation_loading_size_default"
+                android:layout_marginTop="@dimen/space_half"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/loading_lottie"
+                tools:background="#ccc" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:digits="0123456789ABCDEF"
+                android:inputType="textCapCharacters"
+                android:importantForAutofill="no" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.core.widget.NestedScrollView>
+</layout>

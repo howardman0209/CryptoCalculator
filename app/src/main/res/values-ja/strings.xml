@@ -1,0 +1,713 @@
+<resources>
+    <!--    <string name="app_name">Spectra Demo</string>-->
+
+    <!--    common-->
+    <string name="label_login">ログイン</string>
+    <string name="label_password">パスワード</string>
+    <string name="label_email">メール</string>
+    <string name="label_setting">設定</string>
+    <string name="label_unknown">不明</string>
+    <string name="label_off">オフ</string>
+    <string name="other">その他</string>
+    <string name="label_loading">読み込み中…</string>
+
+    <!--    bottom navigation tab label-->
+    <!--    <string name="label_bottom_nav_tab1"  translatable="false">tab1</string>-->
+    <!--    <string name="label_bottom_nav_tab2"  translatable="false">tab2</string>-->
+    <!--    <string name="label_bottom_nav_tab3"  translatable="false">tab3</string>-->
+    <!--    <string name="label_bottom_nav_tab4"  translatable="false">tab4</string>-->
+
+    <!--    activity / fragment label-->
+    <!--    <string name="label_activity_test" translatable="false">TestActivity</string>-->
+    <!--    <string name="label_fragment_test" translatable="false">TestFragment</string>-->
+    <!--    <string name="label_fragment_home" translatable="false">HomeFragment</string>-->
+    <!--    <string name="label_fragment_more" translatable="false">MoreFragment</string>-->
+
+
+    <!--    text label-->
+    <string name="label_remember_me">私を覚えて</string>
+    <string name="label_logout">ログアウトしますか？</string>
+
+    <!--    button text label-->
+    <string name="label_button_test">テストボタン</string>
+    <string name="button_filter">フィルター</string>
+    <string name="button_back">戻る</string>
+    <string name="button_exit">終了</string>
+    <string name="button_ok">はい</string>
+    <string name="button_print">プリント</string>
+    <string name="button_qr_receipt">QR 領収書</string>
+    <string name="button_refresh">リフレッシュ</string>
+    <string name="button_send">送る</string>
+    <string name="button_submit">提出</string>
+    <string name="button_share">シェア</string>
+    <string name="button_update_order">注文を更新</string>
+    <string name="label_button_test_1">テストボタン 1</string>
+    <string name="label_button_test_2">テストボタン 2</string>
+    <string name="label_button_test_3">テストボタン 3</string>
+    <string name="label_button_test_4">テストボタン 4</string>
+    <string name="label_button_test_5">テストボタン 5</string>
+    <string name="label_button_test_6">テストボタン 6</string>
+    <string name="label_button_test_7">テストボタン 7</string>
+    <string name="label_button_test_8">テストボタン 8</string>
+
+    <!--    hint text-->
+    <string name="label_slogan">スローガン</string>
+    <string name="label_title">タイトル</string>
+
+    <string name="button_cancel">キャンセル</string>
+    <string name="button_confirm">確認</string>
+    <string name="button_remove">削除</string>
+    <string name="button_dismiss">閉じる</string>
+    <string name="button_login">ログイン</string>
+    <string name="button_logout">ログアウト</string>
+    <string name="button_request">リクエスト</string>
+    <string name="button_gallery">ギャラリー</string>
+    <string name="button_register">登録</string>
+    <string name="button_start_new_sale">新しい取引</string>
+
+    <string name="transaction_status_approved">承認</string>
+    <string name="transaction_status_completed">完了</string>
+    <string name="transaction_status_declined">拒否</string>
+    <string name="transaction_status_error">エラー</string>
+    <string name="transaction_status_offline">承認（オフライン）</string>
+    <string name="transaction_status_processing">処理中</string>
+    <string name="transaction_status_reverse">リバースした</string>
+    <string name="transaction_status_refunded">返金した</string>
+    <string name="transaction_status_voided">無効した</string>
+    <string name="transaction_type_auth">仮売上</string>
+    <string name="transaction_type_capture">実売上</string>
+    <string name="transaction_type_offline">オフライン売上</string>
+    <string name="transaction_type_refund">払い戻し</string>
+    <string name="transaction_type_sale">売上</string>
+    <string name="transaction_type_void">無効</string>
+
+    <!--    error-->
+    <string name="label_decode_image_fail">画像のデコードに失敗しました</string>
+    <string name="label_transaction_error_idle_timeout">アイドルタイムアウト</string>
+
+    <!--    notification channel id-->
+    <!--    <string name="notification_channel_id" translatable="false">notification_channel_id</string>-->
+
+    <!--    account type-->
+    <!--    <string name="account_type" translatable="false">Spectra Dummy</string>-->
+
+    <!--    rationale-->
+    <string name="label_rationale_location">決済を実行するには位置情報の許可を許可してください</string>
+    <string name="label_rationale_bluetooth">Bluetooth デバイスを探索するための位置情報の許可を設定することを許可してください</string>
+    <string name="label_rationale_phone_state">デバイスのシリアル番号を取得するための電話状態の読み取り権限を許可してください</string>
+    <string name="label_rationale_camera">写真を撮ったり、バーコードや QR コードをスキャンしたりするためのカメラのアクセス許可を許可してください</string>
+    <string name="label_rationale_file">領収書またはレポートを保存するためのファイルとメディア権限を許可してください</string>
+    <string name="label_rationale_file_read">デバイスから画像を読み取るためのファイルとメディア権限を許可します</string>
+    <string name="label_rationale_stats">決済を実行するための権限を許可してください</string>
+    <string name="label_rationale_notification">通知プロンプトを表示するための通知権限を許可してください</string>
+
+    <string name="label_checking_basic_config">基本設定を確認中…</string>
+    <string name="label_powered_by_spectra">Powered by Spectra Technologies</string>
+
+    <!--    e-donation options-->
+    <string name="label_e_donation">電子寄付</string>
+    <!--    <string name="label_e_donation_option" translatable="false">$ %1$s</string>-->
+
+    <string name="label_e_donation_option_1">寄付選択 1</string>
+    <string name="label_e_donation_option_2">寄付選択 2</string>
+    <string name="label_e_donation_option_3">寄付選択 3</string>
+    <string name="label_e_donation_option_4">寄付選択 4</string>
+
+    <!--    <string name="default_e_donation_option_1" translatable="false">$ 1</string>-->
+    <!--    <string name="default_e_donation_option_2" translatable="false">$ 5</string>-->
+    <!--    <string name="default_e_donation_option_3" translatable="false">$ 10</string>-->
+    <!--    <string name="default_e_donation_option_4" translatable="false">$ 20</string>-->
+    <string name="label_e_donation_option_custom">カスタム</string>
+
+    <!--    sale-->
+    <string name="label_total_amount">合計金額</string>
+    <string name="label_check_result">結果の確認</string>
+    <string name="label_input_email">メールを入力してください</string>
+    <string name="label_input_hint">入力してください</string>
+    <string name="label_input_phone">電話番号を入力してください</string>
+    <string name="label_input_customer_info">お客様情報を入力してください</string>
+    <string name="label_present_qr">マーチャントの QR を表示</string>
+    <string name="label_scan_qr_desc">枠内にQRコードを合わせてスキャン</string>
+    <string name="label_scan_code_get_receipt">下のQRをスキャンして領収書を取得します</string>
+    <string name="label_scan_code_get_pay_link">下の QR をスキャンして支払いリンクを取得します</string>
+    <string name="label_sending">送信中…</string>
+    <string name="label_sent">領収書を送りました!</string>
+    <string name="label_sms_receipt">SMS</string>
+    <string name="var_approval">承認番号：%1$s</string>
+    <string name="var_change">おつり：%1$s</string>
+    <!--    <string name="var_multiplication_sign" translatable="false">✕ %1$d</string>-->
+    <string name="var_trace">トレース番号：%1$s</string>
+    <string name="label_need_receipt">領収書が入りますか？</string>
+
+    <!-- Sale - QR fragment -->
+    <string name="button_scan_qr">QRコードをスキャン</string>
+    <string name="label_invalid_qr">無効な QRコード</string>
+    <string name="label_null_qr_desc">QRコードを空にできません</string>
+    <string name="label_qr_choose_payment_method">支払い方法を選択してください</string>
+    <string name="label_scan_present_qr_to_pay">下記QR（マーチャントのQR）をお客様にご提示ください。</string>
+    <string name="label_scan_to_pay">スキャンして支払う</string>
+    <string name="label_save_qr_location_success">QRコードがこちらに保存されました：</string>
+    <string name="label_save_file_failed">ファイルを保存できません</string>
+
+    <string name="var_last_try_passcode_warning">%2$s 分間ロックされる前に、残り %1$s 回のパスコード試行。</string>
+    <string name="label_passcode_updated">パスコードが更新されました</string>
+    <string name="var_qr_valid_until">QR 有効期限: %s</string>
+
+    <string name="label_disclaimer_standard">私は上記の取引／サービスを確認し、本人口座への計上を承諾します。</string>
+    <string name="label_sign_here">ご署名ください</string>
+
+    <!-- Transaction Result Activity -->
+    <string name="transaction_fail_error_message">取引が中止されました</string>
+
+    <!--result message-->
+    <string name="error_result_customer_abort">取引が中止されました</string>
+    <string name="error_result_operation_timeout">アイドルタイムアウト</string>
+    <string name="error_result_nfc_disabled">NFCはオフです</string>
+    <string name="error_result_requirement_not_meet">不十分な機器要件</string>
+    <string name="error_result_pending_reversal_upload_fail">保留中のリバースのアップロードに失敗しました</string>
+    <string name="error_result_txn_amount_exceed_app_limit">取引金額が上限を超えています</string>
+    <string name="error_result_please_retry">エラー: もう一度お試しください</string>
+
+    <!-- Common Payment Method -->
+    <string name="payment_method_alipay">アリペイ</string>
+    <string name="payment_method_amex">アメリカン・エキスプレス</string>
+    <string name="payment_method_cash">現金</string>
+    <string name="payment_method_cup">銀聯</string>
+    <string name="payment_method_fps">FPS</string>
+    <string name="payment_method_octopus">オクトパスカード</string>
+    <string name="payment_method_eps">EPS</string>
+    <string name="payment_method_easycard">イージーカード</string>
+    <string name="payment_method_wechat">ウィーチャットペイ</string>
+    <string name="payment_method_upi_qr">銀聯 QR</string>
+
+    <!--    <string name="payment_method_jcb" translatable="false">JCB</string>-->
+    <!--    <string name="payment_method_master" translatable="false">Mastercard</string>-->
+    <!--    <string name="payment_method_diners" translatable="false">Diners</string>-->
+    <!--    <string name="payment_method_discover" translatable="false">Discover</string>-->
+    <!--    <string name="payment_method_zelle" translatable="false">Zelle</string>-->
+    <!--    <string name="payment_method_maestro" translatable="false">Maestro</string>-->
+    <!--    <string name="payment_method_visa" translatable="false">Visa</string>-->
+    <!--    <string name="payment_method_payme" translatable="false">PayMe</string>-->
+    <!--    <string name="payment_method_yuu" translatable="false">Yuu</string>-->
+
+    <!-- Entry Mode -->
+    <string name="entry_mode_contactless">(T) コンタクトレス</string>
+    <string name="entry_mode_chip">(C) チップカード</string>
+    <string name="entry_mode_magstripe">(S) スワイプ</string>
+    <string name="entry_mode_manual">(M) マニュアル入力</string>
+    <string name="entry_mode_fallback">(F) フォールバック</string>
+    <string name="entry_mode_qr_present">(MP) マーチャント QR プレゼント</string>
+    <string name="entry_mode_qr_scan">(CP) お客様QRプレゼント</string>
+    <string name="entry_mode_ecommerce">(EC) eコマース</string>
+    <string name="entry_mode_octopus">オクトパスカード</string>
+    <string name="entry_mode_cash">現金</string>
+
+    <!--Purchase Fragment-->
+    <string name="label_authorizing">"取引承認中"</string>
+    <string name="label_card_detected">"カードの読み取り中、しっかりと保持してください"</string>
+    <string name="label_card_inserted">"カードの読み取り中"</string>
+    <string name="label_remove_card_use_swipe">"カードを抜き、再度スワイプ"</string>
+    <string name="label_card_read">"カードは読み取られだ，お取り外しことができます"</string>
+    <string name="label_card_try_again">"もう一度お試しください"</string>
+    <string name="label_present_card">"タップして支払う"</string>
+    <string name="label_wait_attestation_end">"アテステーション進行中"</string>
+    <string name="label_wait_registration_end">"登録中"</string>
+    <string name="label_wait_request_IK">"暗号鍵の読み込み中"</string>
+    <string name="label_wait_request_PinKey">"ピンキーの読み込み中"</string>
+    <string name="var_comm_progress_connecting_countdown">"接続中… %1$s秒"</string>
+    <string name="var_comm_progress_wait_data_countdown">"応答待ち… %1$s秒"</string>
+    <string name="label_fail_no_license">認証に失敗しました</string>
+    <string name="label_emv_err_default">"エラー %1$s"</string>
+    <string name="label_emv_err_see_phone">決済デバイスの指示に従ってください</string>
+    <string name="label_emv_err_card_not_support">このカードは対応していません</string>
+    <string name="label_emv_err_card_not_accept">このカードは受け付けていません</string>
+    <string name="label_emv_err_read_failed">カードの読み取りに失敗しました</string>
+
+    <string name="label_app_bar_title_waiting_card">"クレジットカード - %1$s"</string>
+    <string name="label_app_bar_title_qr_payment">"QRウォレット　- %1$s"</string>
+    <string name="label_app_bar_title_cash">"現金 - %1$s"</string>
+
+    <!--    dialog-->
+    <string name="label_enter_the_donation_amount">寄付金額を入力してください</string>
+    <string name="label_result_auto_dismiss_timeout">結果画面のタイムアウト (ms)</string>
+    <!--    <string name="label_result_screen_timeout_min" translatable="false">0s</string>-->
+    <!--    <string name="label_result_screen_timeout_max" translatable="false">10s</string>-->
+    <string name="label_result_screen_setting">取引結果の表示設定</string>
+    <string name="label_result_screen_auto_dismiss">オートスキップ</string>
+    <string name="label_input_your_slogan">スローガンを入力してください</string>
+    <string name="label_hint_text">ヒントワード</string>
+
+    <!--    snackbar-->
+    <string name="snackbar_pin_entry_last_chance">"PIN入力の最後のチャンス"</string>
+
+    <!--    QuickLaunch-->
+    <string name="label_hello">こんにちは！</string>
+    <string name="transaction_type_instalment">割賦</string>
+    <string name="transaction_type_donation">寄付</string>
+    <string name="label_report">レポート</string>
+    <string name="button_activate">アクティブ化</string>
+    <string name="button_settlement">清算</string>
+    <!--    <string name="var_shop_name" translatable="false">\@%1$s</string>-->
+
+    <!--    MainMenu-->
+    <string name="label_payment">支払い</string>
+    <string name="label_home">フロントページ</string>
+    <string name="label_help">ヘルプ</string>
+    <string name="label_promotion">プロモーション</string>
+    <string name="label_more">もっと</string>
+
+    <!-- More Fragment -->
+    <string name="label_app_settings">アプリの設定</string>
+    <string name="label_account">アカウント</string>
+    <string name="label_account_level_basic">SoéPay ベーシック</string>
+    <!--    <string name="label_account_level_enterprise" translatable="false">SoéPay TOPS</string>-->
+    <string name="label_upgrade">アップグレード</string>
+    <string name="label_night_mode">ナイトモード</string>
+    <string name="label_select_card_app">カードアプリを選ぶ</string>
+    <string name="label_select_shop">店を選ぶ</string>
+    <string name="label_shop">店</string>
+    <string name="label_subscription_plan">サブスクリプションプラン</string>
+    <string name="label_switch_shop">店を切り替える</string>
+    <string name="label_username">ユーザー名</string>
+    <string name="message_update_user_name">ユーザー名が更新されました。反映されるまで最大 15 分かかる場合があります。</string>
+    <string name="label_printing_config">プリント オプション</string>
+    <string name="var_printing_copy">プリント オプション - %1$s</string>
+    <string name="label_printing_config_customer">カスタマーコピーのみ</string>
+    <string name="label_printing_config_merchant">マーチャントコピーのみ</string>
+    <string name="label_printing_config_both">両方のコピー</string>
+    <string name="label_printing_time_interval">領収書発行時間間隔</string>
+    <string name="label_auto_print_receipt">取引完了後、自動で領収書を発行</string>
+    <string name="label_create_category">カテゴリを作成</string>
+    <string name="label_edit_category">カテゴリを編集</string>
+    <string name="label_product_category_empty_error">カテゴリは空白にできません</string>
+    <string name="label_calculator_keypad">電卓キーパッド</string>
+    <string name="label_view_own_history">自分の取引履歴のみを表示する</string>
+    <string name="label_skip_success_animation">ECRモードでアニメーションをスキップ</string>
+    <string name="var_result_auto_dismiss_timeout">結果画面のタイムアウト: %1$sms</string>
+    <string name="label_signature_on_paper">領収書に署名する</string>
+
+    <string name="label_edit_shop_name">店名変更</string>
+    <!-- Language -->
+    <string name="label_language">言語</string>
+    <!--    <string name="label_language_en" translatable="false">English</string>-->
+    <!--    <string name="label_language_tc" translatable="false">繁體中文</string>-->
+    <string name="label_select_language">言語を選択</string>
+    <string-array name="language_selection">
+        <item>@string/label_language_en</item>
+        <item>@string/label_language_tc</item>
+        <item>@string/label_language_jp</item>
+    </string-array>
+
+    <!-- Printer -->
+    <string name="button_discover">検索</string>
+    <string name="button_turn_on_bluetooth">Bluetoothをオンにする</string>
+    <string name="label_connect">接続</string>
+    <string name="label_connected">接続済み</string>
+    <string name="label_connecting_printer">接続中…</string>
+    <string name="label_disconnect">接続を切断する</string>
+    <string name="label_disconnected">未接続</string>
+    <string name="label_discovered_devices">検出されたプリンタ</string>
+    <string name="label_forget_device">プリンターを忘れて</string>
+    <string name="label_manage_printers">プリンタの管理</string>
+    <string name="label_my_printers">私のプリンター</string>
+    <string name="label_no_paired_device">記録なし</string>
+    <string name="label_pairing">デバイスをペアリングしている間お待ちください…</string>
+    <string name="label_print_error_with_message">領収書の印刷に失敗しました（%1$s）</string>
+    <string name="label_print_in_progress">領収書印刷中…</string>
+    <string name="label_print_status">印刷状況</string>
+    <string name="label_print_success">領収書を印刷しました</string>
+    <string name="label_printer_connect_failed">プリンター接続失敗</string>
+    <string name="label_printer_low_battery">プリンターのバッテリー残量が少ない</string>
+    <string name="label_printer_low_battery_msg">バッテリー残量が少なくなっています。Bluetooth プリンターを充電してください。</string>
+    <string name="label_printer_manage_msg">先に「プリンタの管理」でプリンタを設定してください。</string>
+    <string name="label_printer_not_found">プリンターが見つかりません</string>
+    <string name="label_printer_out_of_paper">用紙がありません</string>
+    <string name="label_printer_out_of_paper_msg">新しい用紙に交換して、もう一度お試しください。</string>
+    <string name="label_printer_overheat_msg">他の領収書の種類を選択するか、5 分後にもう一度印刷してください。</string>
+    <string name="label_printer_reboot_msg">Bluetoothプリンターを再起動してください。</string>
+    <string name="label_reboot_bp80">Bluetoothプリンターを再起動します</string>
+    <string name="label_please_wait">お待ちください</string>
+    <string name="label_old_version">旧版</string>
+    <string name="label_start_search_printer">近くにある Bluetooth プリンターの検索を開始します</string>
+    <string name="label_contact_cs">カスタマーサービスにお問い合わせください</string>
+    <string name="label_test_printing">テストプリント</string>
+    <string name="print_done">完了</string>
+    <string name="print_retry">リトライ</string>
+    <string name="var_discovering">検索中… %1$s秒で完了</string>
+    <string name="var_second">%s秒</string>
+
+    <!-- Shop Info -->
+    <string name="label_merchant">マーチャント</string>
+    <string name="label_shop_info">店の情報</string>
+    <string name="label_shop_config">店の設定</string>
+    <string name="label_shop_currency">店の通貨</string>
+    <string name="label_shop_name">店名</string>
+    <string name="label_shop_tel">店の電話</string>
+    <string name="label_update_shop_info_success">店の情報を変更しました</string>
+
+    <!-- User/ Device List -->
+    <string name="label_user_device_list">ユーザーとデバイス</string>
+    <string name="label_user_email">ユーザーのメール</string>
+    <string name="label_device">デバイス</string>
+
+    <!-- Password - admin password dialogue -->
+    <string name="label_merchant_passcode_current">現在のマーチャントパスコード</string>
+    <string name="label_merchant_passcode_incorrect">マーチャントパスコードが間違っています</string>
+    <string name="label_merchant_passcode_new">新しいマーチャントパスコード</string>
+    <string name="label_merchant_passcode_confirm">マーチャントパスコードの確認</string>
+    <string name="label_merchant_passcode_saved">パスコードを更新しました</string>
+    <string name="label_merchant_passcode_time_lock">マーチャントパスコードが間違っています。%1$s 秒後にもう一度お試しください</string>
+    <string name="label_merchant_passcode_too_short">パスコードが短すぎます</string>
+    <string name="label_merchant_passcode_enter">マーチャントパスコードを確認する</string>
+    <string name="label_merchant_passcode_change">マーチャントパスコードを変更する</string>
+
+    <!-- POS - Create, Edit -->
+    <string name="button_save">保存</string>
+    <string name="label_barcode">バーコード</string>
+    <string name="label_coach_mark">コーチマーク</string>
+    <string name="label_create_item">新しい商品を作成する</string>
+    <string name="label_create_coupon">クーポンを作成する</string>
+    <string name="label_input_coupon_sn">クーポンのシリアル番号を入力してください</string>
+    <string name="label_serial_number">シリアル番号</string>
+    <string name="label_remove_coupon">クーポンを削除</string>
+    <string name="label_edit_item">商品を編集</string>
+    <string name="label_edit_coupon">クーポンを編集</string>
+    <string name="label_coupon_qr_code">クーポン Qr</string>
+    <string name="label_create_product_category">カテゴリを作成</string>
+    <string name="label_delete_item_confirmation">アイテムを削除しますか？</string>
+    <string name="label_duplicated_item">バーコードと商品が重複している “%1$s”</string>
+    <string name="label_empty_card_title">カートは空です</string>
+    <string name="label_empty_inventory">商品がありません</string>
+    <string name="label_empty_category">カテゴリがありません</string>
+    <string name="label_empty_coupon">クーポンがありません</string>
+    <string name="label_item_field_required">必要</string>
+    <string name="label_item_field_price_type">価格は正または負の数値である必要があります</string>
+    <string name="label_item_category_manage">商品とカテゴリーの管理</string>
+    <string name="label_coupon_manage">クーポン</string>
+    <string name="label_generate_coupon_qr">QR を生成する</string>
+    <string name="label_item_manage">商品</string>
+    <string name="label_category_manage">カテゴリー</string>
+    <string name="label_remove_category">カテゴリを削除しますか？</string>
+    <string name="label_item_preview">商品のプレビュー</string>
+    <string name="label_name">名前</string>
+    <string name="label_price">値段</string>
+    <string name="label_weight">Weight</string>
+    <string name="label_prompt_input">必要なデータを提供してください</string>
+    <!--    <string name="var_amount" translatable="false">%1$s %2$s</string>-->
+    <string name="label_decode_barcode_fail">バーコードが見つかりません</string>
+
+    <!-- Password - Common -->
+    <string name="label_action_result">操作結果</string>
+    <string name="label_change_pw">パスワードを変更する</string>
+    <string name="label_change_password_fail">パスワードの変更に失敗しました</string>
+    <string name="label_change_password_success">パスワードは変更されました</string>
+    <string name="label_confirm_password">パスワードの確認</string>
+    <string name="label_current_password">現在のパスワード</string>
+    <string name="label_username_not_valid">無効なユーザー名</string>
+    <string name="label_email_not_valid">無効なメール</string>
+    <string name="label_phone_not_valid">無効な電話番号</string>
+    <string name="label_forget_password_check_email_description">メールを確認してパスワードをリセットしてください</string>
+    <string name="label_forgot_password_header">パスワードをリセットするには、メールアドレスを入力してください</string>
+    <string name="label_new_password">新しいパスワード</string>
+    <string name="label_not_meet_password_policy">パスワードは 7 文字以上で、数字を 1 つ含める必要があります</string>
+    <string name="label_password_not_match">パスワードが一致していません</string>
+    <string name="label_please_enter_old_password">以前のパスワードを入力してください</string>
+    <string name="label_edit_username">ユーザー名を変更する</string>
+    <string name="label_reset_password">パスワードのリセット</string>
+    <string name="label_reset_password_fail">パスワードのリセットに失敗しました</string>
+    <string name="label_reset_password_success">パスワードはリセットが成功しました</string>
+    <string name="var_back_to_login">%1$s 秒でログインに戻ります"</string>
+
+    <!-- Trouble Shoot -->
+    <string name="label_trouble_shoot">トラブルシューティング</string>
+    <string name="label_section_permission">許可ステータス</string>
+    <string name="label_section_config">構成</string>
+    <string name="label_section_card_agent">カードリーダー</string>
+    <string name="label_section_pin_key">ピンキー</string>
+    <string name="label_permission">許可</string>
+    <string name="label_system_status">システム状態</string>
+    <string name="label_app_versions">アプリ版</string>
+    <string name="label_reader_status">カードリーダーの状態</string>
+    <string name="label_permission_camera">カメラ</string>
+    <string name="label_permission_storage">保存</string>
+    <string name="label_permission_location">位置</string>
+    <string name="label_permission_granted">許可された</string>
+    <string name="label_permission_not_granted">許可されない</string>
+
+    <!--    <string name="label_card_agent" translatable="false">Card agent</string>-->
+    <!--    <string name="label_emv_config_loaded" translatable="false">Test config loaded</string>-->
+    <!--    <string name="label_emv_config_load_failed" translatable="false">Test config load failed</string>-->
+    <!--    <string name="label_capk_config_loaded" translatable="false">CAPK loaded</string>-->
+    <!--    <string name="label_capk_config_load_failed" translatable="false">CAPK load failed</string>-->
+    <!--    <string name="label_product_image" translatable="false">Product image</string>-->
+    <!--    <string name="label_select_emv_config" translatable="false">Select EMV config</string>-->
+
+    <string name="label_reactivate">再アクティブ化</string>
+    <string name="label_confirm_update_emv_config">アクティブにしますか？</string>
+    <string name="label_emv_config">デフォルトの EMV パラメータを読み込む</string>
+    <string name="label_login_by_device_model">デバイスモードログイン</string>
+    <string name="var_transaction_updated">取引 %1$s</string>
+
+    <!-- Register -->
+    <string name="button_install">インストール</string>
+    <string name="label_checking_status_contextual">登録状況を確認しています。しばらくお待ちください。1 分ほどかかる場合があります。</string>
+    <string name="label_checking_ta_register_status">登録状況の確認中…</string>
+    <string name="label_prompt_install_ta_contextual">先にカード受け取りアプリをインストールまたは更新してください。</string>
+    <string name="label_register_failed">登録に失敗しました</string>
+    <string name="label_register_success">登録成功</string>
+    <string name="label_register_ta">カード受取アプリを登録中…</string>
+    <string name="label_ta_register_failed">カード受け取りアプリの登録失敗</string>
+    <string name="label_ta_register_failed_contextual">申し訳ありませんが、現時点ではアプリを登録できませんでした。しばらくしてからもう一度お試しください。\n\nこの状態が続く場合は、カスタマー サービスにお問い合わせください。</string>
+    <string name="var_register_error">エラー: %1$s\nメッセージ: %2$s</string>
+    <string name="var_unexpected_response">予期しない応答: %1$s</string>
+
+    <!-- Common Keypad-->
+    <!--    <string name="label_keypad_0" translatable="false">0</string>-->
+    <!--    <string name="label_keypad_00" translatable="false">00</string>-->
+    <!--    <string name="label_keypad_dp" translatable="false">.</string>-->
+    <!--    <string name="label_keypad_1" translatable="false">1</string>-->
+    <!--    <string name="label_keypad_2" translatable="false">2</string>-->
+    <!--    <string name="label_keypad_3" translatable="false">3</string>-->
+    <!--    <string name="label_keypad_4" translatable="false">4</string>-->
+    <!--    <string name="label_keypad_5" translatable="false">5</string>-->
+    <!--    <string name="label_keypad_6" translatable="false">6</string>-->
+    <!--    <string name="label_keypad_7" translatable="false">7</string>-->
+    <!--    <string name="label_keypad_8" translatable="false">8</string>-->
+    <!--    <string name="label_keypad_9" translatable="false">9</string>-->
+    <!--    <string name="label_keypad_back" translatable="false">←</string>-->
+    <!--    <string name="label_pre_amount_10" translatable="false">+$10</string>-->
+    <!--    <string name="label_pre_amount_20" translatable="false">+$20</string>-->
+    <!--    <string name="label_pre_amount_50" translatable="false">+$50</string>-->
+    <!--    <string name="label_pre_amount_100" translatable="false">+$100</string>-->
+    <!--    <string name="label_pre_amount_500" translatable="false">+$500</string>-->
+
+    <!--    Sale Activity-->
+    <string name="button_charge">チャージ %1$s</string>
+    <string name="button_clear">クリア</string>
+    <string name="label_last_receipt">前の領収書</string>
+    <string name="label_abort">中止</string>
+    <string name="label_add_note">メモを追加</string>
+    <string name="label_add_reference">参照を追加</string>
+    <string name="label_block_refresh_produce_list">カートが空ではありませんので、商品リストを更新できません。</string>
+    <string name="label_clear_all_items_desc">カートが空になります</string>
+    <string name="label_clear_all_items_title">すべてのアイテムを消去しますか？</string>
+    <string name="label_description">メッセージを入力してください</string>
+    <string name="label_empty_cart">アイテムはありません</string>
+    <string name="label_input">入力</string>
+    <string name="label_leave_transaction">取引中止</string>
+    <string name="label_payment_app_not_installed">支払いアプリがインストールされていません。\nサポートにお問い合わせください。</string>
+    <string name="label_total">合計：</string>
+    <string name="label_try_another_payment">他の支払い方法をお試しください</string>
+    <string name="label_uncategorized">未分類</string>
+    <string name="label_upload_order_fail">注文記録の作成に失敗しました</string>
+
+    <!-- DCC -->
+    <string name="label_default_currency">デフォルト通貨</string>
+    <string name="label_dcc_title">自国通貨支払い</string>
+    <string name="label_dcc_currency">通貨を変換する</string>
+    <string name="label_dcc_mode">DCC モード</string>
+    <string name="label_ecr_mode">ECR モード</string>
+    <string name="label_fx_rate_title">為替レート:</string>
+    <string name="label_choose_currency">通貨を選択</string>
+
+
+    <!--    <string name="label_pos" translatable="false">POS</string>-->
+    <!-- Report -->
+    <!--    <string name="label_report_range" translatable="false">%1$s - %2$s</string>-->
+    <string name="label_transaction">取引</string>
+    <string name="label_this_user_only">このユーザーのみ</string>
+    <string name="label_custom_report">カスタム レポート</string>
+    <string name="label_all_users">すべてのユーザー</string>
+    <string name="label_data_last_update">%1$sに更新されたデータ</string>
+    <string name="label_voided_transactions">取引が取り消された</string>
+    <string name="label_report_sale">販売</string>
+    <string name="label_report_refund">払い戻し</string>
+    <string name="label_report_auth_comp">実売上</string>
+    <string name="label_report_void_sale">無効販売</string>
+    <string name="label_report_void_refund">無効な返金</string>
+    <string name="label_report_void_auth_comp">無効な実売上</string>
+    <string name="label_details_report">取引明細</string>
+    <string name="label_product_report">製品</string>
+    <string name="label_transaction_summary">取引概要</string>
+    <string name="label_product_summary">製品の概要</string>
+    <string name="label_product_details">製品詳細</string>
+    <string name="label_payment_method_summary">お支払い方法の概要</string>
+    <string name="label_sale_by_payment">販売</string>
+    <string name="label_refund_by_payment">払い戻し</string>
+    <string name="label_auth_comp_by_payment">実売上</string>
+    <string name="label_void_sale_by_payment">無効販売</string>
+    <string name="label_void_refund_by_payment">無効な返金</string>
+    <string name="label_void_auth_comp_by_payment">無効な実売上</string>
+    <string name="label_avg_net_sale_amount">平均：販売</string>
+    <string name="label_report_refund_total">総額：払い戻し</string>
+    <string name="label_report_auth_comp_total">総額：実売上</string>
+    <string name="label_report_void_sale_amount">総額：無効販売</string>
+    <string name="label_report_void_refund_amount">総額：無効な返金</string>
+    <string name="label_report_void_auth_comp_amount">総額：無効な実売上</string>
+    <string name="label_net_amount">純額</string>
+    <string name="label_sale_by_product">商品別売上高</string>
+    <string name="label_sale_by_category">カテゴリー別売上高</string>
+    <string name="label_product_sold">販売した製品</string>
+    <string name="label_product_detail_trace">トレース番号</string>
+    <string name="label_product_detail_approval_code">承認番号</string>
+    <string name="label_product_detail_date_time">日付／時刻</string>
+    <string name="label_product_detail_payment_method">支払方法</string>
+    <string name="label_product_detail_account">口座</string>
+    <string name="label_product_detail_payment_type">取引タイプ</string>
+    <string name="label_product_detail_amount">金額</string>
+    <string name="label_product_detail_confirm_print">ページ数 > 5, 印刷を確認しますか?</string>
+    <string name="label_product_detail_product_name">製品</string>
+    <string name="label_product_detail_quantity">数量</string>
+    <string name="label_product_detail_total">金額</string>
+    <string name="label_category">カテゴリー</string>
+
+    <string name="api_response_already_exists">すでに存在します</string>
+    <string name="label_scan_from_gallery">アルバムを開く</string>
+
+    <!-- Sale - Bar Code Scan fragment -->
+    <string name="label_item_not_found">アイテムが見つかりません</string>
+    <string name="label_item_added">%1$sは追加した</string>
+    <string name="label_coupon_added">クーポンが追加されました</string>
+    <string name="label_coupon_removed">クーポンを削除しました</string>
+    <string name="label_coupon_applied">クーポンが使用されました</string>
+    <string name="label_coupon_not_need">クーポンは必要ありません</string>
+    <string name="label_unqualified_shop">このマーチャントでは利用できません</string>
+
+
+    <!-- Sale - select instrument -->
+    <string name="button_update">更新する</string>
+    <string name="instrument_card">クレジットカード</string>
+    <string name="instrument_qr_wallet">QRウォレット</string>
+    <string name="label_device_not_eligible_desc">非接触型決済は、お使いのデバイスに対応していない可能性があります。 アップグレードする前に、当社のサポートにお問い合わせください。</string>
+    <string name="label_device_not_eligible_title">デバイスがサポートされていません</string>
+    <string name="label_device_nfc_disabled_title">NFCはオフです</string>
+    <string name="label_device_nfc_disabled_desc">設定でNFC機能をオンにしてください</string>
+    <string name="label_device_amount_exceed_app_limit_title">無効な金額</string>
+    <string name="label_device_amount_exceed_app_limit_desc">取引金額が上限を超えています</string>
+    <string name="label_go_premium_desc">プランをアップグレードすればタップと QR ウォレットを受け入れる</string>
+    <string name="label_go_premium_title">他の支払い方法をお探しですか？</string>
+    <string name="label_payment_method_not_support">お支払いは対応しておりません</string>
+    <string name="label_prompt_install_ta">先にカード受取アプリをインストールしてください</string>
+    <string name="label_prompt_update_ta">先に受取カードのアプリケーションを更新してください</string>
+    <string name="label_prompt_register_ta">カード受取アプリを登録してください</string>
+    <string name="label_select_payment">支払い方法を選ぶ</string>
+    <string name="label_tap_to_pay">タップ</string>
+    <string name="label_pay_by_link">決済リンク</string>
+
+    <!-- Sale - cash fragment -->
+    <string name="button_cash_exact">ちょうど</string>
+    <string name="label_cash_changed">おつりを渡しました</string>
+    <string name="label_cash_received">受け取りました現金</string>
+
+    <!-- history -->
+    <string name="button_reset">リセット</string>
+    <string name="button_search">検索</string>
+    <string name="label_amount">金額</string>
+    <string name="label_amount_end">から</string>
+    <string name="label_amount_start"> </string>
+    <string name="label_date_range">日付指定</string>
+    <string name="label_history">取引記録</string>
+    <string name="label_keyword">キーワード（トレース番号，RRN）</string>
+    <string name="label_payment_method">支払方法</string>
+    <string name="label_entry_mode">エントリーモード</string>
+    <string name="label_settlement_status">清算状況</string>
+    <string name="label_settlement_status_not_settled">まだ清算していません</string>
+    <string name="label_settlement_status_settled">清算済み</string>
+    <string name="label_transaction_record">取引記録</string>
+    <string name="label_transaction_status">取引状況</string>
+    <string name="label_transaction_type">取引タイプ</string>
+    <!--    <string name="var_display_date_range" translatable="false">%1$s - %2$s</string>-->
+    <!--    <string name="var_transaction_action" translatable="false">%1$s %2$s?</string>-->
+    <!--    <string name="var_display_exact_amount" translatable="false">$%1$s</string>-->
+    <!--    <string name="var_two_strings" translatable="false">%1$s %2$s</string>-->
+    <!--    <string name="var_three_strings" translatable="false">%1$s %2$s(%3$s)</string>-->
+    <!--    <string name="var_two_strings_with_parenthesis" translatable="false">%1$s (%2$s)</string>-->
+
+    <!-- History - txn details -->
+    <!--    <string name="label_aid" translatable="false">AID</string>-->
+    <!--    <string name="label_app_name" translatable="false">App name</string>-->
+    <!--    <string name="label_tc" translatable="false">TC</string>-->
+    <!--    <string name="label_tvr" translatable="false">TVR</string>-->
+    <!--    <string name="label_tsi" translatable="false">TSI</string>-->
+    <!--    <string name="label_atc" translatable="false">ATC</string>-->
+    <!--    <string name="label_qrc_voucher_no" translatable="false">Voucher No</string>-->
+    <!--    <string name="label_pos_ref" translatable="false">POS Ref</string>    -->
+    <!--    <string name="label_amex_trace" translatable="false">ROC</string>-->
+    <string name="label_appr_code">承認番号</string>
+    <string name="label_batch">バッチ</string>
+    <string name="label_capture_confirm_message">実売上しますか?</string>
+    <string name="label_empty_state">取引ありません</string>
+    <string name="label_item_list">アイテム一覧</string>
+    <string name="label_mid">店舗番号</string>
+    <string name="label_rrn">照会番号</string>
+    <string name="label_tid">端末番号</string>
+    <string name="label_trace">トレース番号</string>
+    <string name="label_operator">オペレーター</string>
+    <string name="label_txn_details">取引明細</string>
+    <string name="label_void_refund_warn_message">この金額は受け取れません。続けますか?</string>
+    <string name="label_txn_details_save_success">領収書は%1$sに保存された</string>
+    <string name="label_txn_details_save_fail">領収書を保存できません</string>
+    <string name="save_without_permission">画像のダウンロードと共有を行うには、ストレージのアクセス許可を許可してください</string>
+    <string name="share_file_fail">ファイル／画像を共有できません</string>
+    <string name="label_transaction_already_settle">清算済み</string>
+
+
+    <!--CVM result text-->
+    <string name="cvm_result_offline_pin">PIN で認証済み</string>
+    <string name="cvm_result_offline_pin_and_signature">PIN と署名で認証済み</string>
+    <string name="cvm_result_signature">署名で認証済み</string>
+    <string name="cvm_result_cdcvm">CDCVM本人認証</string>
+    <string name="cvm_result_stt">署名は必要ありません (STT)</string>
+    <string name="cvm_result_no_need">署名は必要ありません</string>
+
+    <!--Report fragment-->
+    <string name="label_fetching_data">データを取得中</string>
+    <string name="label_this_week">今週</string>
+    <string name="label_last_week">先週</string>
+    <string name="label_this_month">今月</string>
+    <string name="label_last_month">先月</string>
+    <string name="label_this_quarter">今季</string>
+    <string name="label_last_quarter">先季</string>
+    <string name="label_this_year">本年</string>
+    <string name="label_last_year">昨年</string>
+    <string name="label_pie_chart_center_text">合計: \n%1$s</string>
+    <string name="label_report_no_chart_data">データがありません</string>
+    <string name="label_statistic">統計</string>
+    <string name="label_today">今日</string>
+    <string name="label_total_refund">返金合計</string>
+    <string name="label_total_void">無効合計</string>
+    <string name="label_yesterday">昨日</string>
+
+    <!-- Apollo receipt -->
+    <string name="label_built_in_printer">内蔵プリンター</string>
+    <string name="label_use_built_in_printer">内蔵プリンターを使用する</string>
+    <string name="label_battery_too_low">電池残量が少なくなっています。充電してください</string>
+
+    <string name="label_device_checking_desc_failed">以下のチェックに失敗しました。これにより、SoftPOS タップ機能の使用が妨げられる可能性があります.</string>
+    <string name="label_device_checking_desc_success">デバイスはすべてのチェックに合格しました！</string>
+    <string name="label_device_checking_result">デバイスチェックの結果</string>
+    <string name="button_device_check">デバイスチェック</string>
+    <string name="label_darkness">ダークネス</string>
+    <string name="label_darkness_lighter">明色</string>
+    <string name="label_darkness_medium">中明色</string>
+    <string name="label_darkness_darker">暗色</string>
+    <string name="prompt_please_wait_message">お待ちください</string>
+
+    <!--    card reader-->
+    <string name="emv_label_card_reader_connecting">"リーダー検出中"</string>
+    <string name="emv_label_card_reader_error">"検出エラー"</string>
+    <string name="emv_label_chip_card_detected">"カードIC検出、再度挿入"</string>
+    <string name="emv_label_ctl_read_success">"カードを抜いてください"</string>
+    <string name="emv_label_insert">"カード挿入"</string>
+    <string name="emv_label_insert_or_swipe">"カード挿入またはスワイプ"</string>
+    <string name="emv_label_swipe">"スワイプ"</string>
+    <string name="emv_label_tap">"タップ"</string>
+    <string name="emv_label_tap_or_insert">"タッチまたはインサート"</string>
+    <string name="emv_label_tap_or_swipe">"タッチまたはスワイプ"</string>
+    <string name="emv_label_tap_swipe_insert">"タッチ、インサートもしくはスワイプ"</string>
+    <string name="emv_nfc_multiple_card">"複数カード検出"</string>
+    <string name="emv_no_emv_apps">"EMVアプリなし"</string>
+    <string name="emv_pin_incorrect">"パスワードエラー"</string>
+    <string name="emv_present_card_again">"再試行"</string>
+    <string name="emv_label_bad_swipe">"検出エラー再挿入"</string>
+</resources>

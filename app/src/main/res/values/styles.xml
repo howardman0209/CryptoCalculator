@@ -1,0 +1,481 @@
+<resources>
+    <!--Component style-->
+    <!--the style could be used directly on layout or used in the theme default-->
+    <style name="Widget.Crypto.Calculator" parent="" />
+
+    <!--Toolbar style-->
+    <style name="Widget.Crypto.Calculator.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:minHeight">?actionBarSize</item>
+        <item name="android:background">?android:colorBackground</item>
+        <item name="titleTextAppearance">?textAppearanceHeadline6</item>
+        <item name="titleTextColor">@color/neutral_emphasis_high</item>
+        <item name="subtitleTextAppearance">?textAppearanceSubtitle1</item>
+        <item name="subtitleTextColor">@color/neutral_emphasis_medium</item>
+        <item name="contentInsetStartWithNavigation">@dimen/space_half</item>
+        <item name="contentInsetStart">0dp</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.AppBarLayout" parent="Widget.MaterialComponents.AppBarLayout.Surface">
+        <item name="liftOnScroll">true</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.ActionButton.Overflow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">?colorNeutral</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Toolbar.Button.Navigation" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="android:tint">?colorNeutral</item>
+    </style>
+
+    <!--Bottom navigation style-->
+    <style name="Widget.Crypto.Calculator.BottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="elevation">@dimen/elevation_high</item>
+        <item name="android:background">@drawable/rect_round_top_double</item>
+        <item name="backgroundTint">@color/so_dark_variant</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="itemIconTint">@color/bottom_navigation_item</item>
+        <item name="itemTextColor">@color/bottom_navigation_item</item>
+    </style>
+
+    <!--Button style-->
+    <!--Flat-->
+    <style name="Widget.Crypto.Calculator.Button.Flat" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:minHeight">@dimen/min_touch_area</item>
+        <item name="android:minWidth">@dimen/min_button_width</item>
+        <item name="android:paddingStart">@dimen/space_default</item>
+        <item name="android:paddingEnd">@dimen/space_default</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textAppearance">?textAppearanceButton</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/space_quarter</item>
+
+        <item name="backgroundTint">@color/primary</item>
+        <item name="android:textColor">@color/on_primary</item>
+        <item name="iconTint">@color/on_primary</item>
+        <item name="rippleColor">@color/neutral_emphasis_low</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Flat.PrimaryVariant" parent="Widget.Crypto.Calculator.Button.Flat">
+        <item name="backgroundTint">@color/primary_variant</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Flat.Secondary" parent="Widget.Crypto.Calculator.Button.Flat">
+        <item name="backgroundTint">@color/secondary</item>
+        <item name="android:textColor">@color/on_secondary</item>
+        <item name="iconTint">@color/on_secondary</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Flat.Tertiary" parent="Widget.Crypto.Calculator.Button.Flat">
+        <item name="backgroundTint">@color/neutral</item>
+        <item name="android:textColor">@color/on_neutral</item>
+        <item name="iconTint">@color/on_neutral</item>
+        <item name="rippleColor">@color/on_neutral_emphasis_low</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Flat.Error" parent="Widget.Crypto.Calculator.Button.Flat">
+        <item name="backgroundTint">@color/error</item>
+        <item name="android:textColor">@color/on_error</item>
+        <item name="iconTint">@color/on_error</item>
+    </style>
+
+    <!--Large text button-->
+    <style name="Widget.Crypto.Calculator.Button.Flat.LargeText" parent="Widget.Crypto.Calculator.Button.Flat">
+        <item name="android:textSize">@dimen/font_size_h3</item>
+        <item name="android:textColor">@color/so_dark</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <!--Large icon button-->
+    <style name="Widget.Crypto.Calculator.Button.Flat.LargeIcon" parent="Widget.Crypto.Calculator.Button.Flat">
+        <item name="iconPadding">0dp</item>
+        <item name="iconSize">@dimen/icon_medium</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Flat.LargeIcon.Secondary" parent="Widget.Crypto.Calculator.Button.Flat.Secondary">
+        <item name="iconPadding">0dp</item>
+        <item name="iconSize">@dimen/icon_medium</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Outlined.LargeIcon" parent="Widget.Crypto.Calculator.Button.Outlined">
+        <item name="iconPadding">0dp</item>
+        <item name="iconSize">@dimen/icon_medium</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Outlined.LargeIcon.Secondary" parent="Widget.Crypto.Calculator.Button.Outlined.Secondary">
+        <item name="iconPadding">0dp</item>
+        <item name="iconSize">@dimen/icon_medium</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Flat.LargeIcon.Tertiary" parent="Widget.Crypto.Calculator.Button.Flat.Tertiary">
+        <item name="iconPadding">0dp</item>
+        <item name="iconSize">@dimen/icon_medium</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Flat.LargeIcon.Error" parent="Widget.Crypto.Calculator.Button.Flat.Error">
+        <item name="iconPadding">0dp</item>
+        <item name="iconSize">@dimen/icon_medium</item>
+    </style>
+
+    <!--swiped list side buttons-->
+    <style name="Widget.Crypto.Calculator.Button.Flat.LargeIcon.Square" parent="Widget.Crypto.Calculator.Button.Flat.LargeIcon">
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:minWidth">@dimen/min_touch_area</item>
+        <item name="android:minHeight">@dimen/min_touch_area</item>
+        <item name="cornerRadius">0dp</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Flat.LargeIcon.Square.Secondary" parent="Widget.Crypto.Calculator.Button.Flat.LargeIcon.Secondary">
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:minWidth">@dimen/min_touch_area</item>
+        <item name="android:minHeight">@dimen/min_touch_area</item>
+        <item name="cornerRadius">0dp</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Flat.LargeIcon.Square.Tertiary" parent="Widget.Crypto.Calculator.Button.Flat.LargeIcon.Tertiary">
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:minWidth">@dimen/min_touch_area</item>
+        <item name="android:minHeight">@dimen/min_touch_area</item>
+        <item name="cornerRadius">0dp</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Flat.LargeIcon.Square.Error" parent="Widget.Crypto.Calculator.Button.Flat.LargeIcon.Error">
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:minWidth">@dimen/min_touch_area</item>
+        <item name="android:minHeight">@dimen/min_touch_area</item>
+        <item name="cornerRadius">0dp</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Flat.QuickLaunch" parent="Widget.Crypto.Calculator.Button.Flat">
+        <item name="android:elevation">@dimen/elevation_low</item>
+        <item name="android:gravity">start|center_vertical</item>
+        <item name="android:minHeight">@dimen/min_card_height</item>
+        <item name="android:padding">@dimen/round_corner_default</item>
+        <item name="android:textAppearance">?textAppearanceHeadline5</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="cornerRadius">@dimen/round_corner_default</item>
+        <item name="iconGravity">start</item>
+        <item name="iconSize">@dimen/icon_medium</item>
+        <item name="iconPadding">@dimen/space_half</item>
+
+        <item name="backgroundTint">@color/surface</item>
+        <item name="android:textColor">@color/neutral_emphasis_medium</item>
+        <item name="iconTint">@color/secondary</item>
+        <item name="rippleColor">@color/neutral_emphasis_low</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.PaymentMethod" parent="Widget.Crypto.Calculator.Button.Flat">
+        <item name="android:elevation">@dimen/elevation_low</item>
+        <item name="android:paddingStart">@dimen/space_default</item>
+        <item name="android:paddingEnd">@dimen/space_default</item>
+        <item name="android:textAppearance">?textAppearanceHeadline6</item>
+        <item name="android:textSize">@dimen/font_size_body_l</item>
+        <item name="android:letterSpacing">0</item>
+        <item name="iconPadding">@dimen/space_half</item>
+        <item name="android:clickable">false</item>
+        <item name="android:focusable">false</item>
+
+        <item name="backgroundTint">?colorSurface</item>
+        <item name="android:textColor">@color/neutral</item>
+        <item name="iconTint">@android:color/transparent</item>
+        <item name="iconTintMode">add</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.PaymentMethod.NoBackground" parent="Widget.Crypto.Calculator.Button.PaymentMethod">
+        <item name="android:minHeight">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Report.NoBackground" parent="Widget.Crypto.Calculator.Button.PaymentMethod">
+        <item name="android:minHeight">0dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <!--Outlined button-->
+    <style name="Widget.Crypto.Calculator.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:minHeight">@dimen/min_touch_area</item>
+        <item name="android:minWidth">@dimen/min_button_width</item>
+        <item name="android:paddingStart">@dimen/space_half</item>
+        <item name="android:paddingEnd">@dimen/space_half</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textAppearance">?textAppearanceButton</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/space_quarter</item>
+        <item name="strokeWidth">1dp</item>
+
+        <item name="strokeColor">@color/primary</item>
+        <item name="android:textColor">@color/primary</item>
+        <item name="iconTint">@color/primary</item>
+        <item name="rippleColor">@color/primary_emphasis_low</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Outlined.Secondary" parent="Widget.Crypto.Calculator.Button.Outlined">
+        <item name="strokeColor">@color/secondary</item>
+        <item name="android:textColor">@color/secondary</item>
+        <item name="iconTint">@color/secondary</item>
+        <item name="rippleColor">@color/secondary_emphasis_low</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Outlined.Tertiary" parent="Widget.Crypto.Calculator.Button.Outlined">
+        <item name="strokeColor">@color/neutral_emphasis_medium</item>
+        <item name="android:textColor">@color/neutral_emphasis_medium</item>
+        <item name="iconTint">@color/neutral_emphasis_medium</item>
+        <item name="rippleColor">@color/neutral_emphasis_low</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.Outlined.Error" parent="Widget.Crypto.Calculator.Button.Outlined">
+        <item name="strokeColor">@color/error</item>
+        <item name="android:textColor">@color/error</item>
+        <item name="iconTint">@color/error</item>
+        <item name="rippleColor">@color/error_emphasis_low</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.SelectInstrument" parent="Widget.Crypto.Calculator.Button.Outlined.Tertiary">
+        <item name="android:paddingBottom">@dimen/space_default</item>
+        <item name="iconGravity">top</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconSize">64dp</item>
+        <item name="iconTint">@null</item>
+    </style>
+
+    <!--Text button-->
+    <style name="Widget.Crypto.Calculator.Button.TextButton" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:minHeight">@dimen/min_touch_area_dense</item>
+        <item name="android:minWidth">@dimen/min_button_width</item>
+        <item name="android:paddingStart">@dimen/space_half</item>
+        <item name="android:paddingEnd">@dimen/space_half</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textAppearance">?textAppearanceTextButton</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconPadding">@dimen/space_quarter</item>
+
+        <item name="android:textColor">@color/primary</item>
+        <item name="iconTint">@color/primary</item>
+        <item name="rippleColor">@color/primary_emphasis_low</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.TextButton.Secondary" parent="Widget.Crypto.Calculator.Button.TextButton">
+        <item name="android:textColor">@color/secondary</item>
+        <item name="iconTint">@color/secondary</item>
+        <item name="rippleColor">@color/secondary_emphasis_low</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.TextButton.Tertiary" parent="Widget.Crypto.Calculator.Button.TextButton">
+        <item name="android:textColor">@color/neutral_emphasis_medium</item>
+        <item name="iconTint">@color/neutral_emphasis_medium</item>
+        <item name="rippleColor">@color/neutral_emphasis_low</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.TextButton.Dialog" parent="Widget.Crypto.Calculator.Button.TextButton">
+        <item name="android:insetTop">3dp</item>
+        <item name="android:insetRight">3dp</item>
+        <item name="android:insetLeft">3dp</item>
+        <item name="android:insetBottom">3dp</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.TransparentBackground.Square" parent="Widget.Crypto.Calculator.Button.TextButton.Tertiary">
+        <item name="android:minHeight">@dimen/min_touch_area_dense</item>
+        <item name="android:minWidth">@dimen/min_touch_area_dense</item>
+        <item name="minWidth">@null</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconSize">@dimen/icon_medium</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.TransparentBackground.Circle" parent="Widget.Crypto.Calculator.Button.TextButton.Tertiary">
+        <item name="android:minHeight">@dimen/min_touch_area_dense</item>
+        <item name="android:minWidth">@dimen/min_touch_area_dense</item>
+        <item name="minWidth">@null</item>
+        <item name="iconPadding">0dp</item>
+        <item name="iconSize">@dimen/icon_medium</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.Crypto.Calculator.Small.Circle</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.Button.TransparentBackground.Circle.IconNormalSize" parent="Widget.Crypto.Calculator.Button.TransparentBackground.Circle">
+        <item name="iconSize">@dimen/icon_normal</item>
+    </style>
+
+    <!--Floating action button style-->
+    <style name="Widget.Crypto.Calculator.FloatingActionButton" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="elevation">@dimen/elevation_high</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.ExtendedFloatingActionButton" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
+        <item name="android:textAppearance">?textAppearanceTextButton</item>
+        <item name="android:minWidth">@dimen/min_touch_area_dense</item>
+        <item name="android:paddingStart">@dimen/space_default</item>
+        <item name="android:paddingEnd">@dimen/space_default</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.Crypto.Calculator.Small.Rounded</item>
+        <item name="iconPadding">@dimen/space_half</item>
+    </style>
+
+    <!--Snackbar style-->
+    <style name="Widget.Crypto.Calculator.Snackbar" parent="Widget.MaterialComponents.Snackbar">
+        <item name="backgroundOverlayColorAlpha">1</item>
+        <item name="actionTextColorAlpha">1</item>
+        <item name="android:layout_margin">@dimen/space_default</item>
+        <item name="elevation">@dimen/elevation_medium</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.SnackbarButton" parent="Widget.Crypto.Calculator.Button.TextButton">
+        <item name="android:textAppearance">?textAppearanceTextButton</item>
+        <!--<item name="android:textColor">?colorSecondary</item>-->
+    </style>
+
+    <!--Checkbox style-->
+    <style name="Widget.Crypto.Calculator.Checkbox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="android:textAppearance">?textAppearanceBody1</item>
+        <item name="android:textColor">@color/neutral_emphasis_high</item>
+    </style>
+
+    <!--RadioButton style-->
+    <style name="Widget.Crypto.Calculator.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
+        <item name="android:textAppearance">?textAppearanceBody1</item>
+        <item name="android:textColor">@color/neutral_emphasis_high</item>
+    </style>
+
+    <!--Switch style-->
+    <style name="Widget.Crypto.Calculator.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="android:textAppearance">?textAppearanceBody1</item>
+        <item name="android:textColor">@color/neutral_emphasis_high</item>
+    </style>
+
+    <!--Input layout-->
+    <!--<style name="Widget.Crypto.Calculator.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">-->
+    <!--    <item name="android:textColor">@color/csl_neutral_emphasis_high</item>-->
+    <!--    <item name="hintTextAppearance">?textAppearanceCaption</item>-->
+    <!--    <item name="counterTextAppearance">?textAppearanceCaption</item>-->
+    <!--    <item name="errorTextAppearance">?textAppearanceCaption</item>-->
+    <!--</style>-->
+
+    <!--<style name="Widget.Crypto.Calculator.TextInputEditText">-->
+    <!--    <item name="android:textAppearance">?textAppearanceBody1</item>-->
+    <!--</style>-->
+
+    <!--Divider style-->
+    <style name="Widget.Crypto.Calculator.Divider">
+        <item name="android:background">?colorOnSurface</item>
+        <item name="android:backgroundTint">@color/divider</item>
+        <item name="android:tintMode">src_in</item>
+    </style>
+
+    <!--Amount Display style-->
+    <style name="Widget.Crypto.Calculator.DisplayText" />
+
+    <style name="Widget.Crypto.Calculator.DisplayText.Amount">
+        <item name="android:gravity">center</item>
+        <item name="android:textAppearance">?textAppearanceHeadline2</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="autoSizeMaxTextSize">@dimen/font_size_h2</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeStepGranularity">4sp</item>
+    </style>
+
+    <!--    <style name="Widget.Crypto.Calculator.DisplayText.Currency">-->
+    <!--        <item name="android:textAppearance">?textAppearanceHeadline3</item>-->
+    <!--        <item name="android:textColor">@color/csl_neutral_emphasis_medium</item>-->
+    <!--        <item name="android:fontFeatureSettings">tnum</item>-->
+    <!--    </style>-->
+
+    <!--Keypad style-->
+    <style name="Widget.Crypto.Calculator.KeypadKey" parent="TextAppearance.Crypto.Calculator.Headline3">
+        <item name="android:background">?selectableItemBackgroundBorderless</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:fontFeatureSettings">ss01,tnum</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@color/neutral_emphasis_medium</item>
+        <item name="autoSizeMaxTextSize">@dimen/font_size_h3</item>
+        <item name="autoSizeTextType">uniform</item>
+    </style>
+
+    <!--Bottom sheet (dialog)-->
+    <!--<style name="ThemeOverlay.Crypto.Calculator.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">-->
+    <!--<item name="android:windowIsFloating">false</item>-->
+    <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+    <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
+    <!--<item name="bottomSheetStyle">@style/Widget.Crypto.Calculator.BottomSheet.Modal</item>-->
+    <!--<item name="android:navigationBarColor">?colorSurface</item>-->
+    <!--<item name="android:navigationBarDividerColor" tools:ignore="NewApi">@android:color/transparent</item>-->
+    <!--</style>-->
+    <!--<style name="Widget.Crypto.Calculator.BottomSheet.Modal" parent="Widget.MaterialComponents.BottomSheet.Modal">-->
+    <!--<item name="shapeAppearanceOverlay">?shapeAppearanceLargeComponent</item>-->
+    <!--</style>-->
+
+    <style name="Widget.Crypto.Calculator.Tooltip" parent="Widget.MaterialComponents.Tooltip">
+        <item name="android:textColor">?colorOnPrimary</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.List.Header" parent="TextAppearance.Crypto.Calculator.Subtitle1">
+        <item name="android:layout_marginTop">@dimen/space_double</item>
+        <item name="android:layout_marginStart">@dimen/space_default</item>
+        <item name="android:layout_marginBottom">@dimen/space_half</item>
+        <item name="android:textColor">@color/neutral_emphasis_medium</item>
+        <item name="android:drawableTint">@color/neutral_emphasis_medium</item>
+        <item name="android:drawableTintMode">src_in</item>
+        <item name="android:textAppearance">?textAppearanceSubtitle1</item>
+        <item name="android:drawablePadding">@dimen/space_half</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.List.SingleLineItem" parent="TextAppearance.Crypto.Calculator.Body1">
+        <item name="android:clickable">true</item>
+        <item name="android:drawablePadding">@dimen/space_half</item>
+        <item name="android:drawableTint">@color/neutral_emphasis_medium</item>
+        <item name="android:focusable">true</item>
+        <item name="android:background">?selectableItemBackground</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:padding">@dimen/space_default</item>
+        <item name="android:textColor">@color/neutral_emphasis_high</item>
+    </style>
+
+    <style name="Widget.Crypto.Calculator.AcceptanceMark">
+        <item name="android:layout_marginStart">@dimen/space_quarter</item>
+        <item name="android:layout_marginEnd">@dimen/space_quarter</item>
+        <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <declare-styleable name="LabelTextView">
+        <attr name="label" format="string" />
+        <attr name="body" format="string" />
+    </declare-styleable>
+
+    <style name="Widget.Crypto.Calculator.TabLayout" parent="Widget.MaterialComponents.TabLayout">
+        <item name="android:backgroundTint">?android:colorBackground</item>
+        <item name="tabMode">fixed</item>
+        <item name="tabTextColor">@color/neutral_emphasis_medium</item>
+        <item name="tabIndicatorColor">?colorSecondary</item>
+
+    </style>
+
+    <style name="Widget.Crypto.Calculator.CircleTabIndicator" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabIndicatorHeight">0dp</item>
+        <item name="tabGravity">center</item>
+        <item name="background">@null</item>
+        <item name="android:background">@null</item>
+        <item name="tabBackground">@drawable/circle_indicator_selector</item>
+    </style>
+
+</resources>

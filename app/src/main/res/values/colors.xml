@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--brand color-->
+    <!--Crypto.Calculator-->
+    <!--! Try not to use it directly in code, both layout xml & kt !-->
+    <!--! Use proxy object instead, like colorPrimary/ ColorStateList !-->
+    <color name="theme_yellow_500">#FCD45B</color>
+    <color name="theme_yellow_800">#D89F4A</color>
+    <color name="theme_purple_500">#6F47FF</color>
+    <color name="theme_purple_800">#5040AB</color>
+
+    <!--Generic color-->
+    <color name="generic_blue">#4765FF</color>
+    <color name="generic_yellow">#FFD200</color>
+    <color name="generic_green">#0FE57D</color>
+    <color name="generic_red">#FF4D4D</color>
+
+    <!--utility color (text, surface)-->
+    <!--neutral-->
+    <color name="so_transparent">#00FFFFFF</color>
+
+    <color name="so_white">#FFFFFF</color>
+    <color name="so_white_variant">#F8FAFF</color><!--light surface-->
+
+    <color name="so_dark">#02152C</color>
+    <color name="so_dark_a64">#A302152C</color>
+    <color name="so_dark_variant">#0E2642</color><!--dark surface-->
+
+    <!-- other -->
+    <color name="off_white">#ddd</color>
+
+</resources>

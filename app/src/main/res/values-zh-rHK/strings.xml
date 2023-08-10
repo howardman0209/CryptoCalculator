@@ -1,0 +1,713 @@
+<resources>
+    <!--    <string name="app_name">Spectra Demo</string>-->
+
+    <!--    common-->
+    <string name="label_login">登入</string>
+    <string name="label_password">密碼</string>
+    <string name="label_email">電郵</string>
+    <string name="label_setting">設定</string>
+    <string name="label_unknown">不明</string>
+    <string name="label_off">關</string>
+    <string name="other">其他</string>
+    <string name="label_loading">載入中…</string>
+
+    <!--    bottom navigation tab label-->
+    <!--    <string name="label_bottom_nav_tab1"  translatable="false">tab1</string>-->
+    <!--    <string name="label_bottom_nav_tab2"  translatable="false">tab2</string>-->
+    <!--    <string name="label_bottom_nav_tab3"  translatable="false">tab3</string>-->
+    <!--    <string name="label_bottom_nav_tab4"  translatable="false">tab4</string>-->
+
+    <!--    activity / fragment label-->
+    <!--    <string name="label_activity_test" translatable="false">TestActivity</string>-->
+    <!--    <string name="label_fragment_test" translatable="false">TestFragment</string>-->
+    <!--    <string name="label_fragment_home" translatable="false">HomeFragment</string>-->
+    <!--    <string name="label_fragment_more" translatable="false">MoreFragment</string>-->
+
+
+    <!--    text label-->
+    <string name="label_remember_me">請記住我</string>
+    <string name="label_logout">確定登出？</string>
+
+    <!--    button text label-->
+    <string name="label_button_test">測試按鈕</string>
+    <string name="button_filter">篩選</string>
+    <string name="button_back">回去</string>
+    <string name="button_exit">退出</string>
+    <string name="button_ok">好</string>
+    <string name="button_print">打印</string>
+    <string name="button_qr_receipt">QR 收據</string>
+    <string name="button_refresh">刷新</string>
+    <string name="button_send">送出</string>
+    <string name="button_submit">提交</string>
+    <string name="button_share">分享</string>
+    <string name="button_update_order">更新訂單</string>
+    <string name="label_button_test_1">測試按鈕 1</string>
+    <string name="label_button_test_2">測試按鈕 2</string>
+    <string name="label_button_test_3">測試按鈕 3</string>
+    <string name="label_button_test_4">測試按鈕 4</string>
+    <string name="label_button_test_5">測試按鈕 5</string>
+    <string name="label_button_test_6">測試按鈕 6</string>
+    <string name="label_button_test_7">測試按鈕 7</string>
+    <string name="label_button_test_8">測試按鈕 8</string>
+
+    <!--    hint text-->
+    <string name="label_slogan">標語</string>
+    <string name="label_title">標題</string>
+
+    <string name="button_cancel">取消</string>
+    <string name="button_confirm">確定</string>
+    <string name="button_remove">刪除</string>
+    <string name="button_dismiss">關閉</string>
+    <string name="button_login">登入</string>
+    <string name="button_logout">登出</string>
+    <string name="button_request">請求</string>
+    <string name="button_gallery">圖庫</string>
+    <string name="button_register">註冊</string>
+    <string name="button_start_new_sale">開始新交易</string>
+
+    <string name="transaction_status_approved">接受</string>
+    <string name="transaction_status_completed">已完成</string>
+    <string name="transaction_status_declined">拒絕</string>
+    <string name="transaction_status_error">錯誤</string>
+    <string name="transaction_status_offline">接受（離線）</string>
+    <string name="transaction_status_processing">處理中</string>
+    <string name="transaction_status_reverse">已沖正</string>
+    <string name="transaction_status_refunded">已退款</string>
+    <string name="transaction_status_voided">已撤銷</string>
+    <string name="transaction_type_auth">預授權</string>
+    <string name="transaction_type_capture">預授權完成</string>
+    <string name="transaction_type_offline">離線銷售</string>
+    <string name="transaction_type_refund">退款</string>
+    <string name="transaction_type_sale">銷售</string>
+    <string name="transaction_type_void">撤銷</string>
+
+    <!--    error-->
+    <string name="label_decode_image_fail">解碼圖片失敗</string>
+    <string name="label_transaction_error_idle_timeout">閒置逾時</string>
+
+    <!--    notification channel id-->
+    <!--    <string name="notification_channel_id" translatable="false">notification_channel_id</string>-->
+
+    <!--    account type-->
+    <!--    <string name="account_type" translatable="false">Spectra Dummy</string>-->
+
+    <!--    rationale-->
+    <string name="label_rationale_location">請允許位置權限以執行交易</string>
+    <string name="label_rationale_bluetooth">請允許設置位置權限以探索藍牙設備</string>
+    <string name="label_rationale_phone_state">請允許設置獲取手機狀態權限以獲取序號</string>
+    <string name="label_rationale_camera">請允許相機權限以拍照、掃條碼及二維碼</string>
+    <string name="label_rationale_file">請允許文件和媒體權限以儲存收據或報告</string>
+    <string name="label_rationale_file_read">請允許讀取文件和媒體權限以從您的設備讀取圖像</string>
+    <string name="label_rationale_stats">請允許權限以執行交易</string>
+    <string name="label_rationale_notification">請允許通知權限以顯示通知提示</string>
+
+    <string name="label_checking_basic_config">檢查基本配置…</string>
+    <string name="label_powered_by_spectra">由瑞柏科技提供技術支援</string>
+
+    <!--    e-donation options-->
+    <string name="label_e_donation">電子捐款</string>
+    <!--    <string name="label_e_donation_option" translatable="false">$ %1$s</string>-->
+
+    <string name="label_e_donation_option_1">捐款選項 1</string>
+    <string name="label_e_donation_option_2">捐款選項 2</string>
+    <string name="label_e_donation_option_3">捐款選項 3</string>
+    <string name="label_e_donation_option_4">捐款選項 4</string>
+
+    <!--    <string name="default_e_donation_option_1" translatable="false">$ 1</string>-->
+    <!--    <string name="default_e_donation_option_2" translatable="false">$ 5</string>-->
+    <!--    <string name="default_e_donation_option_3" translatable="false">$ 10</string>-->
+    <!--    <string name="default_e_donation_option_4" translatable="false">$ 20</string>-->
+    <string name="label_e_donation_option_custom">自訂</string>
+
+    <!--    sale-->
+    <string name="label_total_amount">總金額</string>
+    <string name="label_check_result">檢查結果</string>
+    <string name="label_input_email">請輸入電郵</string>
+    <string name="label_input_hint">請輸入</string>
+    <string name="label_input_phone">請輸入電話號碼</string>
+    <string name="label_input_customer_info">請輸入客戶資料</string>
+    <string name="label_present_qr">出示商戶 QR</string>
+    <string name="label_scan_qr_desc">掃描客戶 QR 進行收款</string>
+    <string name="label_scan_code_get_receipt">請掃描以下 QR 取得收據</string>
+    <string name="label_scan_code_get_pay_link">請掃描以下 QR 取得付款連結</string>
+    <string name="label_sending">正在發送…</string>
+    <string name="label_sent">收據已發送！</string>
+    <string name="label_sms_receipt">短訊收據</string>
+    <string name="var_approval">授權號：%1$s</string>
+    <string name="var_change">找續：%1$s</string>
+    <!--    <string name="var_multiplication_sign" translatable="false">✕ %1$d</string>-->
+    <string name="var_trace">賬單號：%1$s</string>
+    <string name="label_need_receipt">需要收據？</string>
+
+    <!-- Sale - QR fragment -->
+    <string name="button_scan_qr">掃描 QR</string>
+    <string name="label_invalid_qr">QR 無效</string>
+    <string name="label_null_qr_desc">QR碼不能為空</string>
+    <string name="label_qr_choose_payment_method">選擇其中一種收款方式</string>
+    <string name="label_scan_present_qr_to_pay">請向客戶出示以下 QR (商戶 QR)</string>
+    <string name="label_scan_to_pay">掃碼付款</string>
+    <string name="label_save_qr_location_success">QR碼已儲存到：</string>
+    <string name="label_save_file_failed">無法儲存檔案</string>
+
+    <string name="var_last_try_passcode_warning">剩餘 %1$s 次密碼嘗試，然後鎖定 %2$s 分鐘。</string>
+    <string name="label_passcode_updated">密碼已更新</string>
+    <string name="var_qr_valid_until">QR 有效至：%s</string>
+
+    <string name="label_disclaimer_standard">本人確認以上交易，同意將其計算入本人賬戶。</string>
+    <string name="label_sign_here">請在此簽名</string>
+
+    <!-- Transaction Result Activity -->
+    <string name="transaction_fail_error_message">交易中止</string>
+
+    <!--result message-->
+    <string name="error_result_customer_abort">交易終止</string>
+    <string name="error_result_operation_timeout">閒置逾時</string>
+    <string name="error_result_nfc_disabled">NFC 已關閉</string>
+    <string name="error_result_requirement_not_meet">設備要求不足</string>
+    <string name="error_result_pending_reversal_upload_fail">待沖正上傳失敗</string>
+    <string name="error_result_txn_amount_exceed_app_limit">交易金額超出上限</string>
+    <string name="error_result_please_retry">錯誤： 請重試</string>
+
+    <!-- Common Payment Method -->
+    <string name="payment_method_alipay">支付寶</string>
+    <string name="payment_method_amex">美國運通</string>
+    <string name="payment_method_cash">現金</string>
+    <string name="payment_method_cup">銀聯</string>
+    <string name="payment_method_fps">轉數快</string>
+    <string name="payment_method_octopus">八達通</string>
+    <string name="payment_method_eps">易辦事</string>
+    <string name="payment_method_easycard">悠遊卡</string>
+    <string name="payment_method_wechat">微信支付</string>
+    <string name="payment_method_upi_qr">銀聯 QR</string>
+
+    <!--    <string name="payment_method_jcb" translatable="false">JCB</string>-->
+    <!--    <string name="payment_method_master" translatable="false">Mastercard</string>-->
+    <!--    <string name="payment_method_diners" translatable="false">Diners</string>-->
+    <!--    <string name="payment_method_discover" translatable="false">Discover</string>-->
+    <!--    <string name="payment_method_zelle" translatable="false">Zelle</string>-->
+    <!--    <string name="payment_method_maestro" translatable="false">Maestro</string>-->
+    <!--    <string name="payment_method_visa" translatable="false">Visa</string>-->
+    <!--    <string name="payment_method_payme" translatable="false">PayMe</string>-->
+    <!--    <string name="payment_method_yuu" translatable="false">Yuu</string>-->
+
+    <!-- Entry Mode -->
+    <string name="entry_mode_contactless">(T) 拍卡</string>
+    <string name="entry_mode_chip">(C) 插卡</string>
+    <string name="entry_mode_magstripe">(S) 拉卡</string>
+    <string name="entry_mode_manual">(M) 人手輸入</string>
+    <string name="entry_mode_fallback">(F) 拍-拉-插卡</string>
+    <string name="entry_mode_qr_present">(MP) 商戶被掃二維碼</string>
+    <string name="entry_mode_qr_scan">(CP) 商戶主掃二維碼</string>
+    <string name="entry_mode_ecommerce">(EC) 電子商務</string>
+    <string name="entry_mode_octopus">八達通</string>
+    <string name="entry_mode_cash">現金</string>
+
+    <!--Purchase Fragment-->
+    <string name="label_authorizing">"交易授權中"</string>
+    <string name="label_card_detected">"讀卡中，請穩住"</string>
+    <string name="label_card_inserted">"讀卡中，請保持插卡狀態"</string>
+    <string name="label_remove_card_use_swipe">"取卡並嘗試刷卡"</string>
+    <string name="label_card_read">"讀卡成功，可以取卡"</string>
+    <string name="label_card_try_again">"請重試"</string>
+    <string name="label_present_card">"拍卡收款"</string>
+    <string name="label_wait_attestation_end">"正在認證中"</string>
+    <string name="label_wait_registration_end">"正在登記中"</string>
+    <string name="label_wait_request_IK">"加載密匙中"</string>
+    <string name="label_wait_request_PinKey">"加載密碼密匙中"</string>
+    <string name="var_comm_progress_connecting_countdown">"連接中… %1$s秒"</string>
+    <string name="var_comm_progress_wait_data_countdown">"等候回應… %1$s秒"</string>
+    <string name="label_fail_no_license">認證失敗</string>
+    <string name="label_emv_err_default">"錯誤 %1$s"</string>
+    <string name="label_emv_err_see_phone">請依照支付設備指示</string>
+    <string name="label_emv_err_card_not_support">此卡不支持</string>
+    <string name="label_emv_err_card_not_accept">此卡不接受</string>
+    <string name="label_emv_err_read_failed">讀卡失敗</string>
+
+    <string name="label_app_bar_title_waiting_card">"信用卡 - %1$s"</string>
+    <string name="label_app_bar_title_qr_payment">"QR 銀包 - %1$s"</string>
+    <string name="label_app_bar_title_cash">"現金 - %1$s"</string>
+
+    <!--    dialog-->
+    <string name="label_enter_the_donation_amount">請輸入捐款金額</string>
+    <string name="label_result_auto_dismiss_timeout">顯示結果時間 (ms)</string>
+    <!--    <string name="label_result_screen_timeout_min" translatable="false">0s</string>-->
+    <!--    <string name="label_result_screen_timeout_max" translatable="false">10s</string>-->
+    <string name="label_result_screen_setting">交易結果顯示設定</string>
+    <string name="label_result_screen_auto_dismiss">自動跳過</string>
+    <string name="label_input_your_slogan">請輸入你的標語</string>
+    <string name="label_hint_text">提示字眼</string>
+
+    <!--    snackbar-->
+    <string name="snackbar_pin_entry_last_chance">"密碼輸入最後嘗試"</string>
+
+    <!--    QuickLaunch-->
+    <string name="label_hello">你好！</string>
+    <string name="transaction_type_instalment">分期</string>
+    <string name="transaction_type_donation">捐款</string>
+    <string name="label_report">報告</string>
+    <string name="button_activate">啟用</string>
+    <string name="button_settlement">結算</string>
+    <!--    <string name="var_shop_name" translatable="false">\@%1$s</string>-->
+
+    <!--    MainMenu-->
+    <string name="label_payment">付款</string>
+    <string name="label_home">首頁</string>
+    <string name="label_help">幫助</string>
+    <string name="label_promotion">推廣</string>
+    <string name="label_more">更多</string>
+
+    <!-- More Fragment -->
+    <string name="label_app_settings">程式設定</string>
+    <string name="label_account">賬戶</string>
+    <string name="label_account_level_basic">SoéPay 基本</string>
+    <!--    <string name="label_account_level_enterprise" translatable="false">SoéPay TOPS</string>-->
+    <string name="label_upgrade">升級</string>
+    <string name="label_night_mode">夜間模式</string>
+    <string name="label_select_card_app">選擇收卡應用程式</string>
+    <string name="label_select_shop">選擇店舖</string>
+    <string name="label_shop">店舖</string>
+    <string name="label_subscription_plan">已訂閱計劃</string>
+    <string name="label_switch_shop">切換店舖</string>
+    <string name="label_username">用戶名稱</string>
+    <string name="message_update_user_name">成功更新用戶名，最多可能需要 15 分鐘才能生效。</string>
+    <string name="label_printing_config">打印選項</string>
+    <string name="var_printing_copy">打印選項 - %1$s</string>
+    <string name="label_printing_config_customer">僅客戶存根</string>
+    <string name="label_printing_config_merchant">僅商戶存根</string>
+    <string name="label_printing_config_both">客戶及商戶存根</string>
+    <string name="label_printing_time_interval">收據時間間隔</string>
+    <string name="label_auto_print_receipt">完成交易後，自動打印收據</string>
+    <string name="label_create_category">建立類別</string>
+    <string name="label_edit_category">編輯類別</string>
+    <string name="label_product_category_empty_error">類別不能留空</string>
+    <string name="label_calculator_keypad">計算機鍵盤</string>
+    <string name="label_view_own_history">只查看自己的交易歷史</string>
+    <string name="label_skip_success_animation">ECR模式下跳過動畫</string>
+    <string name="var_result_auto_dismiss_timeout">結果畫面等待時間: %1$sms</string>
+    <string name="label_signature_on_paper">於收據上簽名</string>
+
+    <string name="label_edit_shop_name">更改店鋪名稱</string>
+    <!-- Language -->
+    <string name="label_language">語言</string>
+    <!--    <string name="label_language_en" translatable="false">English</string>-->
+    <!--    <string name="label_language_tc" translatable="false">繁體中文</string>-->
+    <string name="label_select_language">選擇語言</string>
+    <string-array name="language_selection">
+        <item>@string/label_language_en</item>
+        <item>@string/label_language_tc</item>
+        <item>@string/label_language_jp</item>
+    </string-array>
+
+    <!-- Printer -->
+    <string name="button_discover">搜尋</string>
+    <string name="button_turn_on_bluetooth">開啟藍牙</string>
+    <string name="label_connect">連接</string>
+    <string name="label_connected">已連接</string>
+    <string name="label_connecting_printer">連接中…</string>
+    <string name="label_disconnect">中斷連接</string>
+    <string name="label_disconnected">未連接</string>
+    <string name="label_discovered_devices">已發現的打印機</string>
+    <string name="label_forget_device">忘記打印機</string>
+    <string name="label_manage_printers">管理打印機</string>
+    <string name="label_my_printers">我的打印機</string>
+    <string name="label_no_paired_device">沒有記錄</string>
+    <string name="label_pairing">配對設備中請稍候…</string>
+    <string name="label_print_error_with_message">收據列印失敗（%1$s）</string>
+    <string name="label_print_in_progress">收據打印中…</string>
+    <string name="label_print_status">打印狀態</string>
+    <string name="label_print_success">收據已列印</string>
+    <string name="label_printer_connect_failed">打印機連接失敗</string>
+    <string name="label_printer_low_battery">打印機電量不足</string>
+    <string name="label_printer_low_battery_msg">電池電量低，請為藍牙打印機充電。</string>
+    <string name="label_printer_manage_msg">請先在“管理打印機”設定你的打印機。</string>
+    <string name="label_printer_not_found">找不到打印機</string>
+    <string name="label_printer_out_of_paper">沒有打印紙</string>
+    <string name="label_printer_out_of_paper_msg">請更換新打印紙，然後重試。</string>
+    <string name="label_printer_overheat_msg">請選用其他收據類別或5分鐘後重試打印。</string>
+    <string name="label_printer_reboot_msg">請重新啟動藍牙打印機。</string>
+    <string name="label_reboot_bp80">重啟藍牙打印機</string>
+    <string name="label_please_wait">請稍等</string>
+    <string name="label_old_version">舊版本</string>
+    <string name="label_start_search_printer">開始搜尋鄰近的藍牙打印機</string>
+    <string name="label_contact_cs">請聯繫客服</string>
+    <string name="label_test_printing">測試打印</string>
+    <string name="print_done">完成</string>
+    <string name="print_retry">重試</string>
+    <string name="var_discovering">搜尋中… %1$s秒後完成</string>
+    <string name="var_second">%s秒</string>
+
+    <!-- Shop Info -->
+    <string name="label_merchant">商戶</string>
+    <string name="label_shop_info">店舖資料</string>
+    <string name="label_shop_config">店舖設定</string>
+    <string name="label_shop_currency">店舖貨幣</string>
+    <string name="label_shop_name">店名</string>
+    <string name="label_shop_tel">店舖電話</string>
+    <string name="label_update_shop_info_success">成功更改店舖資料</string>
+
+    <!-- User/ Device List -->
+    <string name="label_user_device_list">用戶及設備</string>
+    <string name="label_user_email">用戶電郵</string>
+    <string name="label_device">設備</string>
+
+    <!-- Password - admin password dialogue -->
+    <string name="label_merchant_passcode_current">當前商戶管理密碼</string>
+    <string name="label_merchant_passcode_incorrect">商戶管理密碼不正確</string>
+    <string name="label_merchant_passcode_new">新商戶管理密碼</string>
+    <string name="label_merchant_passcode_confirm">確認商戶管理密碼</string>
+    <string name="label_merchant_passcode_saved">密碼已更新</string>
+    <string name="label_merchant_passcode_time_lock">商戶管理密碼不正確，請於 %1$s 秒後重試</string>
+    <string name="label_merchant_passcode_too_short">密碼太短</string>
+    <string name="label_merchant_passcode_enter">檢查商戶管理密碼</string>
+    <string name="label_merchant_passcode_change">更改商戶管理密碼</string>
+
+    <!-- POS - Create, Edit -->
+    <string name="button_save">保存</string>
+    <string name="label_barcode">條碼</string>
+    <string name="label_coach_mark">助手</string>
+    <string name="label_create_item">建立新貨品</string>
+    <string name="label_create_coupon">建立優惠券</string>
+    <string name="label_input_coupon_sn">請輸入優惠券序列號</string>
+    <string name="label_serial_number">序列號</string>
+    <string name="label_remove_coupon">移除優惠券</string>
+    <string name="label_edit_item">編輯貨品</string>
+    <string name="label_edit_coupon">編輯優惠券</string>
+    <string name="label_coupon_qr_code">優惠券Qr</string>
+    <string name="label_create_product_category">建立類別</string>
+    <string name="label_delete_item_confirmation">刪除貨品？</string>
+    <string name="label_duplicated_item">條碼與產品重複 “%1$s”</string>
+    <string name="label_empty_card_title">購物籃空置</string>
+    <string name="label_empty_inventory">沒有貨品</string>
+    <string name="label_empty_category">沒有類別</string>
+    <string name="label_empty_coupon">沒有優惠券</string>
+    <string name="label_item_field_required">必需填寫</string>
+    <string name="label_item_field_price_type">價格應該是任何正數或負數</string>
+    <string name="label_item_category_manage">貨品及類別管理</string>
+    <string name="label_coupon_manage">優惠券</string>
+    <string name="label_generate_coupon_qr">產生QR</string>
+    <string name="label_item_manage">貨品</string>
+    <string name="label_category_manage">類別</string>
+    <string name="label_remove_category">移除類別？</string>
+    <string name="label_item_preview">物品預覽</string>
+    <string name="label_name">名稱</string>
+    <string name="label_price">價錢</string>
+    <string name="label_weight">Weight</string>
+    <string name="label_prompt_input">請提供必要數據</string>
+    <!--    <string name="var_amount" translatable="false">%1$s %2$s</string>-->
+    <string name="label_decode_barcode_fail">找不到條碼</string>
+
+    <!-- Password - Common -->
+    <string name="label_action_result">操作結果</string>
+    <string name="label_change_pw">更改密碼</string>
+    <string name="label_change_password_fail">更改密碼失敗</string>
+    <string name="label_change_password_success">更改密碼成功</string>
+    <string name="label_confirm_password">確認密碼</string>
+    <string name="label_current_password">當前密碼</string>
+    <string name="label_username_not_valid">用戶名稱無效</string>
+    <string name="label_email_not_valid">電郵無效</string>
+    <string name="label_phone_not_valid">電話無效</string>
+    <string name="label_forget_password_check_email_description">請檢查電子郵件以重置密碼</string>
+    <string name="label_forgot_password_header">請提供你的電郵以重置密碼</string>
+    <string name="label_new_password">新密碼</string>
+    <string name="label_not_meet_password_policy">密碼必須至少 7 個字並包括 1 個數字</string>
+    <string name="label_password_not_match">密碼不符</string>
+    <string name="label_please_enter_old_password">請輸入舊密碼</string>
+    <string name="label_edit_username">更改用戶名稱</string>
+    <string name="label_reset_password">重置密碼</string>
+    <string name="label_reset_password_fail">重置密碼失敗</string>
+    <string name="label_reset_password_success">重置密碼成功</string>
+    <string name="var_back_to_login">%1$s 秒後返回登錄"</string>
+
+    <!-- Trouble Shoot -->
+    <string name="label_trouble_shoot">排難解紛</string>
+    <string name="label_section_permission">權限狀態</string>
+    <string name="label_section_config">配置</string>
+    <string name="label_section_card_agent">讀卡器</string>
+    <string name="label_section_pin_key">密碼密鑰</string>
+    <string name="label_permission">權限</string>
+    <string name="label_system_status">系統狀態</string>
+    <string name="label_app_versions">應用版本</string>
+    <string name="label_reader_status">讀卡器狀態</string>
+    <string name="label_permission_camera">相機</string>
+    <string name="label_permission_storage">儲存</string>
+    <string name="label_permission_location">位置</string>
+    <string name="label_permission_granted">已允許</string>
+    <string name="label_permission_not_granted">未允許</string>
+
+    <!--    <string name="label_card_agent" translatable="false">Card agent</string>-->
+    <!--    <string name="label_emv_config_loaded" translatable="false">Test config loaded</string>-->
+    <!--    <string name="label_emv_config_load_failed" translatable="false">Test config load failed</string>-->
+    <!--    <string name="label_capk_config_loaded" translatable="false">CAPK loaded</string>-->
+    <!--    <string name="label_capk_config_load_failed" translatable="false">CAPK load failed</string>-->
+    <!--    <string name="label_product_image" translatable="false">Product image</string>-->
+    <!--    <string name="label_select_emv_config" translatable="false">Select EMV config</string>-->
+
+    <string name="label_reactivate">重新啟用</string>
+    <string name="label_confirm_update_emv_config">確定啟用?</string>
+    <string name="label_emv_config">載入默認EMV參數</string>
+    <string name="label_login_by_device_model">設備模式登入</string>
+    <string name="var_transaction_updated">交易 %1$s</string>
+
+    <!-- Register -->
+    <string name="button_install">安裝</string>
+    <string name="label_checking_status_contextual">正在檢查註冊狀態，請稍候，可能需要一分鐘左右。</string>
+    <string name="label_checking_ta_register_status">正在檢查註冊狀態…</string>
+    <string name="label_prompt_install_ta_contextual">請先安裝或更新收卡應用。</string>
+    <string name="label_register_failed">註冊失敗</string>
+    <string name="label_register_success">註冊成功</string>
+    <string name="label_register_ta">正在註冊收卡應用…</string>
+    <string name="label_ta_register_failed">收卡應用註冊失敗</string>
+    <string name="label_ta_register_failed_contextual">抱歉，我們目前無法註冊應用，請稍後重試。\n\n如果情況持續，請聯繫客戶服務。</string>
+    <string name="var_register_error">錯誤：%1$s\n信息：%2$s</string>
+    <string name="var_unexpected_response">未知回應：%1$s</string>
+
+    <!-- Common Keypad-->
+    <!--    <string name="label_keypad_0" translatable="false">0</string>-->
+    <!--    <string name="label_keypad_00" translatable="false">00</string>-->
+    <!--    <string name="label_keypad_dp" translatable="false">.</string>-->
+    <!--    <string name="label_keypad_1" translatable="false">1</string>-->
+    <!--    <string name="label_keypad_2" translatable="false">2</string>-->
+    <!--    <string name="label_keypad_3" translatable="false">3</string>-->
+    <!--    <string name="label_keypad_4" translatable="false">4</string>-->
+    <!--    <string name="label_keypad_5" translatable="false">5</string>-->
+    <!--    <string name="label_keypad_6" translatable="false">6</string>-->
+    <!--    <string name="label_keypad_7" translatable="false">7</string>-->
+    <!--    <string name="label_keypad_8" translatable="false">8</string>-->
+    <!--    <string name="label_keypad_9" translatable="false">9</string>-->
+    <!--    <string name="label_keypad_back" translatable="false">←</string>-->
+    <!--    <string name="label_pre_amount_10" translatable="false">+$10</string>-->
+    <!--    <string name="label_pre_amount_20" translatable="false">+$20</string>-->
+    <!--    <string name="label_pre_amount_50" translatable="false">+$50</string>-->
+    <!--    <string name="label_pre_amount_100" translatable="false">+$100</string>-->
+    <!--    <string name="label_pre_amount_500" translatable="false">+$500</string>-->
+
+    <!--    Sale Activity-->
+    <string name="button_charge">收款 %1$s</string>
+    <string name="button_clear">清空</string>
+    <string name="label_last_receipt">上一單收據</string>
+    <string name="label_abort">中止</string>
+    <string name="label_add_note">加註筆記</string>
+    <string name="label_add_reference">加註參考</string>
+    <string name="label_block_refresh_produce_list">購物籃不是空置，無法更新產品清單。</string>
+    <string name="label_clear_all_items_desc">購物籃將會清空</string>
+    <string name="label_clear_all_items_title">清除所有貨品？</string>
+    <string name="label_description">請輸入您的訊息</string>
+    <string name="label_empty_cart">未有任何貨品</string>
+    <string name="label_input">輸入</string>
+    <string name="label_leave_transaction">交易中止</string>
+    <string name="label_payment_app_not_installed">尚未安裝付款 app。請聯繫我哋跟進。</string>
+    <string name="label_total">總數：</string>
+    <string name="label_try_another_payment">請嘗試其他付款方式</string>
+    <string name="label_uncategorized">未分類</string>
+    <string name="label_upload_order_fail">無法創建交易記錄</string>
+
+    <!-- DCC -->
+    <string name="label_default_currency">預設貨幣</string>
+    <string name="label_dcc_title">動態貨幣轉換</string>
+    <string name="label_dcc_currency">轉換貨幣</string>
+    <string name="label_dcc_mode">DCC模式</string>
+    <string name="label_ecr_mode">ECR模式</string>
+    <string name="label_fx_rate_title">匯率:</string>
+    <string name="label_choose_currency">選擇貨幣</string>
+
+
+    <!--    <string name="label_pos" translatable="false">POS</string>-->
+    <!-- Report -->
+    <!--    <string name="label_report_range" translatable="false">%1$s - %2$s</string>-->
+    <string name="label_transaction">交易</string>
+    <string name="label_this_user_only">僅此用戶</string>
+    <string name="label_custom_report">自定義報告</string>
+    <string name="label_all_users">所有用戶</string>
+    <string name="label_data_last_update">數據更新於：%1$s</string>
+    <string name="label_voided_transactions">已撤銷交易</string>
+    <string name="label_report_sale">銷售</string>
+    <string name="label_report_refund">退款</string>
+    <string name="label_report_auth_comp">預授權完成</string>
+    <string name="label_report_void_sale">撤銷銷售</string>
+    <string name="label_report_void_refund">撤銷退款</string>
+    <string name="label_report_void_auth_comp">撤銷預授權完成</string>
+    <string name="label_details_report">交易詳情</string>
+    <string name="label_product_report">產品</string>
+    <string name="label_transaction_summary">交易摘要</string>
+    <string name="label_product_summary">產品概要</string>
+    <string name="label_product_details">產品詳情</string>
+    <string name="label_payment_method_summary">付款方式摘要</string>
+    <string name="label_sale_by_payment">銷售</string>
+    <string name="label_refund_by_payment">退款</string>
+    <string name="label_auth_comp_by_payment">預授權完成</string>
+    <string name="label_void_sale_by_payment">撤銷銷售</string>
+    <string name="label_void_refund_by_payment">撤銷退款</string>
+    <string name="label_void_auth_comp_by_payment">撤銷預授權完成</string>
+    <string name="label_avg_net_sale_amount">平均：銷售</string>
+    <string name="label_report_refund_total">總額：退款</string>
+    <string name="label_report_auth_comp_total">總額：預授權完成</string>
+    <string name="label_report_void_sale_amount">總額：撤銷銷售</string>
+    <string name="label_report_void_refund_amount">總額：撤銷退款</string>
+    <string name="label_report_void_auth_comp_amount">總額：撤銷預授權完成</string>
+    <string name="label_net_amount">淨額</string>
+    <string name="label_sale_by_product">按產品銷售</string>
+    <string name="label_sale_by_category">按類別銷售</string>
+    <string name="label_product_sold">已售產品</string>
+    <string name="label_product_detail_trace">賬單號</string>
+    <string name="label_product_detail_approval_code">授權號</string>
+    <string name="label_product_detail_date_time">日期／時間</string>
+    <string name="label_product_detail_payment_method">付款方式</string>
+    <string name="label_product_detail_account">賬戶</string>
+    <string name="label_product_detail_payment_type">交易類別</string>
+    <string name="label_product_detail_amount">金額</string>
+    <string name="label_product_detail_confirm_print">頁數 > 5, 確認列印?</string>
+    <string name="label_product_detail_product_name">產品</string>
+    <string name="label_product_detail_quantity">數量</string>
+    <string name="label_product_detail_total">金額</string>
+    <string name="label_category">類別</string>
+
+    <string name="api_response_already_exists">已經存在</string>
+    <string name="label_scan_from_gallery">打開相簿</string>
+
+    <!-- Sale - Bar Code Scan fragment -->
+    <string name="label_item_not_found">找不到項目</string>
+    <string name="label_item_added">已加入 %1$s</string>
+    <string name="label_coupon_added">已加入優惠卷</string>
+    <string name="label_coupon_removed">已移除優惠卷</string>
+    <string name="label_coupon_applied">優惠卷已使用</string>
+    <string name="label_coupon_not_need">無需優惠卷</string>
+    <string name="label_unqualified_shop">不適用於此商戶</string>
+
+
+    <!-- Sale - select instrument -->
+    <string name="button_update">更新</string>
+    <string name="instrument_card">信用卡</string>
+    <string name="instrument_qr_wallet">QR 銀包</string>
+    <string name="label_device_not_eligible_desc">感應式付款可能同你嘅手機不兼容，升級前請聯繫我哋客戶代表。</string>
+    <string name="label_device_not_eligible_title">設備不支援</string>
+    <string name="label_device_nfc_disabled_title">NFC沒開啟</string>
+    <string name="label_device_nfc_disabled_desc">請在設置上先開啟NFC功能</string>
+    <string name="label_device_amount_exceed_app_limit_title">金額無效</string>
+    <string name="label_device_amount_exceed_app_limit_desc">交易金額超出上限</string>
+    <string name="label_go_premium_desc">升級計劃以接受感應式及 QR 錢包收款</string>
+    <string name="label_go_premium_title">搵緊其他收款方法？</string>
+    <string name="label_payment_method_not_support">付款不支援</string>
+    <string name="label_prompt_install_ta">請安裝收卡應用</string>
+    <string name="label_prompt_update_ta">請更新收卡應用</string>
+    <string name="label_prompt_register_ta">請註冊收卡應用</string>
+    <string name="label_select_payment">選擇收款方式</string>
+    <string name="label_tap_to_pay">拍卡</string>
+    <string name="label_pay_by_link">付款鏈結</string>
+
+    <!-- Sale - cash fragment -->
+    <string name="button_cash_exact">實收</string>
+    <string name="label_cash_changed">已找贖</string>
+    <string name="label_cash_received">已收現金</string>
+
+    <!-- history -->
+    <string name="button_reset">重置</string>
+    <string name="button_search">搜查</string>
+    <string name="label_amount">金額</string>
+    <string name="label_amount_end">至</string>
+    <string name="label_amount_start">由</string>
+    <string name="label_date_range">指定日期</string>
+    <string name="label_history">交易記錄</string>
+    <string name="label_keyword">關鍵字（賬單號，RRN）</string>
+    <string name="label_payment_method">收款方式</string>
+    <string name="label_entry_mode">交易介面</string>
+    <string name="label_settlement_status">結算狀態</string>
+    <string name="label_settlement_status_not_settled">尚未結算</string>
+    <string name="label_settlement_status_settled">已結算</string>
+    <string name="label_transaction_record">交易記錄</string>
+    <string name="label_transaction_status">交易狀態</string>
+    <string name="label_transaction_type">交易類別</string>
+    <!--    <string name="var_display_date_range" translatable="false">%1$s - %2$s</string>-->
+    <!--    <string name="var_transaction_action" translatable="false">%1$s %2$s?</string>-->
+    <!--    <string name="var_display_exact_amount" translatable="false">$%1$s</string>-->
+    <!--    <string name="var_two_strings" translatable="false">%1$s %2$s</string>-->
+    <!--    <string name="var_three_strings" translatable="false">%1$s %2$s(%3$s)</string>-->
+    <!--    <string name="var_two_strings_with_parenthesis" translatable="false">%1$s (%2$s)</string>-->
+
+    <!-- History - txn details -->
+    <!--    <string name="label_aid" translatable="false">AID</string>-->
+    <!--    <string name="label_app_name" translatable="false">App name</string>-->
+    <!--    <string name="label_tc" translatable="false">TC</string>-->
+    <!--    <string name="label_tvr" translatable="false">TVR</string>-->
+    <!--    <string name="label_tsi" translatable="false">TSI</string>-->
+    <!--    <string name="label_atc" translatable="false">ATC</string>-->
+    <!--    <string name="label_qrc_voucher_no" translatable="false">Voucher No</string>-->
+    <!--    <string name="label_pos_ref" translatable="false">POS Ref</string>    -->
+    <!--    <string name="label_amex_trace" translatable="false">ROC</string>-->
+    <string name="label_appr_code">授權號</string>
+    <string name="label_batch">批次號</string>
+    <string name="label_capture_confirm_message">完成預授權?</string>
+    <string name="label_empty_state">沒有交易</string>
+    <string name="label_item_list">貨品清單</string>
+    <string name="label_mid">商戶號</string>
+    <string name="label_rrn">參考號</string>
+    <string name="label_tid">終端號</string>
+    <string name="label_trace">賬單號</string>
+    <string name="label_operator">操作員</string>
+    <string name="label_txn_details">交易詳情</string>
+    <string name="label_void_refund_warn_message">你將不會收到此金額，是否繼續？</string>
+    <string name="label_txn_details_save_success">收據已儲存到：%1$s</string>
+    <string name="label_txn_details_save_fail">無法儲存收據</string>
+    <string name="save_without_permission">請允許存儲權限以下載及共享圖像</string>
+    <string name="share_file_fail">無法共享文件／圖像</string>
+    <string name="label_transaction_already_settle">已結算</string>
+
+
+    <!--CVM result text-->
+    <string name="cvm_result_offline_pin">密碼驗證</string>
+    <string name="cvm_result_offline_pin_and_signature">密碼及簽名驗證</string>
+    <string name="cvm_result_signature">簽名驗證</string>
+    <string name="cvm_result_cdcvm">消費者裝置驗證</string>
+    <string name="cvm_result_stt">毋須簽名 (STT)</string>
+    <string name="cvm_result_no_need">毋須簽名</string>
+
+    <!--Report fragment-->
+    <string name="label_fetching_data">正在擷取資料</string>
+    <string name="label_this_week">本星期</string>
+    <string name="label_last_week">上星期</string>
+    <string name="label_this_month">本月</string>
+    <string name="label_last_month">上個月</string>
+    <string name="label_this_quarter">本季</string>
+    <string name="label_last_quarter">上季</string>
+    <string name="label_this_year">本年</string>
+    <string name="label_last_year">上年</string>
+    <string name="label_pie_chart_center_text">總數: \n%1$s</string>
+    <string name="label_report_no_chart_data">沒有數據</string>
+    <string name="label_statistic">統計</string>
+    <string name="label_today">今日</string>
+    <string name="label_total_refund">退款總額</string>
+    <string name="label_total_void">撤銷總額</string>
+    <string name="label_yesterday">昨天</string>
+
+    <!-- Apollo receipt -->
+    <string name="label_built_in_printer">內置打印機</string>
+    <string name="label_use_built_in_printer">使用內置打印機</string>
+    <string name="label_battery_too_low">電量不足，請充電</string>
+
+    <string name="label_device_checking_desc_failed">以下檢查失敗，這可能會妨礙您使用 SoftPOS 手機拍卡功能。</string>
+    <string name="label_device_checking_desc_success">您的設備通過了所有檢查！</string>
+    <string name="label_device_checking_result">設備檢查結果</string>
+    <string name="button_device_check">設備檢查</string>
+    <string name="label_darkness">暗色度</string>
+    <string name="label_darkness_lighter">淺色</string>
+    <string name="label_darkness_medium">中等</string>
+    <string name="label_darkness_darker">深色</string>
+    <string name="prompt_please_wait_message">請稍候</string>
+
+    <!--    card reader-->
+    <string name="emv_label_card_reader_connecting">"讀卡器連接中"</string>
+    <string name="emv_label_card_reader_error">"讀卡器錯誤"</string>
+    <string name="emv_label_chip_card_detected">"檢測到晶片卡，請插卡"</string>
+    <string name="emv_label_ctl_read_success">"讀取完成，請取卡"</string>
+    <string name="emv_label_insert">"插卡"</string>
+    <string name="emv_label_insert_or_swipe">"插卡或刷卡"</string>
+    <string name="emv_label_swipe">"刷卡"</string>
+    <string name="emv_label_tap">"拍卡"</string>
+    <string name="emv_label_tap_or_insert">"拍卡或插卡"</string>
+    <string name="emv_label_tap_or_swipe">"拍卡或刷卡"</string>
+    <string name="emv_label_tap_swipe_insert">"拍卡、插卡或刷卡"</string>
+    <string name="emv_nfc_multiple_card">"檢測到多張卡"</string>
+    <string name="emv_no_emv_apps">"沒有 EMV 應用程序"</string>
+    <string name="emv_pin_incorrect">"密碼錯誤"</string>
+    <string name="emv_present_card_again">"請重試"</string>
+    <string name="emv_label_bad_swipe">"刷卡錯誤，請重試"</string>
+</resources>

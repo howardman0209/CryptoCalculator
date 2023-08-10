@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="space_narrow">2dp</dimen>
+    <dimen name="space_quarter">4dp</dimen>
+    <dimen name="space_half">8dp</dimen>
+    <dimen name="space_default">16dp</dimen>
+    <dimen name="space_double">32dp</dimen>
+    <dimen name="space_triple">48dp</dimen>
+    <dimen name="space_quadruple">64dp</dimen>
+    <dimen name="space_quintuple">80dp</dimen>
+    <dimen name="space_sextuple">96dp</dimen>
+
+    <dimen name="progress_bar_size">64dp</dimen>
+    <dimen name="item_bottom_sheet_peek_height">88dp</dimen>
+
+    <dimen name="icon_normal">24dp</dimen>
+    <dimen name="icon_medium">32dp</dimen>
+    <dimen name="icon_large">48dp</dimen>
+    <dimen name="icon_triple">72dp</dimen>
+
+    <dimen name="min_button_width">72dp</dimen>
+
+    <dimen name="min_touch_area">56dp</dimen>
+    <dimen name="min_touch_area_dense">48dp</dimen>
+
+    <dimen name="min_height_two_line_list">64dp</dimen>
+    <dimen name="min_width_dialog_activity">320dp</dimen>
+
+    <dimen name="max_height_amount_display">80dp</dimen>
+
+    <dimen name="round_corner_default">8dp</dimen>
+    <dimen name="round_corner_half">4dp</dimen>
+    <dimen name="round_corner_double">16dp</dimen>
+    <dimen name="round_corner_triple">24dp</dimen>
+
+    <dimen name="elevation_low">4dp</dimen>
+    <dimen name="elevation_medium">8dp</dimen>
+    <dimen name="elevation_high">16dp</dimen>
+
+    <dimen name="min_card_height">72dp</dimen>
+
+    <dimen name="hero_image_dimens">320dp</dimen>
+
+    <dimen name="height_extended_toolbar">80dp</dimen>
+
+    <dimen name="height_pick_item_image">96dp</dimen>
+    <dimen name="height_pick_item_image_large">128dp</dimen>
+    <dimen name="height_pick_item_image_dense">64dp</dimen>
+
+    <!--text size-->
+    <dimen name="font_size_log">10sp</dimen>
+    <dimen name="font_size_h1">56sp</dimen>
+    <dimen name="font_size_h2">64sp</dimen>
+    <dimen name="font_size_h3">32sp</dimen>
+    <dimen name="font_size_h4">24sp</dimen>
+    <dimen name="font_size_h5">20sp</dimen>
+    <dimen name="font_size_h6">18sp</dimen>
+    <dimen name="font_size_body_l">16sp</dimen>
+    <dimen name="font_size_body_m">14sp</dimen>
+    <dimen name="font_size_body_s">12sp</dimen>
+    <dimen name="font_size_body_xs">10sp</dimen>
+
+    <dimen name="circle_indicator_size">5dp</dimen>
+    <dimen name="chart_size">240dp</dimen>
+    <dimen name="item_preview_card_size">120dp</dimen>
+
+    <dimen name="animation_lottie_size">200dp</dimen>
+    <dimen name="animation_lottie_size_large">300dp</dimen>
+    <dimen name="animation_lottie_margin_top">25dp</dimen>
+    <dimen name="animation_loading_size_default">136dp</dimen>
+    <dimen name="animation_loading_size_dense">80dp</dimen>
+
+    <dimen name="general_divider">1dp</dimen>
+</resources>

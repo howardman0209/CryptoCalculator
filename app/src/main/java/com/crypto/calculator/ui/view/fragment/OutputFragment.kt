@@ -28,8 +28,8 @@ class OutputFragment : MVVMFragment<MainViewModel, FragmentOutputBinding>() {
     private fun startPrintTest() {
         lifecycleScope.launch(Dispatchers.Main) {
             while (true) {
-                delay(500)
-                printLogPanel("Hello World")
+                delay(1000)
+                printLog("Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World ")
             }
         }
     }
@@ -38,15 +38,14 @@ class OutputFragment : MVVMFragment<MainViewModel, FragmentOutputBinding>() {
         binding.logPanel.movementMethod = ScrollingMovementMethod()
     }
 
-    fun printLogPanel(logStr: String) {
-        val view = binding.logPanel
-        val vlog = String.format(
-            "%s: %s\n",
-            viewModel.getCurrentDateTime(true),
-            logStr
-        )
-        view.post {
-            view.append(vlog)
+    fun printLog(logStr: String) {
+        val vlog = String.format("%s: %s", viewModel.getCurrentDateTime(true), logStr)
+        viewModel.logMessage.get().also {
+            if (it.isNullOrEmpty()) {
+                viewModel.logMessage.set(vlog)
+            } else {
+                viewModel.logMessage.set("$it\n$vlog")
+            }
         }
         Log.d("LogPanel", logStr)
     }

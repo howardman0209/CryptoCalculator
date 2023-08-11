@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.View
+import android.widget.ScrollView
+import androidx.core.view.marginBottom
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.crypto.calculator.R
@@ -21,15 +23,17 @@ class OutputFragment : MVVMFragment<MainViewModel, FragmentOutputBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initLogPanel()
-        startPrintTest()
+//        initLogPanel()
+//        startPrintTest()
     }
 
     private fun startPrintTest() {
         lifecycleScope.launch(Dispatchers.Main) {
             while (true) {
                 delay(1000)
-                printLog("Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World ")
+                printLog("Hello World")
+//                viewModel.printLog("Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World ")
+                scrollToBottom()
             }
         }
     }
@@ -39,16 +43,37 @@ class OutputFragment : MVVMFragment<MainViewModel, FragmentOutputBinding>() {
     }
 
     fun printLog(logStr: String) {
-        val vlog = String.format("%s: %s", viewModel.getCurrentDateTime(true), logStr)
-        viewModel.logMessage.get().also {
-            if (it.isNullOrEmpty()) {
-                viewModel.logMessage.set(vlog)
+        val vlog = String.format("%s: %s\n", viewModel.getCurrentDateTime(true), logStr)
+        binding.logPanel.append(vlog)
+        Log.d("LogPanel", logStr)
+        scrollToBottom()
+    }
+
+    private fun scrollToBottom() {
+        binding.verticalScrollView.apply {
+            getChildAt(childCount - 1)
+            val bottom = binding.logPanel.bottom + marginBottom
+            val currentY = measuredHeight + scrollY
+            Log.d("ScrollView", "currentY: $currentY")
+            val alreadyAtBottom = bottom <= currentY
+            Log.d("ScrollView", "already at bottom: $alreadyAtBottom")
+            if (!alreadyAtBottom) {
+                val delta = bottom - currentY
+                smoothScrollBy(0, delta)
+                Log.d("ScrollView", "scroll to bottom")
             } else {
-                viewModel.logMessage.set("$it\n$vlog")
+                // already at bottom, do nothing
+                Log.d("ScrollView", "do nothing")
             }
         }
-        Log.d("LogPanel", logStr)
     }
+
+//    fun ScrollView.scrollToBottom() {
+//        val lastChild = getChildAt(childCount - 1)
+//        val bottom = lastChild.bottom + paddingBottom
+//        val delta = bottom - (scrollY + height)
+//        smoothScrollBy(0, delta)
+//    }
 
     override fun getViewModelInstance(): MainViewModel {
         return activity?.run {

@@ -51,15 +51,19 @@ class OutputFragment : MVVMFragment<MainViewModel, FragmentOutputBinding>() {
 
     private fun scrollToBottom() {
         binding.verticalScrollView.apply {
-            getChildAt(childCount - 1)
+            binding.logPanel.clearFocus() // avoid select text to change the focus, ensure focus at the last line
             val bottom = binding.logPanel.bottom + marginBottom
             val currentY = measuredHeight + scrollY
+            Log.d("ScrollView", "logPanel bottom: ${binding.logPanel.bottom}, marginBottom: $marginBottom")
+            Log.d("ScrollView", "bottom: $bottom")
+            Log.d("ScrollView", "measuredHeight: $measuredHeight, scrollY: $scrollY")
             Log.d("ScrollView", "currentY: $currentY")
             val alreadyAtBottom = bottom <= currentY
             Log.d("ScrollView", "already at bottom: $alreadyAtBottom")
             if (!alreadyAtBottom) {
                 val delta = bottom - currentY
-                smoothScrollBy(0, delta)
+                Log.d("ScrollView", "delta: $delta")
+                smoothScrollTo(0, bottom)
                 Log.d("ScrollView", "scroll to bottom")
             } else {
                 // already at bottom, do nothing

@@ -16,36 +16,87 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/background_dark">
+        android:layout_height="match_parent">
 
-        <ScrollView
-            android:id="@+id/verticalScrollView"
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toTopOf="parent"
+            app:liftOnScroll="true">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/saveBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_half"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="@dimen/space_half"
+                android:src="@drawable/ic_baseline_save"
+                android:tint="@color/secondary" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/copyBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_half"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="@dimen/space_half"
+                android:src="@drawable/ic_baseline_content_copy"
+                android:tint="@color/secondary" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/clearBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_half"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="@dimen/space_half"
+                android:src="@drawable/ic_baseline_delete_forever"
+                android:tint="@color/secondary" />
+
+        </LinearLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_margin="@dimen/space_half"
-            android:fillViewport="true"
+            android:background="@android:color/background_dark"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
-            <HorizontalScrollView
-                android:id="@+id/horizontalScrollView"
+            <ScrollView
+                android:id="@+id/verticalScrollView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_margin="@dimen/space_half"
+                android:fillViewport="true"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <TextView
-                    android:id="@+id/logPanel"
-                    android:layout_width="wrap_content"
+                <HorizontalScrollView
+                    android:id="@+id/horizontalScrollView"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="bottom"
-                    android:textColor="@android:color/background_light"
-                    android:textIsSelectable="true"
-                    android:textSize="@dimen/font_size_log"
-                    android:typeface="monospace"
-                    tools:ignore="SmallSp"
-                    tools:text="qwertyuiop" />
-            </HorizontalScrollView>
-        </ScrollView>
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/logPanel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="bottom"
+                        android:textColor="@android:color/background_light"
+                        android:textIsSelectable="true"
+                        android:textSize="@dimen/font_size_log"
+                        android:typeface="monospace"
+                        tools:ignore="SmallSp"
+                        tools:text="qwertyuiop" />
+                </HorizontalScrollView>
+            </ScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

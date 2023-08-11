@@ -23,8 +23,23 @@ class OutputFragment : MVVMFragment<MainViewModel, FragmentOutputBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        initLogPanel()
-//        startPrintTest()
+
+        viewModel.logMessage.observe(viewLifecycleOwner) {
+            printLog(it)
+        }
+
+        binding.saveBtn.setOnClickListener {
+            Log.d("saveBtn", "OnClick")
+        }
+
+        binding.clearBtn.setOnClickListener {
+            Log.d("clearBtn", "OnClick")
+            binding.logPanel.text = ""
+        }
+
+        binding.copyBtn.setOnClickListener {
+            Log.d("copyBtn", "OnClick")
+        }
     }
 
     private fun startPrintTest() {
@@ -32,17 +47,12 @@ class OutputFragment : MVVMFragment<MainViewModel, FragmentOutputBinding>() {
             while (true) {
                 delay(1000)
                 printLog("Hello World")
-//                viewModel.printLog("Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World ")
                 scrollToBottom()
             }
         }
     }
 
-    private fun initLogPanel() {
-        binding.logPanel.movementMethod = ScrollingMovementMethod()
-    }
-
-    fun printLog(logStr: String) {
+    private fun printLog(logStr: String) {
         val vlog = String.format("%s: %s\n", viewModel.getCurrentDateTime(true), logStr)
         binding.logPanel.append(vlog)
         Log.d("LogPanel", logStr)
@@ -54,15 +64,9 @@ class OutputFragment : MVVMFragment<MainViewModel, FragmentOutputBinding>() {
             binding.logPanel.clearFocus() // avoid select text to change the focus, ensure focus at the last line
             val bottom = binding.logPanel.bottom + marginBottom
             val currentY = measuredHeight + scrollY
-            Log.d("ScrollView", "logPanel bottom: ${binding.logPanel.bottom}, marginBottom: $marginBottom")
-            Log.d("ScrollView", "bottom: $bottom")
-            Log.d("ScrollView", "measuredHeight: $measuredHeight, scrollY: $scrollY")
-            Log.d("ScrollView", "currentY: $currentY")
             val alreadyAtBottom = bottom <= currentY
             Log.d("ScrollView", "already at bottom: $alreadyAtBottom")
             if (!alreadyAtBottom) {
-                val delta = bottom - currentY
-                Log.d("ScrollView", "delta: $delta")
                 smoothScrollTo(0, bottom)
                 Log.d("ScrollView", "scroll to bottom")
             } else {
@@ -71,13 +75,6 @@ class OutputFragment : MVVMFragment<MainViewModel, FragmentOutputBinding>() {
             }
         }
     }
-
-//    fun ScrollView.scrollToBottom() {
-//        val lastChild = getChildAt(childCount - 1)
-//        val bottom = lastChild.bottom + paddingBottom
-//        val delta = bottom - (scrollY + height)
-//        smoothScrollBy(0, delta)
-//    }
 
     override fun getViewModelInstance(): MainViewModel {
         return activity?.run {

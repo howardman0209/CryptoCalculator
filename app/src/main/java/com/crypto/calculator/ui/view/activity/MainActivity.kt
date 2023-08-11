@@ -20,7 +20,7 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
         }
 
         binding.buttonMore.setOnClickListener {
-            (currentBottomPanel as OutputFragment).printLog("Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World Hello World ")
+            viewModel.printLog("Hello World")
         }
 
         switchPanel()
@@ -39,8 +39,6 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
 //            }
         pushFragment(currentBottomPanel as Fragment, target, isAddToBackStack = false)
     }
-
-
 
 
     override fun getViewModelInstance(): MainViewModel {

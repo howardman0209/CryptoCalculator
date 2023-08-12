@@ -11,7 +11,7 @@
 
         <variable
             name="viewModel"
-            type="com.crypto.calculator.ui.viewModel.MainViewModel" />
+            type="com.crypto.calculator.ui.viewModel.CoreViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -11,12 +11,13 @@ import androidx.lifecycle.lifecycleScope
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentOutputBinding
 import com.crypto.calculator.ui.base.MVVMFragment
+import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.ui.viewModel.MainViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class OutputFragment : MVVMFragment<MainViewModel, FragmentOutputBinding>() {
+class OutputFragment : MVVMFragment<CoreViewModel, FragmentOutputBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -76,10 +77,10 @@ class OutputFragment : MVVMFragment<MainViewModel, FragmentOutputBinding>() {
         }
     }
 
-    override fun getViewModelInstance(): MainViewModel {
+    override fun getViewModelInstance(): CoreViewModel {
         return activity?.run {
-            ViewModelProvider(this, defaultViewModelProviderFactory)[MainViewModel::class.java]
-        } ?: MainViewModel()
+            ViewModelProvider(this, defaultViewModelProviderFactory)[CoreViewModel::class.java]
+        } ?: CoreViewModel()
     }
 
     override fun setBindingData() {

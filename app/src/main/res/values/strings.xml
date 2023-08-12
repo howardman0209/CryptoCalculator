@@ -11,6 +11,7 @@
     <string name="label_off">off</string>
     <string name="other">Other</string>
     <string name="label_loading">Loading…</string>
+    <string name="label_logcat" translatable="false">Logcat</string>
 
     <!--    bottom navigation tab label-->
     <string name="label_bottom_nav_tab1" translatable="false">tab1</string>

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.CallSuper
+import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -73,6 +74,31 @@ abstract class BaseFragment : Fragment() {
 
     fun showLoadingIndicator(isShowLoading: Boolean) {
         baseActivity.showLoadingIndicator(isShowLoading)
+    }
+
+    enum class PushFragmentAction {
+        Add,
+        Replace
+    }
+
+    fun pushFragment(
+        fragment: Fragment,
+        @IdRes containerId: Int,
+        action: PushFragmentAction = PushFragmentAction.Replace,
+        isAddToBackStack: Boolean = true
+    ) {
+//        Log.d("DEBUG", "pushFragment")
+        parentFragmentManager.beginTransaction().apply {
+            if (action == PushFragmentAction.Replace) {
+                replace(containerId, fragment)
+            } else {
+                add(containerId, fragment)
+            }
+            if (isAddToBackStack) {
+                addToBackStack(fragment.javaClass.name)
+            }
+            commit()
+        }
     }
 
     fun singleInputDialog(context: Context, title: String?, fieldName: String, fieldValue: String?, onConfirmCallBack: (editText: String) -> Unit) {

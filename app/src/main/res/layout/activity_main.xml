@@ -26,7 +26,6 @@
             android:fitsSystemWindows="true">
 
             <com.google.android.material.appbar.AppBarLayout
-                style="@style/Widget.MaterialComponents.AppBarLayout.PrimarySurface"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fitsSystemWindows="true">
@@ -44,6 +43,12 @@
 
             <!-- Screen content -->
             <!-- Use app:layout_behavior="@string/appbar_scrolling_view_behavior" to fit below top app bar -->
+            <FrameLayout
+                android:id="@+id/mainFragmentContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
@@ -52,8 +57,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:visibility="visible"
-            app:menu="@menu/nav_menu" />
+            app:headerLayout="@layout/nav_header"
+            app:menu="@menu/nav_menu"
+            tools:visibility="gone" />
 
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

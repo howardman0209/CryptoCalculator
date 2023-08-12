@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ScrollView
 import androidx.core.view.marginBottom
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.crypto.calculator.R
@@ -78,8 +79,14 @@ class OutputFragment : MVVMFragment<CoreViewModel, FragmentOutputBinding>() {
     }
 
     override fun getViewModelInstance(): CoreViewModel {
-        return activity?.run {
-            ViewModelProvider(this, defaultViewModelProviderFactory)[CoreViewModel::class.java]
+        return activity?.supportFragmentManager?.fragments?.let {
+            var viewModel: CoreViewModel? = null
+            it.forEach {
+                if (it is CoreFragment) {
+                    viewModel = ViewModelProvider(it, defaultViewModelProviderFactory)[CoreViewModel::class.java]
+                }
+            }
+            viewModel
         } ?: CoreViewModel()
     }
 

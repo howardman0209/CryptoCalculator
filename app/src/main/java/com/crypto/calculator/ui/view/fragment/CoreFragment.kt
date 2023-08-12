@@ -2,6 +2,12 @@ package com.crypto.calculator.ui.view.fragment
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.R
@@ -13,18 +19,18 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
     private var currentBottomPanel: Fragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        binding.toolbar.setNavigationOnClickListener {
-//            Log.d("MainActivity", "NavigationOnClick")
-//        }
-//
-//        binding.buttonMore.setOnClickListener {
-//            viewModel.printLog("Hello World")
-//        }
-
+        Log.d("CoreFragment", "onCreate")
         switchPanel()
+    }
 
-//        appendLog("Hello World")
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        setHasOptionsMenu(true)
+        return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
     }
 
     private fun switchPanel(itemId: Int? = null, target: Int = R.id.bottomPanel) {
@@ -36,7 +42,30 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
 //                R.id.btnPromotion -> PromotionsFragment()
 //                else -> QuickLaunchFragment()
 //            }
-//        pushFragment(currentBottomPanel as Fragment, target, isAddToBackStack = false)
+        pushFragment(currentBottomPanel as Fragment, target, isAddToBackStack = false)
+    }
+
+    private fun logcatSwitch() {
+        if (binding.bottomPanel.visibility == View.VISIBLE) {
+            binding.bottomPanel.visibility = View.GONE
+        } else {
+            binding.bottomPanel.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d("onOptionsItemSelected", "item: $item")
+        when (item.itemId) {
+            R.id.action_settings -> viewModel.printLog("Hello World")
+            R.id.tool_logcat -> logcatSwitch()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        inflater.inflate(R.menu.tools, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
 

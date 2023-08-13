@@ -79,12 +79,10 @@ class OutputFragment : MVVMFragment<CoreViewModel, FragmentOutputBinding>() {
     }
 
     override fun getViewModelInstance(): CoreViewModel {
-        return activity?.supportFragmentManager?.fragments?.let {
+        return activity?.supportFragmentManager?.fragments?.let { fragmentList ->
             var viewModel: CoreViewModel? = null
-            it.forEach {
-                if (it is CoreFragment) {
-                    viewModel = ViewModelProvider(it, defaultViewModelProviderFactory)[CoreViewModel::class.java]
-                }
+            fragmentList.find { it is CoreFragment }?.also {
+                viewModel = ViewModelProvider(it, defaultViewModelProviderFactory)[CoreViewModel::class.java]
             }
             viewModel
         } ?: CoreViewModel()

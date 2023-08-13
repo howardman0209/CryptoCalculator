@@ -389,7 +389,7 @@
     <string name="label_item_field_required">Required</string>
     <string name="label_item_field_price_type">Price should be any positive or negative number</string>
     <string name="label_item_category_manage">Product &amp; category management</string>
-<!--    <string name="label_coupon_manage">Coupon management</string>-->
+    <!--    <string name="label_coupon_manage">Coupon management</string>-->
     <string name="label_item_manage">Product</string>
     <string name="label_category_manage">Category</string>
     <string name="label_coupon_manage">Coupon</string>
@@ -723,4 +723,12 @@
     <string name="label_account_credit" translatable="false">"Credit card"</string>
     <string name="label_account_current" translatable="false">"Checking"</string>
     <string name="label_account_saving" translatable="false">"Saving"</string>
+
+    <string name="label_tool_des" translatable="false">DES</string>
+    <string name="label_tool_aes" translatable="false">AES</string>
+    <string name="label_tool_mac" translatable="false">MAC</string>
+    <string name="label_tool_hash" translatable="false">Hash</string>
+    <string name="label_tool_bitwise" translatable="false">Bitwise</string>
+    <string name="label_tool_converter" translatable="false">Converter</string>
+    <string name="label_tool_tlv_parser" translatable="false">TLV Parser</string>
 </resources>

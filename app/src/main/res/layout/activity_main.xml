@@ -37,7 +37,7 @@
                     android:background="@android:color/transparent"
                     android:elevation="0dp"
                     app:navigationIcon="@drawable/ic_baseline_menu"
-                    app:title="@string/label_title" />
+                    app:title="@{viewModel.title}" />
 
             </com.google.android.material.appbar.AppBarLayout>
 

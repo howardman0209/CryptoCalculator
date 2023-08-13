@@ -7,14 +7,14 @@
         <item
             android:id="@+id/nav_tab1"
             android:icon="@drawable/ic_android"
-            android:title="@string/label_bottom_nav_tab1" />
+            android:title="@string/label_tool_tlv_parser" />
         <item
             android:id="@+id/nav_tab2"
             android:icon="@drawable/ic_android"
-            android:title="@string/label_bottom_nav_tab2" />
+            android:title="@string/label_tool_des" />
         <item
             android:id="@+id/nav_tab3"
             android:icon="@drawable/ic_android"
-            android:title="@string/label_bottom_nav_tab3" />
+            android:title="@string/label_tool_hash" />
     </group>
 </menu>

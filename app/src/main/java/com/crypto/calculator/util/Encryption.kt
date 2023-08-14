@@ -300,4 +300,24 @@ object Encryption {
         }
     }
 
+    fun doDES(key: String, data: String, mode: String, operation: Int): String {
+        return try {
+            val sk = SecretKeySpec(key.hexToByteArray(), "DES")
+            val cipher = Cipher.getInstance("DESede/$mode/NoPadding")
+            cipher.init(operation, sk)
+            cipher.doFinal(data.hexToByteArray()).toHexString()
+        } catch (e: javax.crypto.NoSuchPaddingException) {
+            e.message ?: "Unknown Error"
+        } catch (e: java.security.NoSuchAlgorithmException) {
+            e.message ?: "Unknown Error"
+        } catch (e: java.security.InvalidKeyException) {
+            e.message ?: "Unknown Error"
+        } catch (e: javax.crypto.BadPaddingException) {
+            e.message ?: "Unknown Error"
+        } catch (e: IllegalBlockSizeException) {
+            e.message ?: "Unknown Error"
+        } catch (e: Exception) {
+            e.message ?: "Unknown Error"
+        }
+    }
 }

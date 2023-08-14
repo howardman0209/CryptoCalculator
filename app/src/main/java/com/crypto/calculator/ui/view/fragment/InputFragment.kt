@@ -11,6 +11,8 @@ import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewAdapter.DropDownMenuAdapter
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.util.TlvUtil
+import com.crypto.calculator.util.encryption_padding_iso9797_1_M1
+import com.crypto.calculator.util.encryption_padding_iso9797_1_M2
 
 class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
@@ -78,7 +80,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
         binding.tilCondition2.visibility = View.VISIBLE
         binding.tilCondition2.hint = "Padding"
-        val paddingList = listOf("Method 1", "Method 2")
+        val paddingList = listOf(encryption_padding_iso9797_1_M1, encryption_padding_iso9797_1_M2)
         binding.autoTvCondition2.setAdapter(
             DropDownMenuAdapter(
                 requireContext(),
@@ -94,7 +96,19 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         binding.operationBtn2.visibility = View.VISIBLE
         binding.operationBtn2.text = getString(R.string.label_operation_decrypt)
 
+        binding.operationBtn1.setOnClickListener {
+            val result = viewModel.desEncrypt(
+                message = viewModel.inputData1.get() ?: "",
+                key = viewModel.inputData2.get() ?: "",
+                mode = binding.autoTvCondition1.text.toString(),
+                padding = binding.autoTvCondition2.text.toString(),
+            )
+            Log.d("desCalculator", "result: $result")
+        }
 
+        binding.operationBtn2.setOnClickListener {
+
+        }
     }
 
     private fun tlvParser() {

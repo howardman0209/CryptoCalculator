@@ -41,3 +41,7 @@ const val localDataPrefFileName = "localDataPref"
 const val localPrefFileName = "localPref"
 const val localeLanguagePrefKey = "localeLanguage"
 const val localeCountryPrefKey = "localeCountry"
+
+//encryption
+const val encryption_padding_iso9797_1_M1 = "ISO9797-1 M1"
+const val encryption_padding_iso9797_1_M2 = "ISO9797-1 M2"

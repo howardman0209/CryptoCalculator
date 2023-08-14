@@ -3,6 +3,7 @@ package com.crypto.calculator.extension
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.text.Editable
 import android.util.Base64
 import android.util.Patterns
 import com.crypto.calculator.util.*
@@ -220,3 +221,5 @@ fun String.hexXOR(hex: String): String {
     val res: BigInteger = i1.xor(i2)
     return res.toString(16).uppercase()
 }
+
+private fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)

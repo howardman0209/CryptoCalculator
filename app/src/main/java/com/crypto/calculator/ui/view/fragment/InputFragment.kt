@@ -8,9 +8,9 @@ import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentInputBinding
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.ui.base.MVVMFragment
+import com.crypto.calculator.ui.viewAdapter.DropDownMenuAdapter
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.util.TlvUtil
-import com.google.gson.Gson
 
 class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
@@ -28,7 +28,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         resetInput()
         when (tool) {
             Tool.DES -> {
-
+                desCalculator()
             }
 
             Tool.AES -> {
@@ -57,12 +57,55 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         }
     }
 
+    private fun desCalculator() {
+        binding.tilData1.visibility = View.VISIBLE
+        viewModel.inputData1Label.set("Data")
+
+        binding.tilData2.visibility = View.VISIBLE
+        viewModel.inputData2Label.set("Key")
+
+        binding.tilCondition1.visibility = View.VISIBLE
+        binding.tilCondition1.hint = "Mode"
+        val modeList = listOf("ECB")
+        binding.autoTvCondition1.setAdapter(
+            DropDownMenuAdapter(
+                requireContext(),
+                R.layout.view_drop_down_menu_item,
+                modeList,
+            )
+        )
+        binding.autoTvCondition1.setText(modeList.first())
+
+        binding.tilCondition2.visibility = View.VISIBLE
+        binding.tilCondition2.hint = "Padding"
+        val paddingList = listOf("Method 1", "Method 2")
+        binding.autoTvCondition2.setAdapter(
+            DropDownMenuAdapter(
+                requireContext(),
+                R.layout.view_drop_down_menu_item,
+                paddingList,
+            )
+        )
+        binding.autoTvCondition2.setText(paddingList.first())
+
+        binding.operationBtn1.visibility = View.VISIBLE
+        binding.operationBtn1.text = getString(R.string.label_operation_encrypt)
+
+        binding.operationBtn2.visibility = View.VISIBLE
+        binding.operationBtn2.text = getString(R.string.label_operation_decrypt)
+
+
+    }
+
     private fun tlvParser() {
+        binding.tilData1.visibility = View.VISIBLE
+        viewModel.inputData1Label.set("Data")
+
         binding.operationBtn1.visibility = View.VISIBLE
         binding.operationBtn1.text = getString(R.string.label_operation_decode)
 
         binding.operationBtn1.setOnClickListener {
-            viewModel.inputData.get()?.also { tlv ->
+            viewModel.inputData1.get()?.also { tlv ->
                 val result = try {
                     viewModel.gsonBeautifier.toJson(TlvUtil.decodeTLV(tlv))
                 } catch (ex: Exception) {
@@ -75,12 +118,22 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
     }
 
     private fun resetInput() {
+        binding.tilData1.visibility = View.GONE
+        binding.tilData2.visibility = View.GONE
+        binding.tilData2.tag = null
+
         binding.operationBtn1.visibility = View.GONE
         binding.operationBtn2.visibility = View.GONE
-        viewModel.inputData.set("")
-        viewModel.inputDataMax.set(null)
-        viewModel.inputKey.set("")
-        viewModel.inputKeyMax.set(null)
+
+        binding.tilCondition1.visibility = View.GONE
+
+        viewModel.inputData1.set("")
+        viewModel.inputData1Max.set(null)
+        viewModel.inputData1Label.set("")
+
+        viewModel.inputData2.set("")
+        viewModel.inputData2Max.set(null)
+        viewModel.inputData2Label.set("")
     }
 
     override fun getViewModelInstance(): CoreViewModel {

@@ -21,50 +21,89 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:gravity="end"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/space_default">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilData"
+                android:id="@+id/tilData1"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/space_default"
-                android:hint="@{viewModel.inputDataMax != null? @string/input_hint_with_max(tilData.getTag(),viewModel.inputData.length,viewModel.inputDataMax) : @string/input_hint(tilData.getTag(),viewModel.inputData.length)}"
-                android:tag="Data">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etData"
-                    inputMaxLength="@{viewModel.inputDataMax}"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:digits="0123456789ABCDEF"
-                    android:importantForAutofill="no"
-                    android:inputType="textCapCharacters"
-                    android:text="@={viewModel.inputData}" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tilKey"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/space_default"
-                android:hint="@{viewModel.inputKeyMax != null? @string/input_hint_with_max(tilKey.getTag(), viewModel.inputKey.length,viewModel.inputKeyMax) : @string/input_hint(tilKey.getTag(),viewModel.inputKey.length)}"
-                android:tag="Key"
+                android:hint="@{viewModel.inputData1Max != null? @string/input_hint_with_max(viewModel.inputData1Label,viewModel.inputData1.length,viewModel.inputData1Max) : @string/input_hint(viewModel.inputData1Label,viewModel.inputData1.length)}"
                 android:visibility="gone"
                 tools:visibility="visible">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etKey"
-                    inputMaxLength="@{viewModel.inputKeyMax}"
+                    android:id="@+id/etData1"
+                    inputMaxLength="@{viewModel.inputData1Max}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:digits="0123456789ABCDEF"
                     android:importantForAutofill="no"
                     android:inputType="textCapCharacters"
-                    android:text="@={viewModel.inputKey}" />
+                    android:text="@={viewModel.inputData1}" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilData2"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/space_default"
+                android:hint="@{viewModel.inputData2Max != null? @string/input_hint_with_max(viewModel.inputData2Label, viewModel.inputData2.length,viewModel.inputData2Max) : @string/input_hint(viewModel.inputData2Label,viewModel.inputData2.length)}"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etData2"
+                    inputMaxLength="@{viewModel.inputData2Max}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789ABCDEF"
+                    android:importantForAutofill="no"
+                    android:inputType="textCapCharacters"
+                    android:text="@={viewModel.inputData2}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCondition1"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/space_default"
+                android:visibility="gone"
+                tools:hint="condition1"
+                tools:visibility="visible">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoTvCondition1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    tools:ignore="LabelFor" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCondition2"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/space_default"
+                android:visibility="gone"
+                tools:hint="condition2"
+                tools:visibility="visible">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoTvCondition2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    tools:ignore="LabelFor" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <HorizontalScrollView
                 android:layout_width="match_parent"

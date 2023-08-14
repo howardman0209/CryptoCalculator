@@ -14,11 +14,13 @@ class CoreViewModel : BaseViewModel() {
     val logMessage: MutableLiveData<String> = MutableLiveData()
     val currentTool: MutableLiveData<Tool> = MutableLiveData(Tool.TLV_PARSER)
 
-    var inputData: ObservableField<String> = ObservableField()
-    var inputDataMax: ObservableField<Int?> = ObservableField()
+    val inputData1: ObservableField<String> = ObservableField()
+    val inputData1Max: ObservableField<Int?> = ObservableField()
+    val inputData1Label: ObservableField<String> = ObservableField()
 
-    var inputKey: ObservableField<String> = ObservableField()
-    var inputKeyMax: ObservableField<Int?> = ObservableField()
+    val inputData2: ObservableField<String> = ObservableField()
+    val inputData2Max: ObservableField<Int?> = ObservableField()
+    val inputData2Label: ObservableField<String> = ObservableField()
 
     fun printLog(message: String) {
         logMessage.postValue(message)

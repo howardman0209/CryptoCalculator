@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="view"
+            type="com.crypto.calculator.ui.view.fragment.InputFragment" />
+
+        <variable
+            name="viewModel"
+            type="com.crypto.calculator.ui.viewModel.CoreViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilData"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/space_default"
+            android:hint="@{viewModel.inputDataMax != null? @string/input_data_hint_with_max(viewModel.inputData.length,viewModel.inputDataMax) : @string/input_data_hint(viewModel.inputData.length)}">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etData"
+                inputMaxLength="@{viewModel.inputDataMax}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:digits="0123456789ABCDEF"
+                android:importantForAutofill="no"
+                android:inputType="textCapCharacters"
+                android:text="@={viewModel.inputData}" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+</layout>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="view"
+            type="com.crypto.calculator.ui.view.activity.SplashActivity" />
+
+        <variable
+            name="viewModel"
+            type="com.crypto.calculator.ui.viewModel.SplashViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="SelectableText">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/soePayLogo"
+            android:layout_width="@dimen/animation_lottie_size"
+            android:layout_height="@dimen/animation_lottie_size"
+            android:src="@drawable/ic_android"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/progressBar"
+            android:layout_width="@dimen/progress_bar_size"
+            android:layout_height="@dimen/progress_bar_size"
+            android:indeterminate="true"
+            app:layout_constraintBottom_toTopOf="@+id/tvLoading"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/soePayLogo"
+            app:layout_constraintVertical_chainStyle="packed"
+            app:trackCornerRadius="2dp" />
+
+        <TextView
+            android:id="@+id/tvLoading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/space_default"
+            android:gravity="center_horizontal"
+            android:text="@string/label_checking_basic_config"
+            android:textAppearance="?textAppearanceCaption"
+            android:textColor="@color/neutral_emphasis_medium"
+            app:layout_constraintBottom_toTopOf="@+id/tvPoweredBy"
+            app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+
+        <TextView
+            android:id="@+id/tvPoweredBy"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/space_default"
+            android:gravity="center"
+            android:text="@string/app_name"
+            android:textAppearance="?textAppearanceOverline"
+            android:textColor="@color/neutral_emphasis_medium"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -731,4 +731,7 @@
     <string name="label_tool_bitwise" translatable="false">Bitwise</string>
     <string name="label_tool_converter" translatable="false">Converter</string>
     <string name="label_tool_tlv_parser" translatable="false">TLV Parser</string>
+
+    <string name="input_data_hint" translatable="false">Data(%1$s)</string>
+    <string name="input_data_hint_with_max" translatable="false">Data(%1$s/%2$s)</string>
 </resources>

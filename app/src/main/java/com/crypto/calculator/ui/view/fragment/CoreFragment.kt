@@ -16,13 +16,15 @@ import com.crypto.calculator.model.Tools
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 
-class CoreFragment(private var currentTool: Tools = Tools.TLV_PARSER) : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
+class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
 
+    private var currentCorePanel: Fragment? = null
     private var currentBottomPanel: Fragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("CoreFragment", "onCreate")
         switchBottomPanel()
+        switchCorePanel()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -32,23 +34,21 @@ class CoreFragment(private var currentTool: Tools = Tools.TLV_PARSER) : MVVMFrag
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        Log.d("CoreFragment", "onViewCreated")
     }
 
     fun setCorePanel(selectedTool: Tools) {
         Log.d("setCorePanel", "selectedTool: $selectedTool")
-        currentTool = selectedTool
+        viewModel.currentTool.postValue(selectedTool)
     }
 
-    private fun switchBottomPanel(itemId: Int? = null, target: Int = R.id.bottomPanel) {
+    private fun switchCorePanel(target: Int = R.id.corePanel) {
+        currentCorePanel = InputFragment()
+        pushFragment(currentCorePanel as Fragment, target, isAddToBackStack = false)
+    }
+
+    private fun switchBottomPanel(target: Int = R.id.bottomPanel) {
         currentBottomPanel = OutputFragment()
-//            when (itemId) {
-//                R.id.btnHome -> QuickLaunchFragment()
-//                R.id.btnSupport -> SupportFragment()
-//                R.id.btnMore -> MoreFragment()
-//                R.id.btnPromotion -> PromotionsFragment()
-//                else -> QuickLaunchFragment()
-//            }
         pushFragment(currentBottomPanel as Fragment, target, isAddToBackStack = false)
     }
 

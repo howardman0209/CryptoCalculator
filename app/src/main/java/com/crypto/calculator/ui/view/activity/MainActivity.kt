@@ -2,6 +2,7 @@ package com.crypto.calculator.ui.view.activity
 
 import android.os.Bundle
 import android.util.Log
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.ActivityMainBinding
@@ -9,9 +10,10 @@ import com.crypto.calculator.model.Tools
 import com.crypto.calculator.ui.base.MVVMActivity
 import com.crypto.calculator.ui.view.fragment.CoreFragment
 import com.crypto.calculator.ui.viewModel.MainViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
-    private var mainFragment = CoreFragment()
+    private lateinit var mainFragment: Fragment
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -32,7 +34,7 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
             binding.drawerLayout.close()
             true
         }
-
+        mainFragment = CoreFragment()
         switchTab()
         setAppbarTitle()
     }
@@ -43,15 +45,26 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
 
     private fun switchTab(itemId: Int = 0) {
         when (itemId) {
-            R.id.nav_tab1 -> mainFragment.setCorePanel(Tools.TLV_PARSER)
-            R.id.nav_tab2 -> mainFragment.setCorePanel(Tools.DES)
-            R.id.nav_tab3 -> mainFragment.setCorePanel(Tools.HASH)
+            R.id.nav_tab1 -> (mainFragment as CoreFragment).setCorePanel(Tools.TLV_PARSER)
+            R.id.nav_tab2 -> (mainFragment as CoreFragment).setCorePanel(Tools.DES)
+            R.id.nav_tab3 -> (mainFragment as CoreFragment).setCorePanel(Tools.HASH)
             else -> {
-                mainFragment.setCorePanel(Tools.TLV_PARSER)
                 binding.navigationView.setCheckedItem(R.id.nav_tab1)
             }
         }
         pushFragment(mainFragment, getMainFragmentContainer(), isAddToBackStack = false)
+    }
+
+    private fun backToLogin() {
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.label_logout)
+            .setPositiveButton(R.string.button_confirm) { _, _ ->
+                finish()
+            }
+            .setNegativeButton(R.string.button_cancel) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun getMainFragmentContainer(): Int = R.id.mainFragmentContainer
@@ -66,4 +79,8 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
     }
 
     override fun getLayoutResId(): Int = R.layout.activity_main
+
+    override fun onBackPressed() {
+        backToLogin()
+    }
 }

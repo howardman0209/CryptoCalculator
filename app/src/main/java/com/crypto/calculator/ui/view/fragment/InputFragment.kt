@@ -112,7 +112,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
                     ex.message
                 }
                 Log.d("tlvParser", "result: $result")
-                viewModel.printLog("TLV_PARSER \nTLV: $tlv \n$result")
+                viewModel.printLog("TLV_PARSER \nTLV: $tlv \n$result\n")
             }
         }
     }
@@ -123,9 +123,12 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         binding.tilData2.tag = null
 
         binding.operationBtn1.visibility = View.GONE
+        binding.operationBtn1.setOnClickListener(null)
         binding.operationBtn2.visibility = View.GONE
+        binding.operationBtn2.setOnClickListener(null)
 
         binding.tilCondition1.visibility = View.GONE
+        binding.tilCondition2.visibility = View.GONE
 
         viewModel.inputData1.set("")
         viewModel.inputData1Max.set(null)

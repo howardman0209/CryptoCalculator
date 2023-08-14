@@ -12,7 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentCoreBinding
-import com.crypto.calculator.model.Tools
+import com.crypto.calculator.model.Tool
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 
@@ -37,7 +37,7 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
         Log.d("CoreFragment", "onViewCreated")
     }
 
-    fun setCorePanel(selectedTool: Tools) {
+    fun setCorePanel(selectedTool: Tool) {
         Log.d("setCorePanel", "selectedTool: $selectedTool")
         viewModel.currentTool.postValue(selectedTool)
     }

@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.ActivityMainBinding
-import com.crypto.calculator.model.Tools
+import com.crypto.calculator.model.Tool
 import com.crypto.calculator.ui.base.MVVMActivity
 import com.crypto.calculator.ui.view.fragment.CoreFragment
 import com.crypto.calculator.ui.viewModel.MainViewModel
@@ -45,9 +45,9 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
 
     private fun switchTab(itemId: Int = 0) {
         when (itemId) {
-            R.id.nav_tab1 -> (mainFragment as CoreFragment).setCorePanel(Tools.TLV_PARSER)
-            R.id.nav_tab2 -> (mainFragment as CoreFragment).setCorePanel(Tools.DES)
-            R.id.nav_tab3 -> (mainFragment as CoreFragment).setCorePanel(Tools.HASH)
+            R.id.nav_tab1 -> (mainFragment as CoreFragment).setCorePanel(Tool.TLV_PARSER)
+            R.id.nav_tab2 -> (mainFragment as CoreFragment).setCorePanel(Tool.DES)
+            R.id.nav_tab3 -> (mainFragment as CoreFragment).setCorePanel(Tool.HASH)
             else -> {
                 binding.navigationView.setCheckedItem(R.id.nav_tab1)
             }

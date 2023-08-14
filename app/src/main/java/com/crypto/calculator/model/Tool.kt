@@ -1,6 +1,6 @@
 package com.crypto.calculator.model
 
-enum class Tools {
+enum class Tool {
     DES,
     AES,
     MAC,

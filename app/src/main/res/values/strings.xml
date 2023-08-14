@@ -732,6 +732,10 @@
     <string name="label_tool_converter" translatable="false">Converter</string>
     <string name="label_tool_tlv_parser" translatable="false">TLV Parser</string>
 
-    <string name="input_data_hint" translatable="false">Data(%1$s)</string>
-    <string name="input_data_hint_with_max" translatable="false">Data(%1$s/%2$s)</string>
+    <string name="input_hint" translatable="false">%1$s(%2$s)</string>
+    <string name="input_hint_with_max" translatable="false">%1$s(%2$s/%3$s)</string>
+
+    <string name="label_operation_encrypt" translatable="false">Encrypt</string>
+    <string name="label_operation_decrypt" translatable="false">Decrypt</string>
+    <string name="label_operation_decode" translatable="false">Decode</string>
 </resources>

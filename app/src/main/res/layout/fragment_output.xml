@@ -28,6 +28,16 @@
             app:liftOnScroll="true">
 
             <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/wrapBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_half"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="@dimen/space_half"
+                android:src="@drawable/ic_baseline_wrap_text"
+                android:tint="@color/secondary" />
+
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/saveBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

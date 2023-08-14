@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ScrollView
 import androidx.core.view.marginBottom
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +20,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class OutputFragment : MVVMFragment<CoreViewModel, FragmentOutputBinding>() {
+    private val warpText = MutableLiveData(false)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -28,6 +30,15 @@ class OutputFragment : MVVMFragment<CoreViewModel, FragmentOutputBinding>() {
 
         viewModel.logMessage.observe(viewLifecycleOwner) {
             printLog(it)
+        }
+
+        warpText.observe(viewLifecycleOwner) {
+            if (!it) binding.logPanel.maxWidth = Int.MAX_VALUE else binding.logPanel.maxWidth = binding.horizontalScrollView.measuredWidth
+        }
+
+        binding.wrapBtn.setOnClickListener {
+            Log.d("wrapBtn", "OnClick")
+            warpText.postValue(warpText.value != true)
         }
 
         binding.saveBtn.setOnClickListener {

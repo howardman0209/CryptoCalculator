@@ -65,6 +65,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
         binding.tilData2.visibility = View.VISIBLE
         viewModel.inputData2Label.set("Key")
+        viewModel.inputData2Max.set(32)
 
         binding.tilCondition1.visibility = View.VISIBLE
         binding.tilCondition1.hint = "Mode"
@@ -97,17 +98,33 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         binding.operationBtn2.text = getString(R.string.label_operation_decrypt)
 
         binding.operationBtn1.setOnClickListener {
+            val data = viewModel.inputData1.get() ?: ""
+            val key = viewModel.inputData2.get() ?: ""
+            val mode = binding.autoTvCondition1.text.toString()
+            val padding = binding.autoTvCondition2.text.toString()
             val result = viewModel.desEncrypt(
-                message = viewModel.inputData1.get() ?: "",
-                key = viewModel.inputData2.get() ?: "",
-                mode = binding.autoTvCondition1.text.toString(),
-                padding = binding.autoTvCondition2.text.toString(),
+                data = data,
+                key = key,
+                mode = mode,
+                padding = padding
             )
-            Log.d("desCalculator", "result: $result")
+            Log.d("desCalculator, encrypt", "result: $result")
+            viewModel.printLog("DES_CALCULATOR \nData: $data \nKey: $key \nOperation: Encrypt \nMode: $mode \nPadding: $padding \nEncrypted data: $result\n")
         }
 
         binding.operationBtn2.setOnClickListener {
-
+            val data = viewModel.inputData1.get() ?: ""
+            val key = viewModel.inputData2.get() ?: ""
+            val mode = binding.autoTvCondition1.text.toString()
+            val padding = binding.autoTvCondition2.text.toString()
+            val result = viewModel.desDecrypt(
+                data = data,
+                key = key,
+                mode = mode,
+                padding = padding
+            )
+            Log.d("desCalculator, decrypt", "result: $result")
+            viewModel.printLog("DES_CALCULATOR \nData: $data \nKey: $key \nOperation: Decrypt \nMode: $mode \nDecrypted data: $result\n")
         }
     }
 

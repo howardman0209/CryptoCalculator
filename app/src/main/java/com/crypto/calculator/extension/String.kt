@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+import kotlin.math.ceil
 
 /**
  * Convert to ISOAmountString
@@ -222,4 +223,24 @@ fun String.hexXOR(hex: String): String {
     return res.toString(16).uppercase()
 }
 
-private fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
+fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
+
+fun String.applyISO9797Padding(method: Int): String {
+    return when (method) {
+        1 -> {
+            val padLen = ceil(this.length.div(16.0)).toInt().times(16).let {
+                if (it > 16) it else 16
+            }
+            this.padEnd(padLen, '0')
+        }
+
+        2 -> {
+            val padLen = ceil("${this}80".length.div(16.0)).toInt().times(16).let {
+                if (it > 16) it else 16
+            }
+            "${this}80".padEnd(padLen, '0')
+        }
+
+        else -> this
+    }
+}

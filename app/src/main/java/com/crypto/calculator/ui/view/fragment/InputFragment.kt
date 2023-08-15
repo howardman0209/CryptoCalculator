@@ -8,14 +8,13 @@ import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentInputBinding
 import com.crypto.calculator.extension.hexBitwise
 import com.crypto.calculator.model.BitwiseOperation
+import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewAdapter.DropDownMenuAdapter
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.util.HashUtil
 import com.crypto.calculator.util.TlvUtil
-import com.crypto.calculator.util.encryption_padding_iso9797_1_M1
-import com.crypto.calculator.util.encryption_padding_iso9797_1_M2
 
 class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
@@ -36,7 +35,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
             Tool.AES -> {}
 
-            Tool.MAC -> {}
+            Tool.MAC -> macCalculator()
 
             Tool.HASH -> hashCalculator()
 
@@ -70,7 +69,10 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
         binding.tilCondition2.visibility = View.VISIBLE
         binding.tilCondition2.hint = "Padding"
-        val paddingList = listOf(encryption_padding_iso9797_1_M1, encryption_padding_iso9797_1_M2)
+        val paddingList = listOf(
+            PaddingMethod.ISO9797_1_M1.name,
+            PaddingMethod.ISO9797_1_M2.name,
+        )
         binding.autoTvCondition2.setAdapter(
             DropDownMenuAdapter(
                 requireContext(),
@@ -165,6 +167,50 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             }
             Log.d("hashCalculator", "algorithm: $algorithm, result: $result")
             viewModel.printLog("HASH_CALCULATOR \nData: $data \nAlgorithm: $algorithm \nresult: $result\n")
+        }
+    }
+
+    private fun macCalculator() {
+        binding.tilData1.visibility = View.VISIBLE
+        viewModel.inputData1Label.set("Data")
+
+        binding.tilData2.visibility = View.VISIBLE
+        viewModel.inputData2Label.set("Key")
+        viewModel.inputData2Max.set(32)
+
+        binding.tilCondition1.visibility = View.VISIBLE
+        binding.tilCondition1.hint = "Padding"
+        val paddingList = listOf(
+            PaddingMethod.ISO9797_1_M1.name,
+            PaddingMethod.ISO9797_1_M2.name,
+        )
+        binding.autoTvCondition1.setAdapter(
+            DropDownMenuAdapter(
+                requireContext(),
+                R.layout.view_drop_down_menu_item,
+                paddingList,
+            )
+        )
+        binding.autoTvCondition1.setText(paddingList.first())
+
+        binding.operationBtn1.visibility = View.VISIBLE
+        binding.operationBtn1.text = getString(R.string.label_operation_encode)
+        binding.operationBtn1.setOnClickListener {
+            val data = viewModel.inputData1.get() ?: ""
+            val key = viewModel.inputData2.get() ?: ""
+            val adjustedKey = viewModel.fixDESKeyParity(key)
+            val padding = binding.autoTvCondition1.text.toString()
+            val result = try {
+                viewModel.macCompute(data, adjustedKey, padding)
+            } catch (e: Exception) {
+                e.message
+            }
+            Log.d("macCalculator", "result: $result")
+            viewModel.printLog(
+                "MAC_CALCULATOR \nData: $data \nKey: $adjustedKey " +
+                        (if (adjustedKey != key) "(Parity Fixed)" else "") +
+                        "\nresult: $result\n"
+            )
         }
     }
 

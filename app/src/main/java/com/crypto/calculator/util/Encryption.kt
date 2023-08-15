@@ -276,27 +276,15 @@ object Encryption {
         )?.copyOf(4)
     }
 
-    fun calculateMAC(key: ByteArray, data: ByteArray, macAlgo: String = "ISO9797ALG3MAC", cipherAlgo: String = "DESede", isPaddingMethod2: Boolean = false): ByteArray? {
-        return try {
-            val mac = Mac.getInstance(macAlgo, BouncyCastleProvider())
-            val sk = SecretKeySpec(getTDesKey(key), cipherAlgo)
-            mac.init(sk)
-            if (isPaddingMethod2) mac.doFinal(data + 0x80.toByte()) else mac.doFinal(data)
-        } catch (e: Exception) {
-            Log.d(tag, "Exception: $e")
-            null
-        }
-    }
-
-    fun calculateMAC(key: String, data: String, macAlgo: String = "ISO9797ALG3MAC", cipherAlgo: String = "DESede", isPaddingMethod2: Boolean = false): String? {
+    fun calculateMAC(key: String, data: String, macAlgo: String = "ISO9797ALG3MAC", cipherAlgo: String = "DESede"): String {
         return try {
             val mac = Mac.getInstance(macAlgo, BouncyCastleProvider())
             val sk = SecretKeySpec(getTDesKey(key.hexToByteArray()), cipherAlgo)
             mac.init(sk)
-            if (isPaddingMethod2) mac.doFinal(data.hexToByteArray() + 0x80.toByte()).toHexString() else mac.doFinal(data.hexToByteArray()).toHexString()
+            mac.doFinal(data.hexToByteArray()).toHexString()
         } catch (e: Exception) {
             Log.d(tag, "Exception: $e")
-            null
+            e.message ?: "Unknown Error"
         }
     }
 
@@ -307,6 +295,7 @@ object Encryption {
             cipher.init(operation, sk)
             cipher.doFinal(data.hexToByteArray()).toHexString()
         } catch (e: Exception) {
+            Log.d(tag, "Exception: $e")
             e.message ?: "Unknown Error"
         }
     }

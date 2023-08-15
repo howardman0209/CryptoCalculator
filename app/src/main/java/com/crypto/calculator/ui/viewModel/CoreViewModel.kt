@@ -3,12 +3,14 @@ package com.crypto.calculator.ui.viewModel
 import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import com.crypto.calculator.extension.adjustDESParity
 import com.crypto.calculator.extension.applyISO9797Padding
+import com.crypto.calculator.extension.hexToByteArray
+import com.crypto.calculator.extension.toHexString
+import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.ui.base.BaseViewModel
 import com.crypto.calculator.util.Encryption
-import com.crypto.calculator.util.encryption_padding_iso9797_1_M1
-import com.crypto.calculator.util.encryption_padding_iso9797_1_M2
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import javax.crypto.Cipher
@@ -33,8 +35,8 @@ class CoreViewModel : BaseViewModel() {
 
     fun desEncrypt(data: String, key: String, mode: String, padding: String): String {
         val plaintext = when (padding) {
-            encryption_padding_iso9797_1_M1 -> data.applyISO9797Padding(1)
-            encryption_padding_iso9797_1_M2 -> data.applyISO9797Padding(2)
+            PaddingMethod.ISO9797_1_M1.name -> data.applyISO9797Padding(1)
+            PaddingMethod.ISO9797_1_M2.name -> data.applyISO9797Padding(2)
             else -> data
         }
         return Encryption.doDES(key, plaintext, mode, Cipher.ENCRYPT_MODE).uppercase()
@@ -43,8 +45,21 @@ class CoreViewModel : BaseViewModel() {
     fun desDecrypt(data: String, key: String, mode: String, padding: String): String {
         val decrypted = Encryption.doDES(key, data, mode, Cipher.DECRYPT_MODE).uppercase()
         return when (padding) {
-            encryption_padding_iso9797_1_M2 -> decrypted.substringBeforeLast("80")
+            PaddingMethod.ISO9797_1_M2.name -> decrypted.substringBeforeLast("80")
             else -> decrypted
         }
+    }
+
+    fun macCompute(data: String, key: String, padding: String): String {
+        val plaintext = when (padding) {
+            PaddingMethod.ISO9797_1_M1.name -> data.applyISO9797Padding(1)
+            PaddingMethod.ISO9797_1_M2.name -> data.applyISO9797Padding(2)
+            else -> data
+        }
+        return Encryption.calculateMAC(key, plaintext).uppercase()
+    }
+
+    fun fixDESKeyParity(key: String): String {
+        return key.hexToByteArray().adjustDESParity().toHexString().uppercase()
     }
 }

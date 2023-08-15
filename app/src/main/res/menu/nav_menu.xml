@@ -16,5 +16,13 @@
             android:id="@+id/nav_tab3"
             android:icon="@drawable/ic_android"
             android:title="@string/label_tool_hash" />
+        <item
+            android:id="@+id/nav_tab4"
+            android:icon="@drawable/ic_android"
+            android:title="@string/label_tool_bitwise" />
+        <item
+            android:id="@+id/nav_tab5"
+            android:icon="@drawable/ic_android"
+            android:title="@string/label_tool_mac" />
     </group>
 </menu>

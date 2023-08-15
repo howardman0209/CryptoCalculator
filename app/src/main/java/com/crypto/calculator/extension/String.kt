@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.text.Editable
 import android.util.Base64
 import android.util.Patterns
+import com.crypto.calculator.model.BitwiseOperation
 import com.crypto.calculator.util.*
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
@@ -216,11 +217,17 @@ fun String.hexToBinary(): String {
     return binary.padStart(this.length * 4, '0')
 }
 
-fun String.hexXOR(hex: String): String {
+fun String.hexBitwise(hex: String, operation: BitwiseOperation): String {
     val i1 = BigInteger(this, 16)
     val i2 = BigInteger(hex, 16)
-    val res: BigInteger = i1.xor(i2)
-    return res.toString(16).uppercase()
+    val i3 = BigInteger("FF".padEnd(this.length, 'F'), 16)
+    val res = when (operation) {
+        BitwiseOperation.XOR -> i1.xor(i2)
+        BitwiseOperation.AND -> i1.and(i2)
+        BitwiseOperation.OR -> i1.or(i2)
+        BitwiseOperation.NOT -> i1.xor(i3)
+    }
+    return res.toString(16).uppercase().padStart(hex.length, '0')
 }
 
 fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)

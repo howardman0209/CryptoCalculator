@@ -6,6 +6,8 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentInputBinding
+import com.crypto.calculator.extension.hexBitwise
+import com.crypto.calculator.model.BitwiseOperation
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewAdapter.DropDownMenuAdapter
@@ -29,33 +31,19 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
     private fun setLayout(tool: Tool) {
         resetInput()
         when (tool) {
-            Tool.DES -> {
-                desCalculator()
-            }
+            Tool.DES -> desCalculator()
 
-            Tool.AES -> {
+            Tool.AES -> {}
 
-            }
+            Tool.MAC -> {}
 
-            Tool.MAC -> {
+            Tool.HASH -> hashCalculator()
 
-            }
+            Tool.BITWISE -> bitwiseCalculator()
 
-            Tool.HASH -> {
+            Tool.CONVERTER -> {}
 
-            }
-
-            Tool.BITWISE -> {
-
-            }
-
-            Tool.CONVERTER -> {
-
-            }
-
-            Tool.TLV_PARSER -> {
-                tlvParser()
-            }
+            Tool.TLV_PARSER -> tlvParser()
         }
     }
 
@@ -145,6 +133,66 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
                 Log.d("tlvParser", "result: $result")
                 viewModel.printLog("TLV_PARSER \nTLV: $tlv \n$result\n")
             }
+        }
+    }
+
+    private fun hashCalculator() {
+
+    }
+
+    private fun bitwiseCalculator() {
+        binding.tilData1.visibility = View.VISIBLE
+        viewModel.inputData1Label.set("Data1")
+
+        binding.tilData2.visibility = View.VISIBLE
+        viewModel.inputData2Label.set("Data2")
+
+        binding.tilCondition1.visibility = View.VISIBLE
+        binding.tilCondition1.hint = "Operation"
+        val modeList = listOf(
+            BitwiseOperation.XOR.name,
+            BitwiseOperation.AND.name,
+            BitwiseOperation.OR.name,
+            BitwiseOperation.NOT.name,
+        )
+        binding.autoTvCondition1.setAdapter(
+            DropDownMenuAdapter(
+                requireContext(),
+                R.layout.view_drop_down_menu_item,
+                modeList,
+            )
+        )
+        var selected = 0
+        binding.autoTvCondition1.setText(modeList.first())
+        binding.autoTvCondition1.setOnItemClickListener { _, _, i, _ ->
+            selected = i
+            if (i == 3) binding.tilData2.visibility = View.GONE else binding.tilData2.visibility = View.VISIBLE
+        }
+
+        binding.operationBtn1.visibility = View.VISIBLE
+        binding.operationBtn1.text = getString(R.string.label_operation_encode)
+        binding.operationBtn1.setOnClickListener {
+            val data1 = viewModel.inputData1.get() ?: ""
+            val data2 = viewModel.inputData2.get() ?: ""
+            val operation = when (selected) {
+                0 -> BitwiseOperation.XOR
+                1 -> BitwiseOperation.AND
+                2 -> BitwiseOperation.OR
+                else -> BitwiseOperation.NOT
+            }
+            val result = try {
+                Log.d("bitwiseCalculator", "operation: $operation")
+                data1.hexBitwise(data2, operation)
+            } catch (e: Exception) {
+                e.message
+            }
+            Log.d("bitwiseCalculator", "result: $result")
+            viewModel.printLog(
+                "BITWISE_CALCULATOR \n" +
+                        "Operation: $operation \nData 1: $data1 " +
+                        (if (selected != 3) "\nData 2: $data2 " else "") +
+                        "\nresult: $result\n"
+            )
         }
     }
 

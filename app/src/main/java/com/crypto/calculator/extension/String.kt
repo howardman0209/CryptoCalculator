@@ -218,14 +218,12 @@ fun String.hexToBinary(): String {
 }
 
 fun String.hexBitwise(hex: String, operation: BitwiseOperation): String {
-    val i1 = BigInteger(this, 16)
-    val i2 = BigInteger(hex, 16)
-    val i3 = BigInteger("FF".padEnd(this.length, 'F'), 16)
+    val data = BigInteger(this, 16)
     val res = when (operation) {
-        BitwiseOperation.XOR -> i1.xor(i2)
-        BitwiseOperation.AND -> i1.and(i2)
-        BitwiseOperation.OR -> i1.or(i2)
-        BitwiseOperation.NOT -> i1.xor(i3)
+        BitwiseOperation.XOR -> data.xor(BigInteger(hex, 16))
+        BitwiseOperation.AND -> data.and(BigInteger(hex, 16))
+        BitwiseOperation.OR -> data.or(BigInteger(hex, 16))
+        BitwiseOperation.NOT -> data.xor(BigInteger("FF".padEnd(this.length, 'F'), 16))
     }
     return res.toString(16).uppercase().padStart(hex.length, '0')
 }

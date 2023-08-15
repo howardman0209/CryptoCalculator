@@ -12,6 +12,7 @@ import com.crypto.calculator.model.Tool
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewAdapter.DropDownMenuAdapter
 import com.crypto.calculator.ui.viewModel.CoreViewModel
+import com.crypto.calculator.util.HashUtil
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.encryption_padding_iso9797_1_M1
 import com.crypto.calculator.util.encryption_padding_iso9797_1_M2
@@ -137,19 +138,46 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
     }
 
     private fun hashCalculator() {
+        binding.tilData1.visibility = View.VISIBLE
+        viewModel.inputData1Label.set("Data")
 
+        binding.tilCondition1.visibility = View.VISIBLE
+        binding.tilCondition1.hint = "Algorithm"
+        val algoList = listOf("SHA-1", "SHA-224", "SHA-256", "MD5")
+        binding.autoTvCondition1.setAdapter(
+            DropDownMenuAdapter(
+                requireContext(),
+                R.layout.view_drop_down_menu_item,
+                algoList,
+            )
+        )
+        binding.autoTvCondition1.setText(algoList.first())
+
+        binding.operationBtn1.visibility = View.VISIBLE
+        binding.operationBtn1.text = getString(R.string.label_operation_encode)
+        binding.operationBtn1.setOnClickListener {
+            val data = viewModel.inputData1.get() ?: ""
+            val algorithm = binding.autoTvCondition1.text.toString()
+            val result = try {
+                HashUtil.getHexHash(data, algorithm)
+            } catch (e: Exception) {
+                e.message
+            }
+            Log.d("hashCalculator", "algorithm: $algorithm, result: $result")
+            viewModel.printLog("HASH_CALCULATOR \nData: $data \nAlgorithm: $algorithm \nresult: $result\n")
+        }
     }
 
     private fun bitwiseCalculator() {
         binding.tilData1.visibility = View.VISIBLE
-        viewModel.inputData1Label.set("Data1")
+        viewModel.inputData1Label.set("Block A")
 
         binding.tilData2.visibility = View.VISIBLE
-        viewModel.inputData2Label.set("Data2")
+        viewModel.inputData2Label.set("Block B")
 
         binding.tilCondition1.visibility = View.VISIBLE
         binding.tilCondition1.hint = "Operation"
-        val modeList = listOf(
+        val opList = listOf(
             BitwiseOperation.XOR.name,
             BitwiseOperation.AND.name,
             BitwiseOperation.OR.name,
@@ -159,11 +187,11 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             DropDownMenuAdapter(
                 requireContext(),
                 R.layout.view_drop_down_menu_item,
-                modeList,
+                opList,
             )
         )
         var selected = 0
-        binding.autoTvCondition1.setText(modeList.first())
+        binding.autoTvCondition1.setText(opList.first())
         binding.autoTvCondition1.setOnItemClickListener { _, _, i, _ ->
             selected = i
             if (i == 3) binding.tilData2.visibility = View.GONE else binding.tilData2.visibility = View.VISIBLE
@@ -208,6 +236,9 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
         binding.tilCondition1.visibility = View.GONE
         binding.tilCondition2.visibility = View.GONE
+
+        binding.autoTvCondition1.onItemClickListener = null
+        binding.autoTvCondition2.onItemClickListener = null
 
         viewModel.inputData1.set("")
         viewModel.inputData1Max.set(null)

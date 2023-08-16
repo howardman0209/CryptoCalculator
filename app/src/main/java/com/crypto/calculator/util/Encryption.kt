@@ -283,7 +283,7 @@ object Encryption {
             mac.init(sk)
             mac.doFinal(data.hexToByteArray()).toHexString()
         } catch (e: Exception) {
-            Log.d(tag, "Exception: $e")
+            Log.e(tag, "Exception: $e")
             throw e
         }
     }
@@ -295,7 +295,18 @@ object Encryption {
             cipher.init(operation, sk)
             cipher.doFinal(data.hexToByteArray()).toHexString()
         } catch (e: Exception) {
-            Log.d(tag, "Exception: $e")
+            Log.e(tag, "Exception: $e")
+            throw e
+        }
+    }
+
+    fun doRSA(data: String, exponent: String, modulus: String): String {
+        return try {
+            val e = exponent.toBigInteger(16)
+            val n = modulus.toBigInteger(16)
+            data.toBigInteger(16).modPow(e, n).toHexString()
+        } catch (e: Exception) {
+            Log.e(tag, "Exception: $e")
             throw e
         }
     }

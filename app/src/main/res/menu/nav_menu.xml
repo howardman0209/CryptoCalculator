@@ -28,5 +28,9 @@
             android:id="@+id/nav_tab6"
             android:icon="@drawable/ic_android"
             android:title="@string/label_tool_converter" />
+        <item
+            android:id="@+id/nav_tab7"
+            android:icon="@drawable/ic_android"
+            android:title="@string/label_tool_rsa" />
     </group>
 </menu>

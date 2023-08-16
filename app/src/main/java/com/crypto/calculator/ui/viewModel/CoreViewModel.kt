@@ -38,6 +38,12 @@ class CoreViewModel : BaseViewModel() {
     val inputData2Filter: MutableLiveData<List<InputFilter>> = MutableLiveData(emptyList())
     val inputData2InputType: MutableLiveData<Int> = MutableLiveData(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS)
 
+    val inputData3: ObservableField<String> = ObservableField()
+    val inputData3Max: ObservableField<Int?> = ObservableField()
+    val inputData3Label: ObservableField<String> = ObservableField()
+    val inputData3Filter: MutableLiveData<List<InputFilter>> = MutableLiveData(emptyList())
+    val inputData3InputType: MutableLiveData<Int> = MutableLiveData(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS)
+
     fun setInputData1Filter(maxLength: Int? = null, inputFormat: DataFormat = DataFormat.HEXADECIMAL) {
         inputData1Filter.value = emptyList()
         inputData1Max.set(maxLength)
@@ -78,6 +84,26 @@ class CoreViewModel : BaseViewModel() {
         inputData2Filter.postValue(filterList)
     }
 
+    fun setInputData3Filter(maxLength: Int? = null, inputFormat: DataFormat = DataFormat.HEXADECIMAL) {
+        inputData3Filter.value = emptyList()
+        inputData3Max.set(maxLength)
+        if (inputFormat != DataFormat.ASCII) {
+            inputData3InputType.postValue(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS)
+        } else {
+            inputData3InputType.postValue(InputType.TYPE_CLASS_TEXT)
+        }
+        val filterList = listOfNotNull(
+            maxLength?.let { InputFilterUtil.getLengthInputFilter(it) },
+            when (inputFormat) {
+                DataFormat.HEXADECIMAL -> InputFilterUtil.getHexInputFilter()
+                DataFormat.BINARY -> InputFilterUtil.getBinInputFilter()
+                DataFormat.DECIMAL -> InputFilterUtil.getDesInputFilter()
+                DataFormat.ASCII -> null
+            }
+        )
+        inputData3Filter.postValue(filterList)
+    }
+
     fun printLog(message: String) {
         logMessage.postValue(message)
     }
@@ -98,5 +124,9 @@ class CoreViewModel : BaseViewModel() {
 
     fun fixDESKeyParity(key: String): String {
         return key.hexToByteArray().adjustDESParity().toHexString().uppercase()
+    }
+
+    fun rsaCompute(data: String, exponent: String, modulus: String): String {
+        return Encryption.doRSA(data, exponent, modulus).uppercase()
     }
 }

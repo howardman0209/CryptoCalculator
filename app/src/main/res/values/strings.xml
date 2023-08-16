@@ -725,6 +725,7 @@
     <string name="label_account_saving" translatable="false">"Saving"</string>
 
     <string name="label_tool_des" translatable="false">DES</string>
+    <string name="label_tool_rsa" translatable="false">RSA</string>
     <string name="label_tool_aes" translatable="false">AES</string>
     <string name="label_tool_mac" translatable="false">MAC</string>
     <string name="label_tool_hash" translatable="false">Hash</string>
@@ -740,4 +741,5 @@
     <string name="label_operation_encode" translatable="false">Encode</string>
     <string name="label_operation_decode" translatable="false">Decode</string>
     <string name="label_operation_convert" translatable="false">Convert</string>
+    <string name="label_operation_compute" translatable="false">Compute</string>
 </resources>

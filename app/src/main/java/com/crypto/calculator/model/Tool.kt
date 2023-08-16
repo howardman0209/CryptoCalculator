@@ -2,6 +2,7 @@ package com.crypto.calculator.model
 
 enum class Tool {
     DES,
+    RSA,
     AES,
     MAC,
     HASH,

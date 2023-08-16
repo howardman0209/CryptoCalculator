@@ -1,6 +1,7 @@
 package com.crypto.calculator.ui.view.fragment
 
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
@@ -28,19 +29,39 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         Log.d("InputFragment", "onViewCreated")
 
         viewModel.inputData1InputType.observe(viewLifecycleOwner) {
-            binding.etData1.inputType = it
+            binding.etData1.apply {
+                inputType = it or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                isSingleLine = false
+            }
         }
 
         viewModel.inputData1Filter.observe(viewLifecycleOwner) {
             binding.etData1.bindInputFilters(it)
+            viewModel.inputData1.set("")
         }
 
         viewModel.inputData2InputType.observe(viewLifecycleOwner) {
-            binding.etData2.inputType = it
+            binding.etData2.apply {
+                inputType = it or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                isSingleLine = false
+            }
         }
 
         viewModel.inputData2Filter.observe(viewLifecycleOwner) {
             binding.etData2.bindInputFilters(it)
+            viewModel.inputData2.set("")
+        }
+
+        viewModel.inputData3InputType.observe(viewLifecycleOwner) {
+            binding.etData3.apply {
+                inputType = it or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                isSingleLine = false
+            }
+        }
+
+        viewModel.inputData3Filter.observe(viewLifecycleOwner) {
+            binding.etData3.bindInputFilters(it)
+            viewModel.inputData3.set("")
         }
 
         viewModel.currentTool.observe(viewLifecycleOwner) {
@@ -54,6 +75,8 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         when (tool) {
             Tool.DES -> desCalculator()
 
+            Tool.RSA -> rsaCalculator()
+
             Tool.AES -> {}
 
             Tool.MAC -> macCalculator()
@@ -65,6 +88,29 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             Tool.CONVERTER -> converter()
 
             Tool.TLV_PARSER -> tlvParser()
+        }
+    }
+
+    private fun rsaCalculator() {
+        binding.tilData1.visibility = View.VISIBLE
+        viewModel.inputData1Label.set("Data")
+
+        binding.tilData2.visibility = View.VISIBLE
+        viewModel.inputData2Label.set("Exponent")
+
+        binding.tilData3.visibility = View.VISIBLE
+        viewModel.inputData3Label.set("Modulus")
+
+        binding.operationBtn1.visibility = View.VISIBLE
+        binding.operationBtn1.text = getString(R.string.label_operation_compute)
+        binding.operationBtn1.setOnClickListener {
+            val data = viewModel.inputData1.get() ?: ""
+            val exponent = viewModel.inputData2.get() ?: ""
+            val modulus = viewModel.inputData3.get() ?: ""
+            val result = safeExecute {
+                viewModel.rsaCompute(data, exponent, modulus)
+            }
+            viewModel.printLog("RSA_CALCULATOR \nData: $data \nExponent: $exponent \nModulus: $modulus \nResult: $result\n")
         }
     }
 
@@ -336,9 +382,10 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
     }
 
     private fun resetInput() {
+        Log.d("InputFragment", "resetInput")
         binding.tilData1.visibility = View.GONE
         binding.tilData2.visibility = View.GONE
-        binding.tilData2.tag = null
+        binding.tilData3.visibility = View.GONE
 
         binding.operationBtn1.visibility = View.GONE
         binding.operationBtn1.setOnClickListener(null)
@@ -351,13 +398,14 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         binding.autoTvCondition1.onItemClickListener = null
         binding.autoTvCondition2.onItemClickListener = null
 
-        viewModel.inputData1.set("")
-        viewModel.inputData1Label.set("")
         viewModel.setInputData1Filter()
+        viewModel.inputData1Label.set("")
 
-        viewModel.inputData2.set("")
-        viewModel.inputData2Label.set("")
         viewModel.setInputData2Filter()
+        viewModel.inputData2Label.set("")
+
+        viewModel.setInputData3Filter()
+        viewModel.inputData3Label.set("")
     }
 
     private fun safeExecute(task: () -> String): String {

@@ -165,12 +165,12 @@ fun String.hexToAscii(): String {
         .toString(Charsets.ISO_8859_1)  // Or whichever encoding your input uses
 }
 
-fun String.asciiToHex(): String {
+fun String.asciiToHex(separator: String = " "): String {
     val output = StringBuilder("")
-
-    for (c: Char in this)
-        output.append(c.code.toString(16))
-
+    this.forEach {
+        output.append(it.code.toString(16))
+        output.append(separator)
+    }
     return output.toString()
 }
 

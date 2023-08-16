@@ -24,5 +24,9 @@
             android:id="@+id/nav_tab5"
             android:icon="@drawable/ic_android"
             android:title="@string/label_tool_mac" />
+        <item
+            android:id="@+id/nav_tab6"
+            android:icon="@drawable/ic_android"
+            android:title="@string/label_tool_converter" />
     </group>
 </menu>

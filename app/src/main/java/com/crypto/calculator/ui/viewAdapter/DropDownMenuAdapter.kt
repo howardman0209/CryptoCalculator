@@ -10,9 +10,9 @@ import android.widget.TextView
 
 class DropDownMenuAdapter(
     context: Context, private val layoutResource: Int,
-    itemFullList: List<String>, private val unAssignItem: String? = null
-) : ArrayAdapter<String>(context, layoutResource, itemFullList), Filterable {
-    private var itemList: List<String> = itemFullList
+    itemFullList: List<Any>, private val unAssignItem: String? = null
+) : ArrayAdapter<Any>(context, layoutResource, itemFullList), Filterable {
+    private var itemList: List<Any> = itemFullList
     private var selectedItem: String? = null
 
     override fun getCount(): Int {
@@ -20,11 +20,11 @@ class DropDownMenuAdapter(
     }
 
     override fun getItem(p0: Int): String {
-        selectedItem = itemList[p0]
+        selectedItem = itemList[p0].toString()
         return if (unAssignItem.isNullOrEmpty()) {
-            itemList[p0]
+            itemList[p0].toString()
         } else {
-            itemList[p0].ifEmpty {
+            itemList[p0].toString().ifEmpty {
                 unAssignItem
             }
         }
@@ -32,10 +32,10 @@ class DropDownMenuAdapter(
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view: TextView = convertView as TextView? ?: LayoutInflater.from(context).inflate(layoutResource, parent, false) as TextView
-        view.text = itemList[position].ifEmpty {
+        view.text = itemList[position].toString().ifEmpty {
             unAssignItem
         }
-        selectedItem = itemList[position]
+        selectedItem = itemList[position].toString()
         return view
     }
 }

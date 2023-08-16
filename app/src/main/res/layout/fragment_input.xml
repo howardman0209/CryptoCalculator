@@ -37,12 +37,9 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etData1"
-                    inputMaxLength="@{viewModel.inputData1Max}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:digits="0123456789ABCDEF"
                     android:importantForAutofill="no"
-                    android:inputType="textCapCharacters"
                     android:text="@={viewModel.inputData1}" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -58,12 +55,9 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etData2"
-                    inputMaxLength="@{viewModel.inputData2Max}"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:digits="0123456789ABCDEF"
                     android:importantForAutofill="no"
-                    android:inputType="textCapCharacters"
                     android:text="@={viewModel.inputData2}" />
             </com.google.android.material.textfield.TextInputLayout>
 

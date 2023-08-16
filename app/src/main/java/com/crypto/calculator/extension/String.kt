@@ -7,7 +7,9 @@ import android.text.Editable
 import android.util.Base64
 import android.util.Patterns
 import com.crypto.calculator.model.BitwiseOperation
+import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.util.*
+import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
@@ -155,8 +157,8 @@ fun String.hexToByteArray(): ByteArray {
 
 fun String.rotate(n: Int) = drop(n % length) + take(n % length)
 
-fun String.decodeHex(): String {
-    require(length % 2 == 0) { "Must have an even length" }
+fun String.hexToAscii(): String {
+    require(length % 2 == 0) { "Input data have an even length" }
     return chunked(2)
         .map { it.toInt(16).toByte() }
         .toByteArray()
@@ -167,7 +169,7 @@ fun String.asciiToHex(): String {
     val output = StringBuilder("")
 
     for (c: Char in this)
-        output.append(c.toInt().toString(16))
+        output.append(c.code.toString(16))
 
     return output.toString()
 }
@@ -230,22 +232,31 @@ fun String.hexBitwise(hex: String, operation: BitwiseOperation): String {
 
 fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 
-fun String.applyISO9797Padding(method: Int): String {
-    return when (method) {
-        1 -> {
+fun String.applyPadding(paddingMethod: PaddingMethod): String {
+    return when (paddingMethod) {
+        PaddingMethod.ISO9797_1_M1 -> {
             val padLen = ceil(this.length.div(16.0)).toInt().times(16).let {
                 if (it > 16) it else 16
             }
             this.padEnd(padLen, '0')
         }
 
-        2 -> {
+        PaddingMethod.ISO9797_1_M2 -> {
             val padLen = ceil("${this}80".length.div(16.0)).toInt().times(16).let {
                 if (it > 16) it else 16
             }
             "${this}80".padEnd(padLen, '0')
         }
+    }
+}
 
+fun String.removePadding(paddingMethod: PaddingMethod): String {
+    return when (paddingMethod) {
+        PaddingMethod.ISO9797_1_M2 -> this.substringBeforeLast("80")
         else -> this
     }
+}
+
+inline fun <reified T> String.toDataClass(): T {
+    return Gson().fromJson(this, T::class.java)
 }

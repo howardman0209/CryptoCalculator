@@ -50,6 +50,7 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
             R.id.nav_tab3 -> (mainFragment as CoreFragment).setCorePanel(Tool.HASH)
             R.id.nav_tab4 -> (mainFragment as CoreFragment).setCorePanel(Tool.BITWISE)
             R.id.nav_tab5 -> (mainFragment as CoreFragment).setCorePanel(Tool.MAC)
+            R.id.nav_tab6 -> (mainFragment as CoreFragment).setCorePanel(Tool.CONVERTER)
             else -> {
                 binding.navigationView.setCheckedItem(R.id.nav_tab1)
             }

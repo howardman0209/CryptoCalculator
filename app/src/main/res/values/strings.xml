@@ -739,4 +739,5 @@
     <string name="label_operation_decrypt" translatable="false">Decrypt</string>
     <string name="label_operation_encode" translatable="false">Encode</string>
     <string name="label_operation_decode" translatable="false">Decode</string>
+    <string name="label_operation_convert" translatable="false">Convert</string>
 </resources>

@@ -1,24 +1,19 @@
 package com.crypto.calculator.util
 
 import android.text.InputFilter
-import android.widget.TextView
+import android.util.Log
 import androidx.databinding.BindingAdapter
 import com.google.android.material.textfield.TextInputEditText
 
-@BindingAdapter("inputFilters")
-fun TextView.bindInputFilters(inputFilters: List<InputFilter>) {
-    this.filters = arrayOf(
-        *this.filters,
-        *inputFilters.toTypedArray()
-    )
-}
 
-@BindingAdapter("inputMaxLength")
-fun TextInputEditText.bindInputMaxLength(inputMaxLength: Int?) {
-    if (inputMaxLength != null) {
+@BindingAdapter("inputFilters")
+fun TextInputEditText.bindInputFilters(inputFilters: List<InputFilter>) {
+    if (inputFilters.isNotEmpty()) {
         this.filters = arrayOf(
             *this.filters,
-            InputFilter.LengthFilter(inputMaxLength)
+            *inputFilters.toTypedArray()
         )
+    } else {
+        this.filters = emptyArray()
     }
 }

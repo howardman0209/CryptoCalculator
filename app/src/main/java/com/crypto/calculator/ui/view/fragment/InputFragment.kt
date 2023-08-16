@@ -7,20 +7,41 @@ import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentInputBinding
 import com.crypto.calculator.extension.hexBitwise
+import com.crypto.calculator.extension.toDataClass
 import com.crypto.calculator.model.BitwiseOperation
+import com.crypto.calculator.model.DataFormat
 import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewAdapter.DropDownMenuAdapter
 import com.crypto.calculator.ui.viewModel.CoreViewModel
+import com.crypto.calculator.util.ConverterUtil
 import com.crypto.calculator.util.HashUtil
 import com.crypto.calculator.util.TlvUtil
+import com.crypto.calculator.util.bindInputFilters
+import com.google.gson.Gson
 
 class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("InputFragment", "onViewCreated")
+
+        viewModel.inputData1InputType.observe(viewLifecycleOwner) {
+            binding.etData1.inputType = it
+        }
+
+        viewModel.inputData1Filter.observe(viewLifecycleOwner) {
+            binding.etData1.bindInputFilters(it)
+        }
+
+        viewModel.inputData2InputType.observe(viewLifecycleOwner) {
+            binding.etData2.inputType = it
+        }
+
+        viewModel.inputData2Filter.observe(viewLifecycleOwner) {
+            binding.etData2.bindInputFilters(it)
+        }
 
         viewModel.currentTool.observe(viewLifecycleOwner) {
             Log.d("InputFragment", "currentTool: $it")
@@ -41,7 +62,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
             Tool.BITWISE -> bitwiseCalculator()
 
-            Tool.CONVERTER -> {}
+            Tool.CONVERTER -> converter()
 
             Tool.TLV_PARSER -> tlvParser()
         }
@@ -53,7 +74,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
         binding.tilData2.visibility = View.VISIBLE
         viewModel.inputData2Label.set("Key")
-        viewModel.inputData2Max.set(48)
+        viewModel.setInputData2Filter(maxLength = 48)
 
         binding.tilCondition1.visibility = View.VISIBLE
         binding.tilCondition1.hint = "Mode"
@@ -70,8 +91,8 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         binding.tilCondition2.visibility = View.VISIBLE
         binding.tilCondition2.hint = "Padding"
         val paddingList = listOf(
-            PaddingMethod.ISO9797_1_M1.name,
-            PaddingMethod.ISO9797_1_M2.name,
+            PaddingMethod.ISO9797_1_M1,
+            PaddingMethod.ISO9797_1_M2,
         )
         binding.autoTvCondition2.setAdapter(
             DropDownMenuAdapter(
@@ -80,7 +101,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
                 paddingList,
             )
         )
-        binding.autoTvCondition2.setText(paddingList.first())
+        binding.autoTvCondition2.setText(paddingList.first().name)
 
         binding.operationBtn1.visibility = View.VISIBLE
         binding.operationBtn1.text = getString(R.string.label_operation_encrypt)
@@ -93,7 +114,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             val key = viewModel.inputData2.get() ?: ""
             val adjustedKey = viewModel.fixDESKeyParity(key)
             val mode = binding.autoTvCondition1.text.toString()
-            val padding = binding.autoTvCondition2.text.toString()
+            val padding = binding.autoTvCondition2.text.toString().toDataClass<PaddingMethod>()
             val result = viewModel.desEncrypt(
                 data = data,
                 key = key,
@@ -113,7 +134,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             val key = viewModel.inputData2.get() ?: ""
             val adjustedKey = viewModel.fixDESKeyParity(key)
             val mode = binding.autoTvCondition1.text.toString()
-            val padding = binding.autoTvCondition2.text.toString()
+            val padding = binding.autoTvCondition2.text.toString().toDataClass<PaddingMethod>()
             val result = viewModel.desDecrypt(
                 data = data,
                 key = key,
@@ -124,7 +145,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             viewModel.printLog(
                 "DES_CALCULATOR \nData: $data \nKey: $adjustedKey " +
                         (if (adjustedKey != key) "(Parity Fixed)" else "") +
-                        "\nOperation: Decrypt \nMode: $mode \nDecrypted data: $result\n"
+                        "\nOperation: Decrypt \nMode: $mode \nPadding: $padding \nDecrypted data: $result\n"
             )
         }
     }
@@ -146,6 +167,59 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
                 Log.d("tlvParser", "result: $result")
                 viewModel.printLog("TLV_PARSER \nTLV: $tlv \n$result\n")
             }
+        }
+    }
+
+    private fun converter() {
+        binding.tilData1.visibility = View.VISIBLE
+        viewModel.inputData1Label.set("Data")
+
+        val formatList = listOf(
+            DataFormat.HEXADECIMAL,
+            DataFormat.BINARY,
+            DataFormat.DECIMAL,
+            DataFormat.ASCII,
+        )
+        binding.tilCondition1.visibility = View.VISIBLE
+        binding.tilCondition1.hint = "From"
+        binding.autoTvCondition1.setAdapter(
+            DropDownMenuAdapter(
+                requireContext(),
+                R.layout.view_drop_down_menu_item,
+                formatList,
+            )
+        )
+        binding.autoTvCondition1.setText(formatList.first().name)
+        binding.autoTvCondition1.setOnItemClickListener { _, _, i, _ ->
+            viewModel.setInputData1Filter(inputFormat = formatList[i])
+        }
+
+        binding.tilCondition2.visibility = View.VISIBLE
+        binding.tilCondition2.hint = "To"
+        binding.autoTvCondition2.setAdapter(
+            DropDownMenuAdapter(
+                requireContext(),
+                R.layout.view_drop_down_menu_item,
+                formatList,
+            )
+        )
+        binding.autoTvCondition2.setText(formatList.last().name)
+
+        binding.operationBtn1.visibility = View.VISIBLE
+        binding.operationBtn1.text = getString(R.string.label_operation_convert)
+        binding.operationBtn1.setOnClickListener {
+            val data = viewModel.inputData1.get() ?: ""
+            val fromFormat = binding.autoTvCondition1.text.toString().toDataClass<DataFormat>()
+            val toFormat = binding.autoTvCondition2.text.toString().toDataClass<DataFormat>()
+            Log.d("converter", "data: $data, from: $fromFormat, to: $toFormat")
+
+            val result = try {
+                ConverterUtil.convertString(data, fromFormat, toFormat)
+            } catch (e: Exception) {
+                e.message
+            }
+            Log.d("converter", "result: $result")
+            viewModel.printLog("CONVERTER \nData: $data \nFrom: $fromFormat \nto: $toFormat \nresult: $result\n")
         }
     }
 
@@ -186,13 +260,13 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
         binding.tilData2.visibility = View.VISIBLE
         viewModel.inputData2Label.set("Key")
-        viewModel.inputData2Max.set(32)
+        viewModel.setInputData2Filter(maxLength = 32)
 
         binding.tilCondition1.visibility = View.VISIBLE
         binding.tilCondition1.hint = "Padding"
         val paddingList = listOf(
-            PaddingMethod.ISO9797_1_M1.name,
-            PaddingMethod.ISO9797_1_M2.name,
+            PaddingMethod.ISO9797_1_M1,
+            PaddingMethod.ISO9797_1_M2,
         )
         binding.autoTvCondition1.setAdapter(
             DropDownMenuAdapter(
@@ -201,7 +275,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
                 paddingList,
             )
         )
-        binding.autoTvCondition1.setText(paddingList.first())
+        binding.autoTvCondition1.setText(paddingList.first().name)
 
         binding.operationBtn1.visibility = View.VISIBLE
         binding.operationBtn1.text = getString(R.string.label_operation_encode)
@@ -209,7 +283,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             val data = viewModel.inputData1.get() ?: ""
             val key = viewModel.inputData2.get() ?: ""
             val adjustedKey = viewModel.fixDESKeyParity(key)
-            val padding = binding.autoTvCondition1.text.toString()
+            val padding = binding.autoTvCondition1.text.toString().toDataClass<PaddingMethod>()
             val result = try {
                 viewModel.macCompute(data, adjustedKey, padding)
             } catch (e: Exception) {
@@ -234,10 +308,10 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         binding.tilCondition1.visibility = View.VISIBLE
         binding.tilCondition1.hint = "Operation"
         val opList = listOf(
-            BitwiseOperation.XOR.name,
-            BitwiseOperation.AND.name,
-            BitwiseOperation.OR.name,
-            BitwiseOperation.NOT.name,
+            BitwiseOperation.XOR,
+            BitwiseOperation.AND,
+            BitwiseOperation.OR,
+            BitwiseOperation.NOT,
         )
         binding.autoTvCondition1.setAdapter(
             DropDownMenuAdapter(
@@ -247,7 +321,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             )
         )
         var selected = 0
-        binding.autoTvCondition1.setText(opList.first())
+        binding.autoTvCondition1.setText(opList.first().name)
         binding.autoTvCondition1.setOnItemClickListener { _, _, i, _ ->
             selected = i
             if (i == 3) binding.tilData2.visibility = View.GONE else binding.tilData2.visibility = View.VISIBLE
@@ -258,12 +332,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         binding.operationBtn1.setOnClickListener {
             val data1 = viewModel.inputData1.get() ?: ""
             val data2 = viewModel.inputData2.get() ?: ""
-            val operation = when (selected) {
-                0 -> BitwiseOperation.XOR
-                1 -> BitwiseOperation.AND
-                2 -> BitwiseOperation.OR
-                else -> BitwiseOperation.NOT
-            }
+            val operation = opList[selected]
             val result = try {
                 Log.d("bitwiseCalculator", "operation: $operation")
                 data1.hexBitwise(data2, operation)
@@ -297,12 +366,12 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         binding.autoTvCondition2.onItemClickListener = null
 
         viewModel.inputData1.set("")
-        viewModel.inputData1Max.set(null)
         viewModel.inputData1Label.set("")
+        viewModel.setInputData1Filter()
 
         viewModel.inputData2.set("")
-        viewModel.inputData2Max.set(null)
         viewModel.inputData2Label.set("")
+        viewModel.setInputData2Filter()
     }
 
     override fun getViewModelInstance(): CoreViewModel {

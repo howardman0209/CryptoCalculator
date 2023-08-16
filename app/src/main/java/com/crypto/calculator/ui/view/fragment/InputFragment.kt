@@ -115,12 +115,14 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             val adjustedKey = viewModel.fixDESKeyParity(key)
             val mode = binding.autoTvCondition1.text.toString()
             val padding = binding.autoTvCondition2.text.toString().toDataClass<PaddingMethod>()
-            val result = viewModel.desEncrypt(
-                data = data,
-                key = key,
-                mode = mode,
-                padding = padding
-            )
+            val result = safeExecute {
+                viewModel.desEncrypt(
+                    data = data,
+                    key = key,
+                    mode = mode,
+                    padding = padding
+                )
+            }
             Log.d("desCalculator, encrypt", "result: $result")
             viewModel.printLog(
                 "DES_CALCULATOR \nData: $data \nKey: $adjustedKey " +
@@ -135,12 +137,14 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             val adjustedKey = viewModel.fixDESKeyParity(key)
             val mode = binding.autoTvCondition1.text.toString()
             val padding = binding.autoTvCondition2.text.toString().toDataClass<PaddingMethod>()
-            val result = viewModel.desDecrypt(
-                data = data,
-                key = key,
-                mode = mode,
-                padding = padding
-            )
+            val result = safeExecute {
+                viewModel.desDecrypt(
+                    data = data,
+                    key = key,
+                    mode = mode,
+                    padding = padding
+                )
+            }
             Log.d("desCalculator, decrypt", "result: $result")
             viewModel.printLog(
                 "DES_CALCULATOR \nData: $data \nKey: $adjustedKey " +
@@ -159,11 +163,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
         binding.operationBtn1.setOnClickListener {
             viewModel.inputData1.get()?.also { tlv ->
-                val result = try {
-                    viewModel.gsonBeautifier.toJson(TlvUtil.decodeTLV(tlv))
-                } catch (ex: Exception) {
-                    ex.message
-                }
+                val result = safeExecute { viewModel.gsonBeautifier.toJson(TlvUtil.decodeTLV(tlv)) }
                 Log.d("tlvParser", "result: $result")
                 viewModel.printLog("TLV_PARSER \nTLV: $tlv \n$result\n")
             }
@@ -212,12 +212,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             val fromFormat = binding.autoTvCondition1.text.toString().toDataClass<DataFormat>()
             val toFormat = binding.autoTvCondition2.text.toString().toDataClass<DataFormat>()
             Log.d("converter", "data: $data, from: $fromFormat, to: $toFormat")
-
-            val result = try {
-                ConverterUtil.convertString(data, fromFormat, toFormat)
-            } catch (e: Exception) {
-                e.message
-            }
+            val result = safeExecute { ConverterUtil.convertString(data, fromFormat, toFormat) }
             Log.d("converter", "result: $result")
             viewModel.printLog("CONVERTER \nData: $data \nFrom: $fromFormat \nto: $toFormat \nresult: $result\n")
         }
@@ -244,11 +239,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         binding.operationBtn1.setOnClickListener {
             val data = viewModel.inputData1.get() ?: ""
             val algorithm = binding.autoTvCondition1.text.toString()
-            val result = try {
-                HashUtil.getHexHash(data, algorithm)
-            } catch (e: Exception) {
-                e.message
-            }
+            val result = safeExecute { HashUtil.getHexHash(data, algorithm) }
             Log.d("hashCalculator", "algorithm: $algorithm, result: $result")
             viewModel.printLog("HASH_CALCULATOR \nData: $data \nAlgorithm: $algorithm \nresult: $result\n")
         }
@@ -284,10 +275,8 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             val key = viewModel.inputData2.get() ?: ""
             val adjustedKey = viewModel.fixDESKeyParity(key)
             val padding = binding.autoTvCondition1.text.toString().toDataClass<PaddingMethod>()
-            val result = try {
+            val result = safeExecute {
                 viewModel.macCompute(data, adjustedKey, padding)
-            } catch (e: Exception) {
-                e.message
             }
             Log.d("macCalculator", "result: $result")
             viewModel.printLog(
@@ -333,11 +322,8 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             val data1 = viewModel.inputData1.get() ?: ""
             val data2 = viewModel.inputData2.get() ?: ""
             val operation = opList[selected]
-            val result = try {
-                Log.d("bitwiseCalculator", "operation: $operation")
+            val result = safeExecute {
                 data1.hexBitwise(data2, operation)
-            } catch (e: Exception) {
-                e.message
             }
             Log.d("bitwiseCalculator", "result: $result")
             viewModel.printLog(
@@ -372,6 +358,14 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         viewModel.inputData2.set("")
         viewModel.inputData2Label.set("")
         viewModel.setInputData2Filter()
+    }
+
+    private fun safeExecute(task: () -> String): String {
+        return try {
+            task.invoke()
+        } catch (ex: Exception) {
+            "Error: ${ex.message ?: ex}"
+        }
     }
 
     override fun getViewModelInstance(): CoreViewModel {

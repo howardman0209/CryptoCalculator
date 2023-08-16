@@ -284,7 +284,7 @@ object Encryption {
             mac.doFinal(data.hexToByteArray()).toHexString()
         } catch (e: Exception) {
             Log.d(tag, "Exception: $e")
-            e.message ?: "Unknown Error"
+            throw e
         }
     }
 
@@ -296,7 +296,7 @@ object Encryption {
             cipher.doFinal(data.hexToByteArray()).toHexString()
         } catch (e: Exception) {
             Log.d(tag, "Exception: $e")
-            e.message ?: "Unknown Error"
+            throw e
         }
     }
 }

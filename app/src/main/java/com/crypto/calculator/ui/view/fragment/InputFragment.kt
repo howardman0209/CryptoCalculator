@@ -53,7 +53,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
         binding.tilData2.visibility = View.VISIBLE
         viewModel.inputData2Label.set("Key")
-        viewModel.inputData2Max.set(32)
+        viewModel.inputData2Max.set(48)
 
         binding.tilCondition1.visibility = View.VISIBLE
         binding.tilCondition1.hint = "Mode"
@@ -91,6 +91,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         binding.operationBtn1.setOnClickListener {
             val data = viewModel.inputData1.get() ?: ""
             val key = viewModel.inputData2.get() ?: ""
+            val adjustedKey = viewModel.fixDESKeyParity(key)
             val mode = binding.autoTvCondition1.text.toString()
             val padding = binding.autoTvCondition2.text.toString()
             val result = viewModel.desEncrypt(
@@ -100,12 +101,17 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
                 padding = padding
             )
             Log.d("desCalculator, encrypt", "result: $result")
-            viewModel.printLog("DES_CALCULATOR \nData: $data \nKey: $key \nOperation: Encrypt \nMode: $mode \nPadding: $padding \nEncrypted data: $result\n")
+            viewModel.printLog(
+                "DES_CALCULATOR \nData: $data \nKey: $adjustedKey " +
+                        (if (adjustedKey != key) "(Parity Fixed)" else "") +
+                        "\nOperation: Encrypt \nMode: $mode \nPadding: $padding \nEncrypted data: $result\n"
+            )
         }
 
         binding.operationBtn2.setOnClickListener {
             val data = viewModel.inputData1.get() ?: ""
             val key = viewModel.inputData2.get() ?: ""
+            val adjustedKey = viewModel.fixDESKeyParity(key)
             val mode = binding.autoTvCondition1.text.toString()
             val padding = binding.autoTvCondition2.text.toString()
             val result = viewModel.desDecrypt(
@@ -115,7 +121,11 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
                 padding = padding
             )
             Log.d("desCalculator, decrypt", "result: $result")
-            viewModel.printLog("DES_CALCULATOR \nData: $data \nKey: $key \nOperation: Decrypt \nMode: $mode \nDecrypted data: $result\n")
+            viewModel.printLog(
+                "DES_CALCULATOR \nData: $data \nKey: $adjustedKey " +
+                        (if (adjustedKey != key) "(Parity Fixed)" else "") +
+                        "\nOperation: Decrypt \nMode: $mode \nDecrypted data: $result\n"
+            )
         }
     }
 

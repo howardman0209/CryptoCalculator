@@ -7,11 +7,13 @@ object InputFilterUtil {
     fun getLengthInputFilter(max: Int) = InputFilter.LengthFilter(max)
     fun getHexInputFilter(): InputFilter {
         return InputFilter { source, start, end, _, _, _ ->
-            Log.d("getHexInputFilter", "source: $source, start: $start, end: $end")
             val sb = StringBuilder()
             val hexReg = Regex("(\\d)|([A-F])")
-            if (hexReg.matches(source)) {
-                sb.append(source)
+            Log.d("getHexInputFilter", "source: $source, start: $start, end: $end")
+            for (i in start until end) {
+                if (hexReg.matches(source[i].toString())) {
+                    sb.append(source[i])
+                }
             }
             sb.toString()
         }
@@ -19,11 +21,13 @@ object InputFilterUtil {
 
     fun getBinInputFilter(): InputFilter {
         return InputFilter { source, start, end, _, _, _ ->
-            Log.d("getBinInputFilter", "source: $source, start: $start, end: $end")
             val sb = StringBuilder()
-            val hexReg = Regex("([0-1])")
-            if (hexReg.matches(source)) {
-                sb.append(source)
+            val binReg = Regex("([0-1])")
+            Log.d("getBinInputFilter", "source: $source, start: $start, end: $end")
+            for (i in start until end) {
+                if (binReg.matches(source[i].toString())) {
+                    sb.append(source[i])
+                }
             }
             sb.toString()
         }
@@ -31,11 +35,13 @@ object InputFilterUtil {
 
     fun getDesInputFilter(): InputFilter {
         return InputFilter { source, start, end, _, _, _ ->
-            Log.d("getDesInputFilter", "source: $source, start: $start, end: $end")
             val sb = StringBuilder()
-            val hexReg = Regex("(\\d)")
-            if (hexReg.matches(source)) {
-                sb.append(source)
+            val decReg = Regex("(\\d)")
+            Log.d("getDesInputFilter", "source: $source, start: $start, end: $end")
+            for (i in start until end) {
+                if (decReg.matches(source[i].toString())) {
+                    sb.append(source[i])
+                }
             }
             sb.toString()
         }

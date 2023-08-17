@@ -20,7 +20,7 @@ import com.crypto.calculator.util.ConverterUtil
 import com.crypto.calculator.util.HashUtil
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.bindInputFilters
-import com.google.gson.Gson
+import com.google.gson.JsonObject
 
 class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
 
@@ -204,14 +204,54 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         binding.tilData1.visibility = View.VISIBLE
         viewModel.inputData1Label.set("Data")
 
+        binding.tilCondition1.visibility = View.VISIBLE
+        binding.tilCondition1.hint = "Data format"
+        val modeList = listOf("TLV", "JSON")
+        binding.autoTvCondition1.setAdapter(
+            DropDownMenuAdapter(
+                requireContext(),
+                R.layout.view_drop_down_menu_item,
+                modeList,
+            )
+        )
+        binding.autoTvCondition1.setText(modeList.first())
+        var selected = 0
+        binding.autoTvCondition1.setOnItemClickListener { _, _, i, _ ->
+            selected = i
+            if (i == modeList.indexOf("TLV")) {
+                viewModel.setInputData1Filter(inputFormat = DataFormat.HEXADECIMAL)
+                binding.operationBtn1.text = getString(R.string.label_operation_decode)
+            } else {
+                viewModel.setInputData1Filter(inputFormat = DataFormat.ASCII)
+                binding.operationBtn1.text = getString(R.string.label_operation_encode)
+            }
+        }
+
         binding.operationBtn1.visibility = View.VISIBLE
         binding.operationBtn1.text = getString(R.string.label_operation_decode)
 
         binding.operationBtn1.setOnClickListener {
-            viewModel.inputData1.get()?.also { tlv ->
-                val result = safeExecute { viewModel.gsonBeautifier.toJson(TlvUtil.decodeTLV(tlv)) }
-                Log.d("tlvParser", "result: $result")
-                viewModel.printLog("TLV_PARSER \nTLV: $tlv \n$result\n")
+            viewModel.inputData1.get()?.also { data ->
+                when (selected) {
+                    0 -> {
+                        val result = safeExecute { viewModel.gsonBeautifier.toJson(TlvUtil.decodeTLV(data)) }
+                        Log.d("tlvParser", "result: $result")
+                        viewModel.printLog("TLV_PARSER \nTLV: \n$data \nresult: \n$result\n")
+                    }
+
+                    else -> {
+                        val displayJson = safeExecute {
+                            val jsonObj = data.toDataClass<JsonObject>()
+                            viewModel.gsonBeautifier.toJson(jsonObj)
+                        }
+                        val result = safeExecute {
+                            val jsonObj = data.toDataClass<JsonObject>()
+                            TlvUtil.encodeTLV(jsonObj)
+                        }
+                        Log.d("tlvParser", "result: $result")
+                        viewModel.printLog("TLV_PARSER \nJSON: \n$displayJson \nresult: \n$result\n")
+                    }
+                }
             }
         }
     }

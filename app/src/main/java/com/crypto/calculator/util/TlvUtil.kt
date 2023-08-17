@@ -3,6 +3,7 @@ package com.crypto.calculator.util
 import android.util.Log
 import com.crypto.calculator.extension.hexToBinary
 import com.crypto.calculator.extension.toHexString
+import com.google.gson.JsonObject
 import java.lang.StringBuilder
 
 object TlvUtil {
@@ -70,7 +71,61 @@ object TlvUtil {
      * Eg. input map = {"6F":{"84":"325041592E5359532E4444463031","A5":{"BF0C":{"80":"01","A5":{"80":"77"},"61":[{"4F":"A0000001523010","50":"446973636F766572","87":"01","9F2A":"0006"},{"4F":"A0000003241010","50":"446973636F766572","87":"02"},{"4F":"A0000003241010","50":"446973636F766572","87":"02"}]}}}}
      * return 6F6A840E325041592E5359532E4444463031A558BF0C55800101A503800177611B4F07A00000015230105008446973636F7665728701019F2A02000661164F07A00000032410105008446973636F76657287010261164F07A00000032410105008446973636F766572870102
      */
-    fun encdoeTLV(map: Map<String, Any?>): String {
+    fun encodeTLV(json: JsonObject): String {
+        Log.d("TLV_ENCODER, Start", "json: $json")
+        try {
+            val sb = StringBuilder()
+            json.entrySet().forEach { (tag, value) ->
+                when {
+                    value.isJsonArray -> {
+                        Log.d("TLV_ENCODER", "List value: $value")
+                        value.asJsonArray.forEach {
+                            val tlv = encodeTLV(it.asJsonObject)
+                            val length = when ((tlv.length / 2)) {
+                                in 0 until 126 -> (tlv.length / 2).toHexString()
+                                in 127 until 256 -> "81" + (tlv.length / 2).toHexString()
+                                else -> "82" + (tlv.length / 2).toHexString()
+                            }
+                            sb.append("$tag$length$tlv")
+                        }
+                    }
+
+
+                    value.isJsonObject -> {
+                        Log.d("TLV_ENCODER", "else value: $value")
+                        val tlv = encodeTLV(value.asJsonObject)
+                        val length = when ((tlv.length / 2)) {
+                            in 0 until 126 -> (tlv.length / 2).toHexString()
+                            in 127 until 256 -> "81" + (tlv.length / 2).toHexString()
+                            else -> "82" + (tlv.length / 2).toHexString()
+                        }
+                        sb.append("$tag$length$tlv")
+                    }
+
+                    else -> {
+                        val stringValue = value.asString.replace("\"", "")
+                        Log.d("TLV_ENCODER", "String value: ${value.asString}")
+                        val length = when ((stringValue.length / 2)) {
+                            in 0 until 126 -> (stringValue.length / 2).toHexString()
+                            in 127 until 256 -> "81" + (stringValue.length / 2).toHexString()
+                            else -> "82" + (stringValue.length / 2).toHexString()
+                        }
+                        Log.d("TLV_ENCODER", "length: $length")
+                        sb.append("$tag$length$stringValue")
+                    }
+                }
+            }
+
+            val tlv = sb.toString()
+            Log.d("TLV_ENCODER, End", "tlv: $tlv")
+            return tlv
+        } catch (e: Exception) {
+            Log.d("TLV_ENCODER", "Exception: $e")
+            throw Exception("TLV encode error: Invalid Tag")
+        }
+    }
+
+    fun encodeTLV(map: Map<String, Any?>): String {
         Log.d("TLV_ENCODER, Start", "map: $map")
         try {
             val sb = StringBuilder()
@@ -79,11 +134,11 @@ object TlvUtil {
                     is ArrayList<*> -> {
                         Log.d("TLV_ENCODER", "List value: $value")
                         value.forEach {
-                            val tlv = encdoeTLV(it as Map<String, Any?>)
+                            val tlv = encodeTLV(it as Map<String, Any?>)
                             val length = when ((tlv.length / 2)) {
-                                in 127..255 -> "81" + (tlv.length / 2).toHexString()
-                                in 256..Int.MAX_VALUE -> "82" + (tlv.length / 2).toHexString()
-                                else -> (tlv.length / 2).toHexString()
+                                in 0 until 126 -> (tlv.length / 2).toHexString()
+                                in 127 until 256 -> "81" + (tlv.length / 2).toHexString()
+                                else -> "82" + (tlv.length / 2).toHexString()
                             }
                             sb.append("$tag$length$tlv")
                         }
@@ -92,9 +147,9 @@ object TlvUtil {
                     is String -> {
                         Log.d("TLV_ENCODER", "String value: $value")
                         val length = when ((value.length / 2)) {
-                            in 127..255 -> "81" + (value.length / 2).toHexString()
-                            in 256..Int.MAX_VALUE -> "82" + (value.length / 2).toHexString()
-                            else -> (value.length / 2).toHexString()
+                            in 0 until 126 -> (value.length / 2).toHexString()
+                            in 127 until 256 -> "81" + (value.length / 2).toHexString()
+                            else -> "82" + (value.length / 2).toHexString()
                         }
                         Log.d("TLV_ENCODER", "length: $length")
                         sb.append("$tag$length$value")
@@ -102,11 +157,11 @@ object TlvUtil {
 
                     else -> {
                         Log.d("TLV_ENCODER", "else value: $value")
-                        val tlv = encdoeTLV(value as Map<String, Any?>)
+                        val tlv = encodeTLV(value as Map<String, Any?>)
                         val length = when ((tlv.length / 2)) {
-                            in 127..255 -> "81" + (tlv.length / 2).toHexString()
-                            in 256..Int.MAX_VALUE -> "82" + (tlv.length / 2).toHexString()
-                            else -> (tlv.length / 2).toHexString()
+                            in 0 until 126 -> (tlv.length / 2).toHexString()
+                            in 127 until 256 -> "81" + (tlv.length / 2).toHexString()
+                            else -> "82" + (tlv.length / 2).toHexString()
                         }
                         sb.append("$tag$length$tlv")
                     }

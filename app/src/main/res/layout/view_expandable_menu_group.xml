@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/text1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:ellipsize="none"
+    android:paddingVertical="@dimen/space_default"
+    android:paddingStart="@dimen/space_double"
+    android:singleLine="false"
+    android:textAppearance="?textAppearanceHeadline5"
+    android:textColor="@color/neutral_emphasis_medium"
+    android:textIsSelectable="false"
+    tools:ignore="RtlSymmetry"
+    tools:text="Item 1" />

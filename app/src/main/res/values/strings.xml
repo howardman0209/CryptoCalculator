@@ -742,4 +742,6 @@
     <string name="label_operation_decode" translatable="false">Decode</string>
     <string name="label_operation_convert" translatable="false">Convert</string>
     <string name="label_operation_compute" translatable="false">Compute</string>
+
+    <string name="label_app_version_no" translatable="false">v0.1</string>
 </resources>

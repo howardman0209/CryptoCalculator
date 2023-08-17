@@ -2,13 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
-
-    <item
-        android:id="@+id/nav_category1"
-        android:icon="@drawable/ic_android"
-        android:title="@string/label_bottom_nav_tab1" />
-
-    <group android:checkableBehavior="none">
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_tab1"
             android:icon="@drawable/ic_android"
@@ -37,36 +31,5 @@
             android:id="@+id/nav_tab7"
             android:icon="@drawable/ic_android"
             android:title="@string/label_tool_rsa" />
-
     </group>
-    <!--    <group android:checkableBehavior="single">-->
-    <!--        <item-->
-    <!--            android:id="@+id/nav_tab1"-->
-    <!--            android:icon="@drawable/ic_android"-->
-    <!--            android:title="@string/label_tool_tlv_parser" />-->
-    <!--        <item-->
-    <!--            android:id="@+id/nav_tab2"-->
-    <!--            android:icon="@drawable/ic_android"-->
-    <!--            android:title="@string/label_tool_des" />-->
-    <!--        <item-->
-    <!--            android:id="@+id/nav_tab3"-->
-    <!--            android:icon="@drawable/ic_android"-->
-    <!--            android:title="@string/label_tool_hash" />-->
-    <!--        <item-->
-    <!--            android:id="@+id/nav_tab4"-->
-    <!--            android:icon="@drawable/ic_android"-->
-    <!--            android:title="@string/label_tool_bitwise" />-->
-    <!--        <item-->
-    <!--            android:id="@+id/nav_tab5"-->
-    <!--            android:icon="@drawable/ic_android"-->
-    <!--            android:title="@string/label_tool_mac" />-->
-    <!--        <item-->
-    <!--            android:id="@+id/nav_tab6"-->
-    <!--            android:icon="@drawable/ic_android"-->
-    <!--            android:title="@string/label_tool_converter" />-->
-    <!--        <item-->
-    <!--            android:id="@+id/nav_tab7"-->
-    <!--            android:icon="@drawable/ic_android"-->
-    <!--            android:title="@string/label_tool_rsa" />-->
-    <!--    </group>-->
 </menu>

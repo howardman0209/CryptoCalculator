@@ -11,30 +11,34 @@ import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentOutputBinding
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
+import com.crypto.calculator.ui.viewModel.OutputViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class OutputFragment : MVVMFragment<CoreViewModel, FragmentOutputBinding>() {
-    private val warpText = MutableLiveData(false)
+class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
+    private lateinit var coreViewModel: CoreViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        coreViewModel = getCoreViewModel()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.logMessage.observe(viewLifecycleOwner) {
+        coreViewModel.logMessage.observe(viewLifecycleOwner) {
             printLog(it)
         }
 
-        warpText.observe(viewLifecycleOwner) {
+        viewModel.warpText.observe(viewLifecycleOwner) {
             if (!it) binding.logPanel.maxWidth = Int.MAX_VALUE else binding.logPanel.maxWidth = binding.horizontalScrollView.measuredWidth
         }
 
         binding.wrapBtn.setOnClickListener {
             Log.d("wrapBtn", "OnClick")
-            warpText.postValue(warpText.value != true)
+            viewModel.warpText.apply {
+                postValue(this.value != true)
+            }
         }
 
         binding.saveBtn.setOnClickListener {
@@ -87,7 +91,8 @@ class OutputFragment : MVVMFragment<CoreViewModel, FragmentOutputBinding>() {
         }
     }
 
-    override fun getViewModelInstance(): CoreViewModel {
+    private fun getCoreViewModel(): CoreViewModel {
+        Log.d("OutputFragment", "getCoreViewModel")
         return activity?.supportFragmentManager?.fragments?.let { fragmentList ->
             var viewModel: CoreViewModel? = null
             fragmentList.find { it is CoreFragment }?.also {
@@ -96,6 +101,8 @@ class OutputFragment : MVVMFragment<CoreViewModel, FragmentOutputBinding>() {
             viewModel
         } ?: CoreViewModel()
     }
+
+    override fun getViewModelInstance(): OutputViewModel = OutputViewModel()
 
     override fun setBindingData() {
         binding.viewModel = viewModel

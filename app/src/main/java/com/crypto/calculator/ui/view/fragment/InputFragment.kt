@@ -16,13 +16,19 @@ import com.crypto.calculator.model.Tool
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewAdapter.DropDownMenuAdapter
 import com.crypto.calculator.ui.viewModel.CoreViewModel
+import com.crypto.calculator.ui.viewModel.InputViewModel
 import com.crypto.calculator.util.ConverterUtil
 import com.crypto.calculator.util.HashUtil
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.bindInputFilters
 import com.google.gson.JsonObject
 
-class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
+class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
+    private lateinit var coreViewModel: CoreViewModel
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        coreViewModel = getCoreViewModel()
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,7 +70,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             viewModel.inputData3.set("")
         }
 
-        viewModel.currentTool.observe(viewLifecycleOwner) {
+        coreViewModel.currentTool.observe(viewLifecycleOwner) {
             Log.d("InputFragment", "currentTool: $it")
             setLayout(it)
         }
@@ -110,7 +116,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             val result = safeExecute {
                 viewModel.rsaCompute(data, exponent, modulus)
             }
-            viewModel.printLog("RSA_CALCULATOR \nData: $data \nExponent: $exponent \nModulus: $modulus \nResult: $result\n")
+            coreViewModel.printLog("RSA_CALCULATOR \nData: $data \nExponent: $exponent \nModulus: $modulus \nResult: $result\n")
         }
     }
 
@@ -170,7 +176,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
                 )
             }
             Log.d("desCalculator, encrypt", "result: $result")
-            viewModel.printLog(
+            coreViewModel.printLog(
                 "DES_CALCULATOR \nData: $data \nKey: $adjustedKey " +
                         (if (adjustedKey != key) "(Parity Fixed)" else "") +
                         "\nOperation: Encrypt \nMode: $mode \nPadding: $padding \nEncrypted data: $result\n"
@@ -192,7 +198,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
                 )
             }
             Log.d("desCalculator, decrypt", "result: $result")
-            viewModel.printLog(
+            coreViewModel.printLog(
                 "DES_CALCULATOR \nData: $data \nKey: $adjustedKey " +
                         (if (adjustedKey != key) "(Parity Fixed)" else "") +
                         "\nOperation: Decrypt \nMode: $mode \nPadding: $padding \nDecrypted data: $result\n"
@@ -234,22 +240,22 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             viewModel.inputData1.get()?.also { data ->
                 when (selected) {
                     0 -> {
-                        val result = safeExecute { viewModel.gsonBeautifier.toJson(TlvUtil.decodeTLV(data)) }
+                        val result = safeExecute { coreViewModel.gsonBeautifier.toJson(TlvUtil.decodeTLV(data)) }
                         Log.d("tlvParser", "result: $result")
-                        viewModel.printLog("TLV_PARSER \nTLV: \n$data \nresult: \n$result\n")
+                        coreViewModel.printLog("TLV_PARSER \nTLV: \n$data \nresult: \n$result\n")
                     }
 
                     else -> {
                         val displayJson = safeExecute {
                             val jsonObj = data.toDataClass<JsonObject>()
-                            viewModel.gsonBeautifier.toJson(jsonObj)
+                            coreViewModel.gsonBeautifier.toJson(jsonObj)
                         }
                         val result = safeExecute {
                             val jsonObj = data.toDataClass<JsonObject>()
                             TlvUtil.encodeTLV(jsonObj)
                         }
                         Log.d("tlvParser", "result: $result")
-                        viewModel.printLog("TLV_PARSER \nJSON: \n$displayJson \nresult: \n$result\n")
+                        coreViewModel.printLog("TLV_PARSER \nJSON: \n$displayJson \nresult: \n$result\n")
                     }
                 }
             }
@@ -300,7 +306,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             Log.d("converter", "data: $data, from: $fromFormat, to: $toFormat")
             val result = safeExecute { ConverterUtil.convertString(data, fromFormat, toFormat) }
             Log.d("converter", "result: $result")
-            viewModel.printLog("CONVERTER \nData: $data \nFrom: $fromFormat \nto: $toFormat \nresult: $result\n")
+            coreViewModel.printLog("CONVERTER \nData: $data \nFrom: $fromFormat \nto: $toFormat \nresult: $result\n")
         }
     }
 
@@ -327,7 +333,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             val algorithm = binding.autoTvCondition1.text.toString()
             val result = safeExecute { HashUtil.getHexHash(data, algorithm) }
             Log.d("hashCalculator", "algorithm: $algorithm, result: $result")
-            viewModel.printLog("HASH_CALCULATOR \nData: $data \nAlgorithm: $algorithm \nresult: $result\n")
+            coreViewModel.printLog("HASH_CALCULATOR \nData: $data \nAlgorithm: $algorithm \nresult: $result\n")
         }
     }
 
@@ -365,7 +371,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
                 viewModel.macCompute(data, adjustedKey, padding)
             }
             Log.d("macCalculator", "result: $result")
-            viewModel.printLog(
+            coreViewModel.printLog(
                 "MAC_CALCULATOR \nData: $data \nKey: $adjustedKey " +
                         (if (adjustedKey != key) "(Parity Fixed)" else "") +
                         "\nresult: $result\n"
@@ -412,7 +418,7 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
                 data1.hexBitwise(data2, operation)
             }
             Log.d("bitwiseCalculator", "result: $result")
-            viewModel.printLog(
+            coreViewModel.printLog(
                 "BITWISE_CALCULATOR \n" +
                         "Operation: $operation \nData 1: $data1 " +
                         (if (selected != 3) "\nData 2: $data2 " else "") +
@@ -456,7 +462,8 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
         }
     }
 
-    override fun getViewModelInstance(): CoreViewModel {
+    private fun getCoreViewModel(): CoreViewModel {
+        Log.d("InputFragment", "getCoreViewModel")
         return activity?.supportFragmentManager?.fragments?.let { fragmentList ->
             var viewModel: CoreViewModel? = null
             fragmentList.find { it is CoreFragment }?.also {
@@ -465,6 +472,8 @@ class InputFragment : MVVMFragment<CoreViewModel, FragmentInputBinding>() {
             viewModel
         } ?: CoreViewModel()
     }
+
+    override fun getViewModelInstance(): InputViewModel = InputViewModel()
 
     override fun setBindingData() {
         binding.viewModel = viewModel

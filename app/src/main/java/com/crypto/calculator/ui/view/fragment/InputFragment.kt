@@ -250,10 +250,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
                             val jsonObj = data.toDataClass<JsonObject>()
                             coreViewModel.gsonBeautifier.toJson(jsonObj)
                         }
-                        val result = safeExecute {
-                            val jsonObj = data.toDataClass<JsonObject>()
-                            TlvUtil.encodeTLV(jsonObj)
-                        }
+                        val result = safeExecute { TlvUtil.encodeTLV(data) }
                         Log.d("tlvParser", "result: $result")
                         coreViewModel.printLog("TLV_PARSER \nJSON: \n$displayJson \nresult: \n$result\n")
                     }

@@ -2,6 +2,7 @@ package com.crypto.calculator.util
 
 import android.util.Log
 import com.crypto.calculator.extension.hexToBinary
+import com.crypto.calculator.extension.toDataClass
 import com.crypto.calculator.extension.toHexString
 import com.google.gson.JsonObject
 import java.lang.StringBuilder
@@ -71,6 +72,16 @@ object TlvUtil {
      * Eg. input map = {"6F":{"84":"325041592E5359532E4444463031","A5":{"BF0C":{"80":"01","A5":{"80":"77"},"61":[{"4F":"A0000001523010","50":"446973636F766572","87":"01","9F2A":"0006"},{"4F":"A0000003241010","50":"446973636F766572","87":"02"},{"4F":"A0000003241010","50":"446973636F766572","87":"02"}]}}}}
      * return 6F6A840E325041592E5359532E4444463031A558BF0C55800101A503800177611B4F07A00000015230105008446973636F7665728701019F2A02000661164F07A00000032410105008446973636F76657287010261164F07A00000032410105008446973636F766572870102
      */
+    fun encodeTLV(jsonString: String): String {
+        val jsonObj = try {
+            jsonString.toDataClass<JsonObject>()
+        } catch (ex: Exception) {
+            Log.d("TLV_ENCODER", "Exception: $ex")
+            throw ex
+        }
+        return encodeTLV(jsonObj)
+    }
+
     fun encodeTLV(json: JsonObject): String {
         Log.d("TLV_ENCODER, Start", "json: $json")
         try {

@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import com.akexorcist.localizationactivity.core.LocalizationApplicationDelegate
 import com.crypto.calculator.util.LIFECYCLE
 import com.crypto.calculator.util.PreferencesUtil
@@ -25,6 +26,9 @@ class MainApplication : Application(), ActivityLifecycleCallbacks {
         super.onCreate()
         Log.d(LIFECYCLE, "app onCreate")
         registerActivityLifecycleCallbacks(this)
+        //fixme occasionally the view seems getting a mixed theme's attributes, hence disable the theme switching for now
+        //val sharedPref: SharedPreferences = getSharedPreferences(PREF_THEME_NAME, Context.MODE_PRIVATE)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {

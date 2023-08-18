@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.crypto.calculator.MainApplication
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.ActivityMainBinding
 import com.crypto.calculator.model.NavigationMenuData
@@ -29,19 +30,7 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
             binding.drawerLayout.open()
         }
 
-        navigationMenuData = getNavigationMenuData()
-
-//        binding.navigationView.setNavigationItemSelectedListener { menuItem ->
-//            // Handle menu item selected
-//            Log.d("navigationView", "Selected: $menuItem")
-//
-//            switchTab(menuItem.itemId)
-//            setAppbarTitle(menuItem.title.toString())
-//
-//            menuItem.isChecked = true
-//            binding.drawerLayout.close()
-//            true
-//        }
+        navigationMenuData = MainApplication.getNavigationMenuData()
 
         menuAdapter = ExpandableMenuAdapter(
             this,
@@ -72,54 +61,12 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
         viewModel.title.set(title)
     }
 
-    private fun getNavigationMenuData(): NavigationMenuData {
-        return NavigationMenuData(
-            data = hashMapOf(
-                "Generic" to listOf(
-                    Tool.TLV_PARSER,
-                    Tool.DES,
-                    Tool.HASH,
-                    Tool.BITWISE,
-                    Tool.MAC,
-                    Tool.CONVERTER,
-                    Tool.RSA,
-                ),
-                "EMV" to emptyList()
-            )
-        )
-    }
-
-//    private fun switchTab(itemId: Int = 0) {
-//        when (itemId) {
-//            R.id.nav_tab1 -> (mainFragment as CoreFragment).setCorePanel(Tool.TLV_PARSER)
-//            R.id.nav_tab2 -> (mainFragment as CoreFragment).setCorePanel(Tool.DES)
-//            R.id.nav_tab3 -> (mainFragment as CoreFragment).setCorePanel(Tool.HASH)
-//            R.id.nav_tab4 -> (mainFragment as CoreFragment).setCorePanel(Tool.BITWISE)
-//            R.id.nav_tab5 -> (mainFragment as CoreFragment).setCorePanel(Tool.MAC)
-//            R.id.nav_tab6 -> (mainFragment as CoreFragment).setCorePanel(Tool.CONVERTER)
-//            R.id.nav_tab7 -> (mainFragment as CoreFragment).setCorePanel(Tool.RSA)
-//            else -> {
-//                binding.navigationView.setCheckedItem(R.id.nav_tab1)
-//            }
-//        }
-//        pushFragment(mainFragment, getMainFragmentContainer(), isAddToBackStack = false)
-//    }
-
     private fun switchTool(groupId: Int? = null, itemId: Int? = null) {
         navigationMenuData.also {
             if (groupId != null && itemId != null) {
                 val group = it.getGroupList()[groupId]
                 it.data[group]?.get(itemId)?.let { selectedTool ->
-                    when (selectedTool) {
-                        Tool.TLV_PARSER -> (mainFragment as CoreFragment).setCorePanel(Tool.TLV_PARSER)
-                        Tool.DES -> (mainFragment as CoreFragment).setCorePanel(Tool.DES)
-                        Tool.HASH -> (mainFragment as CoreFragment).setCorePanel(Tool.HASH)
-                        Tool.BITWISE -> (mainFragment as CoreFragment).setCorePanel(Tool.BITWISE)
-                        Tool.MAC -> (mainFragment as CoreFragment).setCorePanel(Tool.MAC)
-                        Tool.CONVERTER -> (mainFragment as CoreFragment).setCorePanel(Tool.CONVERTER)
-                        Tool.RSA -> (mainFragment as CoreFragment).setCorePanel(Tool.RSA)
-                        else -> {}
-                    }
+                    (mainFragment as CoreFragment).setCurrentTool(selectedTool)
                     PreferencesUtil.saveLastUsedTool(applicationContext, selectedTool)
                 }
             } else {

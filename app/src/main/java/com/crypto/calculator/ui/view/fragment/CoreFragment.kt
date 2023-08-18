@@ -10,9 +10,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.crypto.calculator.MainApplication
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentCoreBinding
+import com.crypto.calculator.model.Category
+import com.crypto.calculator.model.NavigationMenuData
 import com.crypto.calculator.model.Tool
+import com.crypto.calculator.model.getGroupList
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.util.PreferencesUtil
@@ -20,14 +24,16 @@ import com.crypto.calculator.util.PreferencesUtil
 
 class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
 
+    private lateinit var navigationMenuData: NavigationMenuData
     private var currentCorePanel: Fragment? = null
     private var currentBottomPanel: Fragment? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("CoreFragment", "onCreate")
+
+        navigationMenuData = MainApplication.getNavigationMenuData()
         viewModel.currentTool.postValue(PreferencesUtil.getLastUsedTool(requireContext().applicationContext))
         switchBottomPanel()
-        switchCorePanel()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -38,16 +44,28 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d("CoreFragment", "onViewCreated")
+
+        viewModel.currentTool.observe(viewLifecycleOwner) {
+            navigationMenuData.getGroupList().find { group ->
+                navigationMenuData.data[group]?.contains(it) == true
+            }?.also {
+                switchCorePanel(it)
+            }
+        }
     }
 
-    fun setCorePanel(selectedTool: Tool) {
-        Log.d("setCorePanel", "selectedTool: $selectedTool")
+    fun setCurrentTool(selectedTool: Tool) {
+        Log.d("setCurrentTool", "selectedTool: $selectedTool")
         viewModel.currentTool.postValue(selectedTool)
     }
 
-    private fun switchCorePanel(target: Int = R.id.corePanel) {
-        currentCorePanel = InputFragment()
-        pushFragment(currentCorePanel as Fragment, target, isAddToBackStack = false)
+    private fun switchCorePanel(parentGroup: Category, target: Int = R.id.corePanel) {
+        currentCorePanel = when (parentGroup) {
+            Category.GENERIC -> InputFragment()
+            Category.EMV -> EmvFragment()
+            else -> null
+        }
+        currentCorePanel?.let { pushFragment(it, target, isAddToBackStack = false) }
     }
 
     private fun switchBottomPanel(target: Int = R.id.bottomPanel) {

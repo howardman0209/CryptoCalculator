@@ -9,6 +9,9 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import com.akexorcist.localizationactivity.core.LocalizationApplicationDelegate
+import com.crypto.calculator.model.Category
+import com.crypto.calculator.model.NavigationMenuData
+import com.crypto.calculator.model.Tool
 import com.crypto.calculator.util.LIFECYCLE
 import com.crypto.calculator.util.PreferencesUtil
 
@@ -17,6 +20,26 @@ class MainApplication : Application(), ActivityLifecycleCallbacks {
 
     companion object {
         var activitiesAlive = ArrayList<String>()
+
+        fun getNavigationMenuData(): NavigationMenuData {
+            return NavigationMenuData(
+                data = hashMapOf(
+                    Category.GENERIC to listOf(
+                        Tool.TLV_PARSER,
+                        Tool.DES,
+                        Tool.HASH,
+                        Tool.BITWISE,
+                        Tool.MAC,
+                        Tool.CONVERTER,
+                        Tool.RSA,
+                    ),
+                    Category.EMV to listOf(
+                        Tool.CARD_SIMULATOR,
+                        Tool.EMV_KERNEL,
+                    )
+                )
+            )
+        }
     }
 
     private var currentActiveActivity: Activity? = null
@@ -33,7 +56,7 @@ class MainApplication : Application(), ActivityLifecycleCallbacks {
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
         Log.d(LIFECYCLE, "${activity.javaClass.name} onCreated")
-        if (!activitiesAlive.contains(activity.javaClass.name)){
+        if (!activitiesAlive.contains(activity.javaClass.name)) {
             activitiesAlive.add(activity.javaClass.name)
             Log.d(LIFECYCLE, activitiesAlive.toString())
         }

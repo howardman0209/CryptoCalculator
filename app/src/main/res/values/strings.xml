@@ -733,6 +733,11 @@
     <string name="label_tool_bitwise" translatable="false">Bitwise</string>
     <string name="label_tool_converter" translatable="false">Converter</string>
     <string name="label_tool_tlv_parser" translatable="false">TLV Parser</string>
+    <string name="label_tool_card_simulator" translatable="false">Card Simulator</string>
+    <string name="label_tool_emv_kernel" translatable="false">EMV Kernel</string>
+
+    <string name="label_category_generic" translatable="false">Generic</string>
+    <string name="label_category_emv" translatable="false">EMV</string>
 
     <string name="input_hint" translatable="false">%1$s(%2$s)</string>
     <string name="input_hint_with_max" translatable="false">%1$s(%2$s/%3$s)</string>

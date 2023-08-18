@@ -1,9 +1,9 @@
 package com.crypto.calculator.model
 
 data class NavigationMenuData(
-    val data: HashMap<String, List<Tool>>
+    val data: HashMap<Category, List<Tool>>
 )
 
-fun NavigationMenuData.getGroupList(): List<String> {
+fun NavigationMenuData.getGroupList(): List<Category> {
     return this.data.keys.toList()
 }

@@ -87,7 +87,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
             Tool.BITWISE -> bitwiseCalculator()
             Tool.CONVERTER -> converter()
             Tool.TLV_PARSER -> tlvParser()
-            Tool.UNKNOWN -> {}
+            else -> {}
         }
     }
 

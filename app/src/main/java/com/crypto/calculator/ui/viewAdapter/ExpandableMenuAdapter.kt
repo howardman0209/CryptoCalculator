@@ -8,16 +8,17 @@ import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
 import android.widget.TextView
 import com.crypto.calculator.R
+import com.crypto.calculator.model.Category
 import com.crypto.calculator.model.Tool
 
 class ExpandableMenuAdapter(
     private val context: Context,
-    private val groupList: List<String>,
-    private val itemList: HashMap<String, List<Tool>>,
+    private val groupList: List<Category>,
+    private val itemList: HashMap<Category, List<Tool>>,
     private val groupListLayoutResource: Int = R.layout.view_expandable_menu_group,
     private val itemListLayoutResource: Int = R.layout.view_expandable_menu_item,
 ) : BaseExpandableListAdapter() {
-    override fun getChild(listPosition: Int, expandedListPosition: Int): Any {
+    override fun getChild(listPosition: Int, expandedListPosition: Int): Tool {
         return this.itemList[this.groupList[listPosition]]!![expandedListPosition]
     }
 
@@ -32,7 +33,7 @@ class ExpandableMenuAdapter(
         convertView: View?,
         parent: ViewGroup
     ): View {
-        val expandedListText = getChild(listPosition, expandedListPosition).toString()
+        val expandedListText = context.getString(getChild(listPosition, expandedListPosition).resourceId)
         val view: TextView = convertView as TextView? ?: LayoutInflater.from(context).inflate(itemListLayoutResource, parent, false) as TextView
         view.text = expandedListText
         return view
@@ -42,7 +43,7 @@ class ExpandableMenuAdapter(
         return this.itemList[this.groupList[listPosition]]!!.size
     }
 
-    override fun getGroup(listPosition: Int): Any {
+    override fun getGroup(listPosition: Int): Category {
         return this.groupList[listPosition]
     }
 
@@ -60,7 +61,7 @@ class ExpandableMenuAdapter(
         convertView: View?,
         parent: ViewGroup
     ): View {
-        val listTitle = getGroup(listPosition).toString()
+        val listTitle = context.getString(getGroup(listPosition).resourceId)
         val view: TextView = convertView as TextView? ?: LayoutInflater.from(context).inflate(groupListLayoutResource, parent, false) as TextView
         view.text = listTitle
         view.setTypeface(null, BOLD)

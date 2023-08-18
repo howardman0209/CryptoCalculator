@@ -85,7 +85,9 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
                                 Tool.CONVERTER,
                                 Tool.RSA,
                         ),
-                        "EMV" to emptyList(),
+                        "EMV" to listOf(
+                                Tool.AES,
+                        ),
                 )
         )
     }
@@ -125,8 +127,8 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
                 }
             } else {
                 // Expand Generic tab by default
-                it.getGroupList().find { group -> it.data[group]?.contains(PreferencesUtil.getLastUsedTool(applicationContext)) == true }
-                binding.expandableMenu.expandGroup(0)
+                val lastUsedParentGroup = it.getGroupList().find { group -> it.data[group]?.contains(PreferencesUtil.getLastUsedTool(applicationContext)) == true }
+                binding.expandableMenu.expandGroup(it.getGroupList().indexOf(lastUsedParentGroup))
             }
             pushFragment(mainFragment, getMainFragmentContainer(), isAddToBackStack = false)
         }

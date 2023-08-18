@@ -16,6 +16,10 @@ import com.crypto.calculator.model.Tool
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.util.PreferencesUtil
+import java.io.BufferedReader
+import java.io.DataOutputStream
+import java.io.InputStreamReader
+
 
 class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
 
@@ -76,7 +80,12 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d("onOptionsItemSelected", "item: $item")
         when (item.itemId) {
-            R.id.action_settings -> viewModel.printLog("Hello World")
+            R.id.action_settings -> {
+                singleInputDialog(requireContext(), "Enter your message", "Message") {
+                    viewModel.printLog(it)
+                }
+            }
+
             R.id.tool_logcat -> logcatSwitch()
         }
         return super.onOptionsItemSelected(item)

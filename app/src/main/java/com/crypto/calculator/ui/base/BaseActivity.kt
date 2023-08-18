@@ -261,7 +261,7 @@ abstract class BaseActivity : LocalizationActivity() {
         }
     }
 
-    fun singleInputDialog(context: Context, title: String?, fieldName: String, fieldValue: String?, onConfirmCallBack: (editText: String) -> Unit) {
+    fun singleInputDialog(context: Context, title: String?, fieldName: String, fieldValue: String? = null, onConfirmCallBack: (editText: String) -> Unit) {
         val dialogBinding: DialogContentSingleInputBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_content_single_input, null, false)
         dialogBinding.tiInputBox1.hint = fieldName
         dialogBinding.tiInputBox1.editText?.setText(fieldValue)

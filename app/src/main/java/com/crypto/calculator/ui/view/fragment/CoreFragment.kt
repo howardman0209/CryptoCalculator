@@ -16,9 +16,6 @@ import com.crypto.calculator.model.Tool
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.util.PreferencesUtil
-import java.io.BufferedReader
-import java.io.DataOutputStream
-import java.io.InputStreamReader
 
 
 class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {

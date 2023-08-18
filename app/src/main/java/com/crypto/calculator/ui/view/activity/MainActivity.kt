@@ -2,7 +2,6 @@ package com.crypto.calculator.ui.view.activity
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.ExpandableListAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.R
@@ -45,9 +44,9 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
 //        }
 
         menuAdapter = ExpandableMenuAdapter(
-                this,
-                navigationMenuData.getGroupList(),
-                navigationMenuData.data
+            this,
+            navigationMenuData.getGroupList(),
+            navigationMenuData.data
         )
         binding.expandableMenu.setAdapter(menuAdapter)
 
@@ -75,20 +74,18 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
 
     private fun getNavigationMenuData(): NavigationMenuData {
         return NavigationMenuData(
-                data = hashMapOf(
-                        "Generic" to listOf(
-                                Tool.TLV_PARSER,
-                                Tool.DES,
-                                Tool.HASH,
-                                Tool.BITWISE,
-                                Tool.MAC,
-                                Tool.CONVERTER,
-                                Tool.RSA,
-                        ),
-                        "EMV" to listOf(
-                                Tool.AES,
-                        ),
-                )
+            data = hashMapOf(
+                "Generic" to listOf(
+                    Tool.TLV_PARSER,
+                    Tool.DES,
+                    Tool.HASH,
+                    Tool.BITWISE,
+                    Tool.MAC,
+                    Tool.CONVERTER,
+                    Tool.RSA,
+                ),
+                "EMV" to emptyList()
+            )
         )
     }
 
@@ -136,14 +133,15 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
 
     private fun backToLogin() {
         MaterialAlertDialogBuilder(this)
-                .setTitle(R.string.label_logout)
-                .setPositiveButton(R.string.button_confirm) { _, _ ->
-                    finish()
-                }
-                .setNegativeButton(R.string.button_cancel) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
+            .setTitle(R.string.label_logout)
+            .setPositiveButton(R.string.button_confirm) { _, _ ->
+                finish()
+            }
+            .setNegativeButton(R.string.button_cancel)
+            { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun getMainFragmentContainer(): Int = R.id.mainFragmentContainer

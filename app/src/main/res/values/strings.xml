@@ -724,6 +724,7 @@
     <string name="label_account_current" translatable="false">"Checking"</string>
     <string name="label_account_saving" translatable="false">"Saving"</string>
 
+    <string name="label_tool_unknown" translatable="false">UNKNOWN</string>
     <string name="label_tool_des" translatable="false">DES</string>
     <string name="label_tool_rsa" translatable="false">RSA</string>
     <string name="label_tool_aes" translatable="false">AES</string>

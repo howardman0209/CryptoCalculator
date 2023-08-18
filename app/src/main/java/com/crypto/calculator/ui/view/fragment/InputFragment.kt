@@ -80,20 +80,14 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
         resetInput()
         when (tool) {
             Tool.DES -> desCalculator()
-
             Tool.RSA -> rsaCalculator()
-
             Tool.AES -> {}
-
             Tool.MAC -> macCalculator()
-
             Tool.HASH -> hashCalculator()
-
             Tool.BITWISE -> bitwiseCalculator()
-
             Tool.CONVERTER -> converter()
-
             Tool.TLV_PARSER -> tlvParser()
+            Tool.UNKNOWN -> {}
         }
     }
 

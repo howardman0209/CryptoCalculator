@@ -15,6 +15,7 @@ import com.crypto.calculator.databinding.FragmentCoreBinding
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
+import com.crypto.calculator.util.PreferencesUtil
 
 class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
 
@@ -23,6 +24,7 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d("CoreFragment", "onCreate")
+        viewModel.currentTool.postValue(PreferencesUtil.getLastUsedTool(requireContext().applicationContext))
         switchBottomPanel()
         switchCorePanel()
     }

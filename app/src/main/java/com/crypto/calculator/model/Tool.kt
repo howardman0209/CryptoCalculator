@@ -1,12 +1,31 @@
 package com.crypto.calculator.model
 
-enum class Tool {
-    DES,
-    RSA,
-    AES,
-    MAC,
-    HASH,
-    BITWISE,
-    CONVERTER,
-    TLV_PARSER,
+import com.crypto.calculator.R
+
+enum class Tool(val id: Int, val resourceId: Int) {
+    UNKNOWN(0, R.string.label_tool_unknown),
+    DES(1, R.string.label_tool_des),
+    RSA(2, R.string.label_tool_rsa),
+    AES(3, R.string.label_tool_aes),
+    MAC(4, R.string.label_tool_mac),
+    HASH(5, R.string.label_tool_hash),
+    BITWISE(6, R.string.label_tool_bitwise),
+    CONVERTER(7, R.string.label_tool_converter),
+    TLV_PARSER(8, R.string.label_tool_tlv_parser), ;
+
+    companion object {
+        fun getById(id: Int): Tool {
+            return when (id) {
+                1 -> DES
+                2 -> RSA
+                3 -> AES
+                4 -> MAC
+                5 -> HASH
+                6 -> BITWISE
+                7 -> CONVERTER
+                8 -> TLV_PARSER
+                else -> UNKNOWN
+            }
+        }
+    }
 }

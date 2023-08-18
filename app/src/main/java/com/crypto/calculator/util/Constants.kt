@@ -41,3 +41,6 @@ const val localDataPrefFileName = "localDataPref"
 const val localPrefFileName = "localPref"
 const val localeLanguagePrefKey = "localeLanguage"
 const val localeCountryPrefKey = "localeCountry"
+
+//prefKey
+const val prefLastUsedTool= "prefLastUsedTool"

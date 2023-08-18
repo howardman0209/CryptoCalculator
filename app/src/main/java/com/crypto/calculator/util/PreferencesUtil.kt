@@ -1,6 +1,7 @@
 package com.crypto.calculator.util
 
 import android.content.Context
+import com.crypto.calculator.model.Tool
 import java.util.Locale
 
 object PreferencesUtil {
@@ -34,4 +35,14 @@ object PreferencesUtil {
         return localPref.getString(prefKey, "").orEmpty()
     }
 
+    fun saveLastUsedTool(context: Context, tool: Tool) {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        localPref?.edit()?.putInt(prefLastUsedTool, tool.id)?.apply()
+    }
+
+    fun getLastUsedTool(context: Context): Tool {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        val id = localPref.getInt(prefLastUsedTool, Tool.TLV_PARSER.id)
+        return Tool.getById(id)
+    }
 }

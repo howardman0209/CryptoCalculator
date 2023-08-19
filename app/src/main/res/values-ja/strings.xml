@@ -98,6 +98,7 @@
     <string name="label_rationale_camera">写真を撮ったり、バーコードや QR コードをスキャンしたりするためのカメラのアクセス許可を許可してください</string>
     <string name="label_rationale_file">領収書またはレポートを保存するためのファイルとメディア権限を許可してください</string>
     <string name="label_rationale_file_read">デバイスから画像を読み取るためのファイルとメディア権限を許可します</string>
+    <string name="label_rationale_file_manage">"デバイスの外部ストレージからのファイルとメディアの管理権限を許可してください"</string>
     <string name="label_rationale_stats">決済を実行するための権限を許可してください</string>
     <string name="label_rationale_notification">通知プロンプトを表示するための通知権限を許可してください</string>
 

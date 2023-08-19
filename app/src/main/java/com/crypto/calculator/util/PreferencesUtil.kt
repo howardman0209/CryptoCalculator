@@ -1,7 +1,10 @@
 package com.crypto.calculator.util
 
 import android.content.Context
+import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.Tool
+import com.crypto.calculator.service.model.CardProfile
+import com.google.gson.Gson
 import java.util.Locale
 
 object PreferencesUtil {
@@ -44,5 +47,39 @@ object PreferencesUtil {
         val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
         val id = localPref.getInt(prefLastUsedTool, Tool.TLV_PARSER.id)
         return Tool.getById(id)
+    }
+
+    fun saveCardPreference(context: Context, card: PaymentMethod) {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        localPref?.edit()?.putInt(prefCardPreference, card.id)?.apply()
+    }
+
+    fun getCardPreference(context: Context): PaymentMethod {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        val id = localPref.getInt(prefCardPreference, PaymentMethod.VISA.id)
+        return PaymentMethod.getById(id)
+    }
+
+    fun saveCardProfile(context: Context, cardProfile: CardProfile, cardScheme: PaymentMethod) {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        val jsonStr = Gson().toJson(cardProfile)
+        localPref?.edit()?.putString("${cardScheme}-$prefCardProfile", jsonStr)?.apply()
+    }
+
+    fun getCardProfile(context: Context, cardScheme: PaymentMethod): CardProfile {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        val jsonStr = localPref.getString("${cardScheme}-$prefCardProfile", null)
+        val defaultPath = when (cardScheme) {
+            PaymentMethod.VISA -> "${assetsPathCardVisa}_cvn10.json"
+            PaymentMethod.MASTER -> assetsPathCardMaster
+            PaymentMethod.UNIONPAY -> assetsPathCardUnionPay
+            PaymentMethod.JCB -> assetsPathCardJcb
+            PaymentMethod.DISCOVER -> assetsPathCardDiscover
+            PaymentMethod.AMEX -> assetsPathCardAmex
+            else -> ""
+        }
+        return jsonStr?.let {
+            Gson().fromJson(it, CardProfile::class.java)
+        } ?: AssetsUtil.readFile(context, defaultPath)
     }
 }

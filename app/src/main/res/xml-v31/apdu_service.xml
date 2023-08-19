@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<host-apdu-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/hce_service_description"
+    android:requireDeviceScreenOn="false"
+    android:requireDeviceUnlock="false">
+    <aid-group android:category="payment">
+        <aid-filter android:name="325041592E5359532E4444463031" />
+        <aid-prefix-filter android:name="A00000000310" />
+        <aid-prefix-filter android:name="A00000000410" />
+        <aid-prefix-filter android:name="A0000000043060" />
+        <aid-prefix-filter android:name="A0000003330101" />
+        <aid-prefix-filter android:name="A00000002501" />
+        <aid-prefix-filter android:name="A0000000651010" />
+        <aid-prefix-filter android:name="A0000005150004" />
+        <aid-prefix-filter android:name="A0000005150024" />
+        <aid-prefix-filter android:name="A00000047400000001" />
+        <aid-prefix-filter android:name="A000000013000002" />
+        <aid-prefix-filter android:name="A0000001523010" />
+        <aid-prefix-filter android:name="A0000003241010" />
+    </aid-group>
+</host-apdu-service>

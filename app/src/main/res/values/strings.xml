@@ -100,6 +100,7 @@
     <string name="label_rationale_camera">"Allow camera permission to take picture, barcode or QR code"</string>
     <string name="label_rationale_file">"Allow files and media permission to save images to your device"</string>
     <string name="label_rationale_file_read">"Allow read files and media permission to read images from your device"</string>
+    <string name="label_rationale_file_manage">"Allow manage files and media permission from device's external storage"</string>
     <string name="label_rationale_stats">"Allow permission to perform transaction"</string>
     <string name="label_rationale_notification">"Allow device notification permission to push notification to your device"</string>
 
@@ -750,4 +751,5 @@
     <string name="label_operation_compute" translatable="false">Compute</string>
 
     <string name="label_app_version_no" translatable="false">v0.1</string>
+    <string name="hce_service_description" translatable="false">Crypto Calculator HCE</string>
 </resources>

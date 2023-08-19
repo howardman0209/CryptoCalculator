@@ -98,6 +98,7 @@
     <string name="label_rationale_camera">請允許相機權限以拍照、掃條碼及二維碼</string>
     <string name="label_rationale_file">請允許文件和媒體權限以儲存收據或報告</string>
     <string name="label_rationale_file_read">請允許讀取文件和媒體權限以從您的設備讀取圖像</string>
+    <string name="label_rationale_file_manage">"請允許從設備的外部存儲管理文件和媒體權限"</string>
     <string name="label_rationale_stats">請允許權限以執行交易</string>
     <string name="label_rationale_notification">請允許通知權限以顯示通知提示</string>
 

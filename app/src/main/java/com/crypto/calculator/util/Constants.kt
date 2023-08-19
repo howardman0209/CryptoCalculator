@@ -1,5 +1,15 @@
 package com.crypto.calculator.util
 
+const val REQUEST_CODE_ALL_PERMISSION = 1001
+const val REQUEST_CODE_CAMERA = 1002
+const val REQUEST_CODE_BLUETOOTH = 1003
+const val REQUEST_CODE_LOCATION = 1004
+const val REQUEST_CODE_FILE = 1005
+const val REQUEST_CODE_READ_FILE = 1006
+const val REQUEST_CODE_NOTIFICATION = 1007
+const val REQUEST_CODE_PHONE_STATE = 1008
+const val REQUEST_CODE_QR_CODE_ACTIVITY = 0x10
+
 //date time display
 const val MONTH_DATE_DISPLAY_PATTERN = "MMM dd"
 const val MONTH_YEAR_DISPLAY_PATTERN = "MMM yyyy"
@@ -44,3 +54,17 @@ const val localeCountryPrefKey = "localeCountry"
 
 //prefKey
 const val prefLastUsedTool= "prefLastUsedTool"
+const val prefCardPreference = "CardPreference"
+const val prefCardProfile = "CardProfile"
+
+//assets path
+const val assetsPathEmvConfig = "emv/config/emvConfig.cfg"
+const val assetsPathTestCapk = "emv/config/testKey.capk"
+const val assetsPathLiveCapk = "emv/config/liveKey.capk"
+const val assetsPathAresLicense = "ares/slm-Spectratech-license_file.json"
+const val assetsPathCardVisa = "emv/card/visa"
+const val assetsPathCardMaster = "emv/card/mastercard.json"
+const val assetsPathCardUnionPay = "emv/card/unionpay.json"
+const val assetsPathCardJcb= "emv/card/jcb.json"
+const val assetsPathCardDiscover= "emv/card/discover.json"
+const val assetsPathCardAmex= "emv/card/amex.json"

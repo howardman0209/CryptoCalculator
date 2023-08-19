@@ -219,7 +219,7 @@ fun String.hexToBinary(): String {
     return binary.padStart(this.length * 4, '0')
 }
 
-fun String.hexBitwise(hex: String, operation: BitwiseOperation): String {
+fun String.hexBitwise(hex: String = "", operation: BitwiseOperation): String {
     val data = BigInteger(this, 16)
     val res = when (operation) {
         BitwiseOperation.XOR -> data.xor(BigInteger(hex, 16))

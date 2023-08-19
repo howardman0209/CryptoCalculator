@@ -6,7 +6,9 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentEmvBinding
+import com.crypto.calculator.extension.requireDefaultPaymentServicePermission
 import com.crypto.calculator.model.Tool
+import com.crypto.calculator.ui.base.BaseActivity
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.ui.viewModel.EmvViewModel
@@ -43,7 +45,9 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     }
 
     private fun cardSimulator() {
-        binding.cardContainer.visibility = View.VISIBLE
+        (requireActivity() as BaseActivity).requireDefaultPaymentServicePermission {
+            binding.cardContainer.visibility = View.VISIBLE
+        }
     }
 
     private fun emvKernel() {

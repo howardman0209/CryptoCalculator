@@ -25,7 +25,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         Log.d("EmvFragment", "onViewCreated")
 
         coreViewModel.currentTool.observe(viewLifecycleOwner) {
-            Log.d("InputFragment", "currentTool: $it")
+            Log.d("EmvFragment", "currentTool: $it")
             setLayout(it)
         }
     }

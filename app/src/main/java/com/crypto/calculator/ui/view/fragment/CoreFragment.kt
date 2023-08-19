@@ -49,8 +49,14 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
             navigationMenuData.getGroupList().find { group ->
                 navigationMenuData.data[group]?.contains(it) == true
             }?.also {
-                switchCorePanel(it)
+                if (viewModel.currentCategory.value != it) {
+                    viewModel.currentCategory.postValue(it)
+                }
             }
+        }
+
+        viewModel.currentCategory.observe(viewLifecycleOwner) {
+            switchCorePanel(it)
         }
     }
 
@@ -60,12 +66,16 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
     }
 
     private fun switchCorePanel(parentGroup: Category, target: Int = R.id.corePanel) {
-        currentCorePanel = when (parentGroup) {
+        val selectedFragment = when (parentGroup) {
             Category.GENERIC -> InputFragment()
             Category.EMV -> EmvFragment()
             else -> null
         }
-        currentCorePanel?.let { pushFragment(it, target, isAddToBackStack = false) }
+
+        selectedFragment?.let {
+            currentCorePanel = selectedFragment
+            pushFragment(selectedFragment, target, isAddToBackStack = false)
+        }
     }
 
     private fun switchBottomPanel(target: Int = R.id.bottomPanel) {

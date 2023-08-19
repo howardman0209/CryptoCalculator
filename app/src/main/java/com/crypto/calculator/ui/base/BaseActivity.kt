@@ -12,7 +12,6 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
@@ -46,11 +45,6 @@ abstract class BaseActivity : LocalizationActivity() {
         layoutInflater.inflate(R.layout.activity_base, findViewById(android.R.id.content))
 
         progressDialog = ProgressDialog(this).create()
-
-
-//        viewModel.isShowLoading.observe(this) {
-//            showLoadingIndicator(it == true)
-//        }
 
     }
 

@@ -1,6 +1,7 @@
 package com.crypto.calculator.extension
 
 import android.Manifest.permission
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -9,6 +10,7 @@ import android.provider.Settings
 import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
 import android.view.View
 import com.crypto.calculator.R
+import com.crypto.calculator.model.PermissionRequestHandler
 import com.crypto.calculator.model.PermissionResult
 import com.crypto.calculator.service.cardSimulator.CreditCardSimulator.Companion.isDefaultPaymentService
 import com.crypto.calculator.service.cardSimulator.CreditCardSimulator.Companion.requestDefaultPaymentServiceIntent
@@ -34,16 +36,32 @@ inline fun BaseActivity.requireManageOverlayPermission(view: View, crossinline o
 }
 
 inline fun BaseActivity.requireDefaultPaymentServicePermission(crossinline onSuccess: () -> Unit) {
+    permissionRequestHandler = object : PermissionRequestHandler() {
+        override fun onPermissionRequestedResult(resultCode: Int) {
+            if (resultCode == RESULT_OK) {
+                onSuccess()
+            }
+        }
+    }
+
     if (isDefaultPaymentService(this.applicationContext)) {
         onSuccess()
     } else {
         val intent = requestDefaultPaymentServiceIntent(this.applicationContext)
-        startActivity(intent)
+        permissionRequestLauncher.launch(intent)
     }
 }
 
 inline fun BaseActivity.requireManageFilePermission(view: View, crossinline onSuccess: () -> Unit) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        permissionRequestHandler = object : PermissionRequestHandler() {
+            override fun onPermissionRequestedResult(resultCode: Int) {
+                if (resultCode == RESULT_OK) {
+                    onSuccess()
+                }
+            }
+        }
+
         if (Environment.isExternalStorageManager()) {
             onSuccess()
         } else {
@@ -51,12 +69,8 @@ inline fun BaseActivity.requireManageFilePermission(view: View, crossinline onSu
                 .make(view, R.string.label_rationale_file_manage, Snackbar.LENGTH_LONG)
                 .setAction(R.string.button_request) {
                     val uri = Uri.parse("package:${packageName}")
-                    startActivity(
-                        Intent(
-                            Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-                            uri
-                        )
-                    )
+                    val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri)
+                    permissionRequestLauncher.launch(intent)
                 }
                 .show()
         }

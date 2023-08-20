@@ -30,3 +30,7 @@ class PermissionRequest(
     var requestCode: Int? = null,
     var resultCallback: (PermissionResult.() -> Unit)? = null
 )
+
+abstract class PermissionRequestHandler {
+    abstract fun onPermissionRequestedResult(resultCode: Int)
+}

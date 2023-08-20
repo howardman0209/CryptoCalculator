@@ -54,6 +54,10 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.animationAwaitCard.visibility = View.VISIBLE
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+    }
     private fun getCoreViewModel(): CoreViewModel {
         Log.d("EmvFragment", "getCoreViewModel")
         return activity?.supportFragmentManager?.fragments?.let { fragmentList ->

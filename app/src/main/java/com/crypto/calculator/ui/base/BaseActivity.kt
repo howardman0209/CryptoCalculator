@@ -13,6 +13,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
@@ -24,6 +25,7 @@ import com.akexorcist.localizationactivity.ui.LocalizationActivity
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.DialogContentSingleInputBinding
 import com.crypto.calculator.model.PermissionRequest
+import com.crypto.calculator.model.PermissionRequestHandler
 import com.crypto.calculator.model.PermissionResult
 import com.crypto.calculator.uiComponent.ProgressDialog
 import com.crypto.calculator.util.TAG
@@ -36,6 +38,12 @@ abstract class BaseActivity : LocalizationActivity() {
     private val permCallbackMap = mutableMapOf<Int, PermissionResult.() -> Unit>()
     lateinit var progressDialog: AlertDialog
     private var disposable: Disposable? = null
+    lateinit var permissionRequestHandler: PermissionRequestHandler
+    val permissionRequestLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        permissionRequestHandler.onPermissionRequestedResult(result.resultCode)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,9 +114,11 @@ abstract class BaseActivity : LocalizationActivity() {
                     requestCode
                 )
             )
+
             notGranted.any { shouldShowRequestPermissionRationale(it) } -> onPermissionResult(
                 PermissionResult.NeedRationale(requestCode)
             )
+
             else -> requestPermissions(notGranted, requestCode)
         }
     }
@@ -125,10 +135,12 @@ abstract class BaseActivity : LocalizationActivity() {
                 // all perms granted after the result back
                 onPermissionResult(PermissionResult.PermissionGranted(requestCode))
             }
+
             permissions.any { shouldShowRequestPermissionRationale(it) } -> {
                 // some denied & rationale might be needed
                 onPermissionResult(PermissionResult.PermissionDenied(requestCode))
             }
+
             else -> {
                 // repeatedly denied the permission -> os regards this as permanently denied
                 // need to prompt user to app settings to change it

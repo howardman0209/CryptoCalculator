@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
+import android.util.Log
 import android.view.View
 import com.crypto.calculator.R
 import com.crypto.calculator.model.PermissionRequestHandler

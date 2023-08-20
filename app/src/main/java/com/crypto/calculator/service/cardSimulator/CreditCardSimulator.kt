@@ -3,6 +3,7 @@ package com.crypto.calculator.service.cardSimulator
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
 import android.nfc.cardemulation.CardEmulation
 import android.util.Log
@@ -30,8 +31,17 @@ class CreditCardSimulator : BasicEMVCardSimulator() {
             val nfcAdapter = NfcAdapter.getDefaultAdapter(context)
             val cardEmulation = CardEmulation.getInstance(nfcAdapter)
             val paymentServiceName = ComponentName(context, CreditCardSimulator::class.java)
-//            Log.d("BasicApduService", "paymentServiceName: $paymentServiceName")
+//            Log.d("CreditCardSimulator", "paymentServiceName: $paymentServiceName")
             return cardEmulation.isDefaultServiceForCategory(paymentServiceName, CardEmulation.CATEGORY_PAYMENT)
+        }
+
+        fun enablePaymentService(context: Context, enable: Boolean = true) {
+            val flag = if (enable) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+            context.packageManager.setComponentEnabledSetting(
+                ComponentName(context, CreditCardSimulator::class.java),
+                flag,
+                PackageManager.DONT_KILL_APP
+            )
         }
     }
 

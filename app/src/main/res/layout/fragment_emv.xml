@@ -41,6 +41,7 @@
                 android:orientation="horizontal">
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivPaymentMethod"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/item_preview_card_size"
                     android:layout_weight="1"
@@ -52,6 +53,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivCard"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/item_preview_card_size"
                     android:layout_weight="1"

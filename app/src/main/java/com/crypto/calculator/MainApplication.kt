@@ -12,6 +12,8 @@ import com.akexorcist.localizationactivity.core.LocalizationApplicationDelegate
 import com.crypto.calculator.model.Category
 import com.crypto.calculator.model.NavigationMenuData
 import com.crypto.calculator.model.Tool
+import com.crypto.calculator.service.cardSimulator.CreditCardSimulator
+import com.crypto.calculator.ui.view.activity.MainActivity
 import com.crypto.calculator.util.LIFECYCLE
 import com.crypto.calculator.util.PreferencesUtil
 
@@ -78,6 +80,10 @@ class MainApplication : Application(), ActivityLifecycleCallbacks {
 
     override fun onActivityStopped(activity: Activity) {
         Log.d(LIFECYCLE, "${activity.javaClass.name} onStopped")
+
+        if (activity is MainActivity) {
+            CreditCardSimulator.enablePaymentService(applicationContext, false)
+        }
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, savedInstanceState: Bundle) {

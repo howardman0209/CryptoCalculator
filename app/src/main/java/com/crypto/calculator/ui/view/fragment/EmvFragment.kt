@@ -8,6 +8,7 @@ import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentEmvBinding
 import com.crypto.calculator.extension.requireDefaultPaymentServicePermission
 import com.crypto.calculator.model.Tool
+import com.crypto.calculator.service.cardSimulator.CreditCardSimulator
 import com.crypto.calculator.ui.base.BaseActivity
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
@@ -26,6 +27,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
         coreViewModel.currentTool.observe(viewLifecycleOwner) {
             Log.d("EmvFragment", "currentTool: $it")
+            CreditCardSimulator.enablePaymentService(requireContext().applicationContext, false)
             setLayout(it)
         }
     }
@@ -45,8 +47,16 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     }
 
     private fun cardSimulator() {
+        CreditCardSimulator.enablePaymentService(requireContext().applicationContext, true)
         (requireActivity() as BaseActivity).requireDefaultPaymentServicePermission {
             binding.cardContainer.visibility = View.VISIBLE
+            binding.ivPaymentMethod.setOnClickListener {
+
+            }
+
+            binding.ivCard.setOnClickListener {
+
+            }
         }
     }
 
@@ -54,10 +64,19 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.animationAwaitCard.visibility = View.VISIBLE
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (coreViewModel.currentTool.value == Tool.CARD_SIMULATOR) {
+            CreditCardSimulator.enablePaymentService(requireContext().applicationContext, true)
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-
+        Log.d("EmvFragment", "onDestroy")
+        CreditCardSimulator.enablePaymentService(requireContext().applicationContext, false)
     }
+
     private fun getCoreViewModel(): CoreViewModel {
         Log.d("EmvFragment", "getCoreViewModel")
         return activity?.supportFragmentManager?.fragments?.let { fragmentList ->

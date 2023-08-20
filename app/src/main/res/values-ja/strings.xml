@@ -371,6 +371,7 @@
     <string name="label_input_coupon_sn">クーポンのシリアル番号を入力してください</string>
     <string name="label_serial_number">シリアル番号</string>
     <string name="label_remove_coupon">クーポンを削除</string>
+    <string name="label_edit">編集</string>
     <string name="label_edit_item">商品を編集</string>
     <string name="label_edit_coupon">クーポンを編集</string>
     <string name="label_coupon_qr_code">クーポン Qr</string>
@@ -396,6 +397,7 @@
     <string name="label_prompt_input">必要なデータを提供してください</string>
     <!--    <string name="var_amount" translatable="false">%1$s %2$s</string>-->
     <string name="label_decode_barcode_fail">バーコードが見つかりません</string>
+    <string name="label_select_card">クレジットカードを選ぶ</string>
 
     <!-- Password - Common -->
     <string name="label_action_result">操作結果</string>

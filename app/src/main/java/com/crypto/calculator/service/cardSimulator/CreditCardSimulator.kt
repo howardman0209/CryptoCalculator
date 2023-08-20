@@ -15,6 +15,12 @@ import com.crypto.calculator.service.cardSimulator.delegate.MastercardDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.UnionPayDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.VisaDelegate
 import com.crypto.calculator.util.PreferencesUtil
+import com.crypto.calculator.util.assetsPathCardAmex
+import com.crypto.calculator.util.assetsPathCardDiscover
+import com.crypto.calculator.util.assetsPathCardJcb
+import com.crypto.calculator.util.assetsPathCardMaster
+import com.crypto.calculator.util.assetsPathCardUnionPay
+import com.crypto.calculator.util.assetsPathCardVisa
 
 class CreditCardSimulator : BasicEMVCardSimulator() {
     companion object {
@@ -42,6 +48,19 @@ class CreditCardSimulator : BasicEMVCardSimulator() {
                 flag,
                 PackageManager.DONT_KILL_APP
             )
+        }
+
+        fun getDefaultCardAssetsPath(cardType: PaymentMethod): String {
+            val path = when (cardType) {
+                PaymentMethod.VISA -> "${assetsPathCardVisa}_cvn10.json"
+                PaymentMethod.MASTER -> assetsPathCardMaster
+                PaymentMethod.UNIONPAY -> assetsPathCardUnionPay
+                PaymentMethod.JCB -> assetsPathCardJcb
+                PaymentMethod.DISCOVER -> assetsPathCardDiscover
+                PaymentMethod.AMEX -> assetsPathCardAmex
+                else -> ""
+            }
+            return path
         }
     }
 

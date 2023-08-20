@@ -371,6 +371,7 @@
     <string name="label_input_coupon_sn">請輸入優惠券序列號</string>
     <string name="label_serial_number">序列號</string>
     <string name="label_remove_coupon">移除優惠券</string>
+    <string name="label_edit">編輯</string>
     <string name="label_edit_item">編輯貨品</string>
     <string name="label_edit_coupon">編輯優惠券</string>
     <string name="label_coupon_qr_code">優惠券Qr</string>
@@ -396,6 +397,7 @@
     <string name="label_prompt_input">請提供必要數據</string>
     <!--    <string name="var_amount" translatable="false">%1$s %2$s</string>-->
     <string name="label_decode_barcode_fail">找不到條碼</string>
+    <string name="label_select_card">選擇信用卡</string>
 
     <!-- Password - Common -->
     <string name="label_action_result">操作結果</string>

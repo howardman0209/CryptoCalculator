@@ -288,6 +288,8 @@
     <string name="label_skip_success_animation">Skip animation under ECR</string>
     <string name="var_result_auto_dismiss_timeout">Result screen timeout: %1$sms</string>
     <string name="label_signature_on_paper">Signature on paper</string>
+    <string name="label_save_to_file" translatable="false">Save to file</string>
+    <string name="label_load_from_file" translatable="false">Load from file</string>
 
     <string name="label_edit_shop_name">Edit shop name</string>
     <!-- Language -->
@@ -375,6 +377,7 @@
     <string name="label_input_coupon_sn">Please input coupon serial no.</string>
     <string name="label_serial_number">Serial no.</string>
     <string name="label_remove_coupon">Remove coupon?</string>
+    <string name="label_edit">Edit</string>
     <string name="label_edit_item">Edit item</string>
     <string name="label_edit_coupon">Edit coupon</string>
     <string name="label_coupon_qr_code">Coupon Qr Code</string>
@@ -403,6 +406,7 @@
     <string name="label_prompt_input">Please provide all required info</string>
     <string name="var_amount" translatable="false">%1$s %2$s</string>
     <string name="label_decode_barcode_fail">Cannot decode barcode</string>
+    <string name="label_select_card">Select card</string>
 
     <!-- Password - Common -->
     <string name="label_action_result">Action result</string>

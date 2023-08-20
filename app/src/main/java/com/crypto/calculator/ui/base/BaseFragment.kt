@@ -105,6 +105,30 @@ abstract class BaseFragment : Fragment() {
         baseActivity.singleInputDialog(context, title, fieldName, fieldValue, onConfirmCallBack)
     }
 
+    fun arrayItemDialog(
+        context: Context, items: Array<String?>, title: String?,
+        positiveBtn: String? = null,
+        positiveBtnCallback: (() -> Unit)? = null,
+        negativeBtn: String? = null,
+        negativeBtnCallback: (() -> Unit)? = null,
+        neutralBtn: String? = null,
+        neutralBtnCallback: (() -> Unit)? = null,
+        onDismissCallback: (selectedOption: Int) -> Unit
+    ) {
+        baseActivity.arrayItemDialog(context, items, title, positiveBtn, positiveBtnCallback, negativeBtn, negativeBtnCallback, neutralBtn, neutralBtnCallback, onDismissCallback)
+    }
+
+    inline fun <reified T : Any> editConfigJson(
+        context: Context, view: View,
+        config: T,
+        editable: Boolean = true,
+        neutralBtn: String? = null,
+        noinline onNeutralBtnClick: (() -> Unit)? = null,
+        crossinline onConfirmClick: (editResult: T) -> Unit
+    ) {
+        (requireActivity() as BaseActivity).editConfigJson(context, view, config, editable, neutralBtn, onNeutralBtnClick, onConfirmClick)
+    }
+
     // Prevent unintended double/ multiple click
     class PreventFastDoubleClick {
         companion object {

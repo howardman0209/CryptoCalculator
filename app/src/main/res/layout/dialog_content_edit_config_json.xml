@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:translationZ="1dp"
+            app:liftOnScroll="false">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/saveBtn"
+                    style="@style/Widget.Crypto.Calculator.Button.TextButton.Tertiary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/label_save_to_file"
+                    app:icon="@drawable/ic_baseline_download" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/loadBtn"
+                    style="@style/Widget.Crypto.Calculator.Button.TextButton.Tertiary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/label_load_from_file"
+                    app:icon="@drawable/ic_baseline_drive_file_move" />
+
+            </LinearLayout>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <ScrollView
+            android:id="@+id/scrollView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:overScrollMode="ifContentScrolls"
+            android:translationZ="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvConfigItems"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/view_holder_map_data" />
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</layout>

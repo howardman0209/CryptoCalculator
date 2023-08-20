@@ -27,6 +27,20 @@
     <color name="so_dark_a64">#A302152C</color>
     <color name="so_dark_variant">#0E2642</color><!--dark surface-->
 
+    <!--Payment-->
+    <color name="brand_visa">#1A1F71</color>
+    <color name="brand_mastercard">#F79E1B</color>
+    <color name="brand_jcb">#40A737</color>
+    <color name="brand_unionpay">#E0002B</color>
+    <color name="brand_amex">#006FCF</color>
+    <color name="brand_alipay">#0AE</color>
+    <color name="brand_wechat">#09BB07</color>
+    <color name="brand_fps">#56BBE9</color>
+    <color name="brand_payme">#DB0011</color>
+    <color name="brand_octopus">#F5911E</color>
+    <color name="brand_yuu">#2A7DE1</color>
+    <color name="brand_cash">#00A590</color>
+
     <!-- other -->
     <color name="off_white">#ddd</color>
 

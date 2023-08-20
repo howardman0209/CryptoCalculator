@@ -23,14 +23,20 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.akexorcist.localizationactivity.ui.LocalizationActivity
 import com.crypto.calculator.R
+import com.crypto.calculator.databinding.DialogContentEditConfigJsonBinding
 import com.crypto.calculator.databinding.DialogContentSingleInputBinding
+import com.crypto.calculator.extension.requireManageFilePermission
 import com.crypto.calculator.model.PermissionRequest
 import com.crypto.calculator.model.PermissionRequestHandler
 import com.crypto.calculator.model.PermissionResult
+import com.crypto.calculator.ui.viewAdapter.ConfigItemsAdapter
 import com.crypto.calculator.uiComponent.ProgressDialog
+import com.crypto.calculator.util.JsonUtils
+import com.crypto.calculator.util.ShareFileUtil
 import com.crypto.calculator.util.TAG
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
 import io.reactivex.disposables.Disposable
 
 
@@ -282,6 +288,119 @@ abstract class BaseActivity : LocalizationActivity() {
             }
             .setNegativeButton(R.string.button_cancel) { _, _ ->
                 Log.d(TAG, "cancel")
+            }
+            .show()
+    }
+
+    fun arrayItemDialog(
+        context: Context, items: Array<String?>, title: String?,
+        positiveBtn: String? = null,
+        positiveBtnCallback: (() -> Unit)? = null,
+        negativeBtn: String? = null,
+        negativeBtnCallback: (() -> Unit)? = null,
+        neutralBtn: String? = null,
+        neutralBtnCallback: (() -> Unit)? = null,
+        onDismissCallback: (selectedOption: Int) -> Unit
+    ) {
+        var selectedOption: Int? = null
+        MaterialAlertDialogBuilder(context)
+            .setCancelable(true)
+            .setTitle(title)
+            .setItems(items) { _, index ->
+                selectedOption = index
+            }
+            .apply {
+                positiveBtnCallback?.let {
+                    setPositiveButton(positiveBtn) { _, _ ->
+                        it.invoke()
+                    }
+                }
+                negativeBtnCallback?.let {
+                    setNegativeButton(negativeBtn) { _, _ ->
+                        it.invoke()
+                    }
+                }
+                neutralBtnCallback?.let {
+                    setNeutralButton(neutralBtn) { _, _ ->
+                        it.invoke()
+                    }
+                }
+            }
+            .setOnDismissListener {
+                selectedOption?.let { onDismissCallback.invoke(it) }
+            }.show()
+    }
+
+    inline fun <reified T : Any> editConfigJson(
+        context: Context, view: View,
+        config: T,
+        editable: Boolean = true,
+        neutralBtn: String? = null,
+        noinline onNeutralBtnClick: (() -> Unit)? = null,
+        crossinline onConfirmClick: (editResult: T) -> Unit
+    ) {
+        val dialogBinding: DialogContentEditConfigJsonBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_content_edit_config_json, null, false)
+
+        val jsonStr = Gson().toJson(config)
+        val list = JsonUtils.flattenJson(jsonStr).toMutableList()
+        /// Do NOT sort the list otherwise cannot unflatten back to Json !!!
+
+        val adapter = ConfigItemsAdapter { position, adapter ->
+            if (editable) {
+                val keyAndValue = list[position].split(':', limit = 2)
+                singleInputDialog(context, getString(R.string.label_edit_item), keyAndValue.first(), keyAndValue.last()) { editedStr ->
+                    list[position] = "${keyAndValue.first()}:$editedStr"
+                    adapter.setData(list)
+                }
+            }
+        }
+        dialogBinding.rvConfigItems.adapter = adapter
+        adapter.setData(list)
+
+        dialogBinding.saveBtn.setOnClickListener {
+            requireManageFilePermission(it) {
+                singleInputDialog(context, "Please input a file suffix", "Suffix") { suffix ->
+                    if (suffix.isNotEmpty()) {
+                        ShareFileUtil.saveConfigToJsonFile(context, config, suffix)
+                    }
+                }
+            }
+        }
+
+        dialogBinding.loadBtn.setOnClickListener {
+            requireManageFilePermission(it) {
+                ShareFileUtil.loadConfigFromJsonFile(context, config) { jsonStr ->
+                    Log.d(TAG, "jsonStr: $jsonStr")
+                    list.clear()
+                    list.addAll(JsonUtils.flattenJson(jsonStr))
+                    adapter.setData(list)
+                }
+            }
+        }
+
+        MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.label_edit_item)
+            .setCancelable(false)
+            .setView(dialogBinding.root)
+            .setPositiveButton(R.string.button_confirm) { _, _ ->
+                Log.d(TAG, "confirm")
+                val editedJsonStr = JsonUtils.unflattenJson(list)
+                try {
+                    onConfirmClick.invoke(Gson().fromJson(editedJsonStr, T::class.java))
+                } catch (e: Exception) {
+                    Log.d(TAG, "Exception: $e")
+                    Snackbar.make(view, "Invalid format", Snackbar.LENGTH_LONG).show()
+                }
+            }
+            .setNegativeButton(R.string.button_cancel) { _, _ ->
+                Log.d(TAG, "cancel")
+            }.apply {
+                onNeutralBtnClick?.let {
+                    setNeutralButton(neutralBtn) { _, _ ->
+                        Log.d(TAG, "reset")
+                        onNeutralBtnClick.invoke()
+                    }
+                }
             }
             .show()
     }

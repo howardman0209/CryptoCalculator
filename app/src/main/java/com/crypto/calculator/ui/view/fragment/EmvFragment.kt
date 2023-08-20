@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
-import com.crypto.calculator.MainApplication
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentEmvBinding
 import com.crypto.calculator.extension.getColorIconResId

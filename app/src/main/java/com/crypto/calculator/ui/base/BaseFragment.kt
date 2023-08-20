@@ -9,12 +9,8 @@ import android.view.ViewGroup
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.crypto.calculator.R
-import com.crypto.calculator.databinding.DialogContentSingleInputBinding
-import com.crypto.calculator.util.TAG
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 abstract class BaseFragment : Fragment() {
     protected lateinit var baseActivity: BaseActivity

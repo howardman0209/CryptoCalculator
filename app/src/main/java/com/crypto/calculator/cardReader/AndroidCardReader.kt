@@ -9,6 +9,7 @@ import com.crypto.calculator.extension.toISOAmountString
 import com.crypto.calculator.model.EMVTags
 import com.crypto.calculator.model.EmvConfig
 import com.crypto.calculator.model.getHexTag
+import com.crypto.calculator.util.CurrencyUtil
 import com.crypto.calculator.util.DATE_TIME_PATTERN_EMV_9A
 import com.crypto.calculator.util.DATE_TIME_PATTERN_EMV_9F21
 import com.crypto.calculator.util.TlvUtil
@@ -95,15 +96,17 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
 
     override fun startEMV(amount: String?, amountCashback: String?, emvConfig: EmvConfig) {
         val tmp = emvConfig.data
-        tmp[EMVTags.AUTHORISED_AMOUNT.getHexTag()] = amount?.toISOAmountString(LoginManager.getCurrentShopCurrencyDecimal())?.padStart(12, '0')
+        val currency = emvConfig.data[EMVTags.TRANSACTION_CURRENCY_CODE.getHexTag()]?.let { CurrencyUtil.getCurrencyByNumericCode(it) }
+            ?: throw Exception("INVALID_TRANSACTION_CURRENCY_CODE")
+        tmp[EMVTags.AUTHORISED_AMOUNT.getHexTag()] = amount?.toISOAmountString(currency.defaultFractionDigits)?.padStart(12, '0')
             ?: throw Exception("INVALID_AUTHORISED_AMOUNT")
-        tmp[EMVTags.AMOUNT_OTHER.getHexTag()] = amountCashback?.toISOAmountString(LoginManager.getCurrentShopCurrencyDecimal())?.padStart(12, '0')
+        tmp[EMVTags.AMOUNT_OTHER.getHexTag()] = amountCashback?.toISOAmountString(currency.defaultFractionDigits)?.padStart(12, '0')
             ?: "0".padStart(12, '0')
         getCurrentTime(DATE_TIME_PATTERN_EMV_9A)?.let { tmp[EMVTags.TRANSACTION_DATE.getHexTag()] = it }
         getCurrentTime(DATE_TIME_PATTERN_EMV_9F21)?.let { tmp[EMVTags.TRANSACTION_TIME.getHexTag()] = it }
         Log.d("AndroidCR", "startEMV - data: $tmp")
         enableReader(
-            DummyEMVKernel(context,
+            EMVKernel(context,
                 this.apply {
                     onStatusChange(BasicNFCKernel.Companion.CardReaderStatus.READY)
                 }

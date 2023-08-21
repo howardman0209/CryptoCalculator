@@ -8,6 +8,66 @@ import com.google.gson.JsonObject
 import java.lang.StringBuilder
 
 object TlvUtil {
+
+    fun findByTag(tlv: String, tag: String): List<String>? {
+        val value = parseTLV(tlv)[tag]
+        Log.d("TAG_FINDER", "tag: $tag, value: $value")
+        return value
+    }
+
+    /**
+     * Decode TLV into map of list of string (each layer)
+     * key = tag, value(s) = listOf(value1, value2...)
+     * Eg. input tlv = 6F6C840E325041592E5359532E4444463031A558BF0C55800101A503800177611B4F07A00000015230105008446973636F7665728701019F2A02000661164F07A00000032410105008446973636F76657287010261164F07A00000032410105008446973636F7665728701029000
+     * return {"6F":["840E325041592E5359532E4444463031A558BF0C55800101A503800177611B4F07A00000015230105008446973636F7665728701019F2A02000661164F07A00000032410105008446973636F76657287010261164F07A00000032410105008446973636F7665728701029000"],"84":["325041592E5359532E4444463031"],"A5":["BF0C55800101A503800177611B4F07A00000015230105008446973636F7665728701019F2A02000661164F07A00000032410105008446973636F76657287010261164F07A00000032410105008446973636F766572870102","800177"],"BF0C":["800101A503800177611B4F07A00000015230105008446973636F7665728701019F2A02000661164F07A00000032410105008446973636F76657287010261164F07A00000032410105008446973636F766572870102"],"80":["01","77"],"61":["4F07A00000015230105008446973636F7665728701019F2A020006","4F07A00000032410105008446973636F766572870102","4F07A00000032410105008446973636F766572870102"],"4F":["A0000001523010","A0000003241010","A0000003241010"],"50":["446973636F766572","446973636F766572","446973636F766572"],"87":["01","02","02"],"9F2A":["0006"]}
+     */
+    fun parseTLV(tlv: String): Map<String, List<String>> {
+        Log.d("TLV_DECODER, Start", "tlv: $tlv")
+        try {
+            val tagAndValue: MutableMap<String, MutableList<String>> = mutableMapOf()
+            var cursor = 0
+            while (cursor < tlv.length) {
+                val tag = nextTag(tlv.substring(cursor))
+                Log.d("TLV_DECODER", "Current tag: $tag")
+                val lengthByte = when (tlv.substring(cursor + tag.length, cursor + tag.length + 2)) {
+                    "81" -> {
+                        cursor += 2
+                        2
+                    }
+
+                    "82" -> {
+                        cursor += 2
+                        4
+                    }
+
+                    else -> 2
+                }
+                val dataLength = tlv.substring(cursor + tag.length, cursor + tag.length + lengthByte).toInt(16) * 2
+                val data = tlv.substring(cursor + tag.length + lengthByte, cursor + tag.length + lengthByte + dataLength)
+                Log.d("TLV_DECODER", "Tag: $tag, Length: $dataLength, Value: $data")
+                if (!tagAndValue.contains(tag)) tagAndValue[tag] = mutableListOf(data) else tagAndValue[tag]?.add(data)
+
+                cursor += if (isTemplateTag(tag)) {
+                    (tag.length + lengthByte)
+                } else {
+                    (tag.length + lengthByte + dataLength)
+                }
+
+                Log.d("TLV_DECODER", "Remaining Tlv: ${tlv.substring(cursor)}")
+
+                if (tlv.substring(cursor) == APDU_RESPONSE_CODE_OK) {
+                    Log.d("TLV_DECODER, End", "Decoded TLV: $tagAndValue")
+                    return tagAndValue
+                }
+            }
+            Log.d("TLV_DECODER, End", "Decoded TLV: $tagAndValue")
+            return tagAndValue
+        } catch (e: Exception) {
+            Log.d("TLV_DECODER", "Exception: $e")
+            throw Exception("TLV decode error: Invalid TLV")
+        }
+    }
+
     /**
      * Decode TLV into structured map
      * Eg. input tlv = 6F6C840E325041592E5359532E4444463031A558BF0C55800101A503800177611B4F07A00000015230105008446973636F7665728701019F2A02000661164F07A00000032410105008446973636F76657287010261164F07A00000032410105008446973636F7665728701029000

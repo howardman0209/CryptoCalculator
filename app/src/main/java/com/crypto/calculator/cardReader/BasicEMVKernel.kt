@@ -31,29 +31,29 @@ abstract class BasicEMVKernel(nfcDelegate: NfcDelegate) : BasicNFCKernel(nfcDele
         super.onCompleted()
     }
 
-    fun communicator(isoDep: IsoDep, cmd: String): String {
-        val command = cmd.uppercase()
-        val tlv = isoDep.sendAPDU(command)
-        if (tlv.endsWith(APDU_RESPONSE_CODE_OK)) {
-            Log.i("APDU ->>", "cmd: $command")
-            Log.i("APDU <<-", "tlv: $tlv")
+    open fun communicator(isoDep: IsoDep, cmd: String): String {
+        val cAPDU = cmd.uppercase()
+        val rAPDU = isoDep.sendAPDU(cAPDU)
+        if (rAPDU.endsWith(APDU_RESPONSE_CODE_OK)) {
+            Log.i("communicator", "cAPDU ->>: $cAPDU")
+            Log.i("communicator", "rAPDU <<-: $rAPDU")
         } else {
-            Log.e("APDU ->>", "cmd: $command")
-            Log.e("APDU <<-", "tlv: $tlv")
+            Log.e("communicator", "cAPDU ->>: $cAPDU")
+            Log.e("communicator", "rAPDU <<-: $rAPDU")
         }
-        return tlv
+        return rAPDU
     }
 
     fun processTlv(tlv: String) {
-        val decodedMap = TlvUtil.decodeTLV(tlv)
+        val decodedMap = TlvUtil.parseTLV(tlv)
         Log.d("processTlv", "tag data: $decodedMap")
         saveICCData(decodedMap)
     }
 
-    private fun saveICCData(data: Map<String, Any?>) {
+    private fun saveICCData(data: Map<String, List<String>>) {
         data.forEach {
             if (!TlvUtil.isTemplateTag(it.key) && !cardData.containsKey(it.key)) {
-                cardData[it.key] = it.value
+                cardData[it.key] = it.value.first()
             }
         }
     }

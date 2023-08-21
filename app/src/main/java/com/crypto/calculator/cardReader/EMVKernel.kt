@@ -3,6 +3,7 @@ package com.crypto.calculator.cardReader
 import android.content.Context
 import android.nfc.tech.IsoDep
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.crypto.calculator.extension.hexToBinary
 import com.crypto.calculator.extension.hexToByteArray
 import com.crypto.calculator.extension.toHexString
@@ -23,7 +24,10 @@ import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
 import java.security.MessageDigest
 
-class DummyEMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel(nfcDelegate) {
+class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel(nfcDelegate) {
+    companion object {
+        val apdu: MutableLiveData<String?> = MutableLiveData()
+    }
 
     override fun onCommunication(isoDep: IsoDep) {
         super.onCommunication(isoDep)
@@ -37,7 +41,7 @@ class DummyEMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVK
             PaymentMethod.DISCOVER,
             PaymentMethod.DINERS,
             PaymentMethod.UNIONPAY -> {
-                Log.d("DummyEMVKernel", "skip generate AC")
+                Log.d("EMVKernel", "skip generate AC")
             }
 
             else -> generateAC(isoDep)
@@ -45,6 +49,14 @@ class DummyEMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVK
         performODA()
         performCVM()
         nfcDelegate.onCardDataReceived(getICCData() + getTerminalData())
+    }
+
+    override fun communicator(isoDep: IsoDep, cmd: String): String {
+        val cAPDU = cmd.uppercase()
+        apdu.value = cAPDU
+        val rAPDU = super.communicator(isoDep, cmd)
+        apdu.postValue(rAPDU)
+        return rAPDU
     }
 
     override fun ppse(isoDep: IsoDep) {
@@ -57,14 +69,14 @@ class DummyEMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVK
             }
         }
 
-        val appTemplates = TlvUtil.findTagValue(EMVTags.APPLICATION_TEMPLATE.getHexTag(), tlv)
+        val appTemplates = TlvUtil.findByTag(tlv, tag = EMVTags.APPLICATION_TEMPLATE.getHexTag())
         Log.d("ppse", "appTemplates: $appTemplates")
         val finalTlv = appTemplates?.let { appList ->
             // check if more than 1 aid return
             if (appList.size > 1) {
                 Log.d("ppse", "multiple AID read from card")
                 // CTL -> auto select app with higher Application Priority Indicator
-                appList.minBy { TlvUtil.encodeTLV(it)[EMVTags.APPLICATION_PRIORITY_INDICATOR.getHexTag()].toString().toInt(16) } ?: appList.first()
+                appList.minBy { TlvUtil.decodeTLV(it)[EMVTags.APPLICATION_PRIORITY_INDICATOR.getHexTag()].toString().toInt(16) } ?: appList.first()
             } else {
                 Log.d("ppse", "single AID read from card")
                 appList.first()
@@ -158,7 +170,7 @@ class DummyEMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVK
 
         // handle Format 1 data
         if (tlv.startsWith(EMVTags.RESPONSE_MESSAGE_TEMPLATE_1.getHexTag())) {
-            val tag80Data = TlvUtil.findTagValue(EMVTags.RESPONSE_MESSAGE_TEMPLATE_1.getHexTag(), tlv)?.first()
+            val tag80Data = TlvUtil.findByTag(tlv, EMVTags.RESPONSE_MESSAGE_TEMPLATE_1.getHexTag())?.first()
             tag80Data?.let {
                 val aip = it.substring(0, 4) // AIP
                 processTlv("${EMVTags.APPLICATION_INTERCHANGE_PROFILE.getHexTag()}02$aip")
@@ -195,7 +207,7 @@ class DummyEMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVK
                         Log.d("readRecord", "tlv: $tlv")
                         if (tlv.endsWith(APDU_RESPONSE_CODE_OK)) {
                             if (odaLabel > 0) {
-                                saveOdaData(TlvUtil.findTagValue(EMVTags.EMV_PROPRIETARY_TEMPLATE.getHexTag(), tlv)?.first() ?: "")
+                                saveOdaData(TlvUtil.findByTag(tlv, EMVTags.EMV_PROPRIETARY_TEMPLATE.getHexTag())?.first() ?: "")
                                 odaLabel--
                             }
                             processTlv(tlv)
@@ -246,7 +258,7 @@ class DummyEMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVK
 
             // handle Format 1 data
             if (tlv.startsWith(EMVTags.RESPONSE_MESSAGE_TEMPLATE_1.getHexTag())) {
-                val tag80Data = TlvUtil.findTagValue(EMVTags.RESPONSE_MESSAGE_TEMPLATE_1.getHexTag(), tlv)?.first()
+                val tag80Data = TlvUtil.findByTag(tlv, tag = EMVTags.RESPONSE_MESSAGE_TEMPLATE_1.getHexTag())?.first()
                 tag80Data?.let {
                     val cid = it.substring(0, 2)
                     processTlv("${EMVTags.CRYPTOGRAM_INFORMATION_DATA.getHexTag()}01$cid")
@@ -519,7 +531,9 @@ class DummyEMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVK
         val sdad = getICCTag(EMVTags.SIGNED_DYNAMIC_APPLICATION_DATA.getHexTag()) // returned from GPO
         val decryptedSDAD = sdad?.let {
             // fDDA
-            Encryption.doRSA(it, iccPK.exponent, iccPK.modulus) ?: return false
+            iccPK.exponent ?: return false
+            iccPK.modulus ?: return false
+            Encryption.doRSA(it, iccPK.exponent, iccPK.modulus)
         } ?: return false
         Log.d("_DDA/_CDA", "decryptedSDAD: $decryptedSDAD")
         if (!verifySDAD(decryptedSDAD)) return false
@@ -564,7 +578,7 @@ class DummyEMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVK
         Log.d("getIssuerPK", "capk: $capk")
         val issuerPKCert = getICCTag(EMVTags.ISSUER_PUBLIC_KEY_CERTIFICATE.getHexTag()) ?: return null
         Log.d("getIssuerPK", "issuerPKCert: $issuerPKCert")
-        val decryptedIssuerPKCert = Encryption.doRSA(issuerPKCert, capk.exponent, capk.modulus) ?: return null
+        val decryptedIssuerPKCert = Encryption.doRSA(issuerPKCert, capk.exponent, capk.modulus)
         Log.d("getIssuerPK", "decryptedIssuerPKCert: $decryptedIssuerPKCert")
         if (!verifyIssuerPKCert(decryptedIssuerPKCert)) return null
         Log.d("getIssuerPK", "verifyIssuerPKCert SUCCESS")
@@ -579,6 +593,8 @@ class DummyEMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVK
 
     private fun retrieveIccPK(issuerPK: EMVPublicKey): EMVPublicKey? {
         val iccPKCert = getICCTag(EMVTags.ICC_PUBLIC_KEY_CERTIFICATE.getHexTag()) ?: return null
+        issuerPK.exponent ?: return null
+        issuerPK.modulus ?: return null
         val decryptedIccPKCert = Encryption.doRSA(iccPKCert, issuerPK.exponent, issuerPK.modulus)
         Log.d("getIccPK", "decryptedIccPKCert: $decryptedIccPKCert")
         if (!verifyIccPKCert(decryptedIccPKCert)) return null
@@ -652,7 +668,9 @@ class DummyEMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVK
         }
         Log.d("_SDA", "issuerPK: ${issuerPK.exponent}, ${issuerPK.modulus}")
         val ssad = getICCTag(EMVTags.SIGNED_STATIC_APPLICATION_DATA.getHexTag()) ?: return false
-        val decryptedSSAD = Encryption.doRSA(ssad, issuerPK.exponent, issuerPK.modulus) ?: return false
+        issuerPK.exponent ?: return false
+        issuerPK.modulus ?: return false
+        val decryptedSSAD = Encryption.doRSA(ssad, issuerPK.exponent, issuerPK.modulus)
         Log.d("_SDA", "decryptedSSAD: $decryptedSSAD")
         if (!verifySSAD(decryptedSSAD)) return false
         Log.d("_SDA", "verifySDAD SUCCESS")

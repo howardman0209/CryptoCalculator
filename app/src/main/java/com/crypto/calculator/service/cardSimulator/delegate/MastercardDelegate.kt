@@ -65,7 +65,7 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
 
     private fun processODAData(rAPDU: String) {
         TlvUtil.decodeTLV(rAPDU).let {
-            odaData = it["70"] as String
+            odaData = TlvUtil.encodeTLV("${it["70"]}")
             Log.d("MastercardDelegate", "processODAData - odaData: $odaData")
         }
     }
@@ -153,7 +153,7 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
         plainCert.append("BC")
         Log.d("calculateIssuerPKCert", "plainCert: $plainCert")
 
-        return Encryption.doRSA(plainCert.toString(), capk.modulus, caPrivateExponent)
+        return Encryption.doRSA(plainCert.toString(), caPrivateExponent, capk.modulus)
     }
 
     private fun calculateICCPKCert(): String? {
@@ -200,7 +200,7 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
         plainCert.append("BC")
         Log.d("calculateICCPKCert", "plainCert: $plainCert")
 
-        return Encryption.doRSA(plainCert.toString(), issuerPublicKey.modulus, issuerPrivateExponent)
+        return Encryption.doRSA(plainCert.toString(), issuerPrivateExponent, issuerPublicKey.modulus)
     }
 
     private fun calculateSDAD(type: ApplicationCryptogram.Type): String? {
@@ -237,7 +237,7 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
         plainCert.append("BC")
         Log.d("calculateSDAD", "plainCert: $plainCert")
 
-        return Encryption.doRSA(plainCert.toString(), iccPublicKey.modulus, iccPrivateExponent)
+        return Encryption.doRSA(plainCert.toString(), iccPrivateExponent, iccPublicKey.modulus)
     }
 
     private fun getHash(plaintext: String): String {

@@ -39,11 +39,11 @@
                 android:id="@+id/cardContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivPaymentMethod"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/item_preview_card_size"
                     android:layout_weight="1"
                     android:background="?selectableItemBackground"
@@ -55,7 +55,7 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivCard"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/item_preview_card_size"
                     android:layout_weight="1"
                     android:background="?selectableItemBackground"

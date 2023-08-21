@@ -57,7 +57,7 @@ inline fun BaseActivity.requireManageFilePermission(view: View, crossinline onSu
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         permissionRequestHandler = object : PermissionRequestHandler() {
             override fun onPermissionRequestedResult(resultCode: Int) {
-                if (resultCode == RESULT_OK) {
+                if (Environment.isExternalStorageManager()) {
                     onSuccess()
                 }
             }

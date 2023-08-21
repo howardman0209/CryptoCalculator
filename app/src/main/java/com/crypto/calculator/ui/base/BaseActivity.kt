@@ -44,11 +44,12 @@ abstract class BaseActivity : LocalizationActivity() {
     private val permCallbackMap = mutableMapOf<Int, PermissionResult.() -> Unit>()
     lateinit var progressDialog: AlertDialog
     private var disposable: Disposable? = null
-    lateinit var permissionRequestHandler: PermissionRequestHandler
+    var permissionRequestHandler: PermissionRequestHandler? = null
     val permissionRequestLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        permissionRequestHandler.onPermissionRequestedResult(result.resultCode)
+        Log.d("permissionRequestLauncher", "result: $result")
+        permissionRequestHandler?.onPermissionRequestedResult(result.resultCode)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

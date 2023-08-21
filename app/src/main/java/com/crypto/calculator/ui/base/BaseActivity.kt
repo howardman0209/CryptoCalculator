@@ -1,5 +1,7 @@
 package com.crypto.calculator.ui.base
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -13,6 +15,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
@@ -271,6 +274,15 @@ abstract class BaseActivity : LocalizationActivity() {
             } else {
                 Log.d("Click Event", "== ! == Click Prevented")
             }
+        }
+    }
+
+    fun copyTextToClipboard(context: Context, copyText: String?, label: String? = null) {
+        if (!copyText.isNullOrEmpty()) {
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText(label, copyText)
+            clipboard.setPrimaryClip(clip)
+            Toast.makeText(context, copyText, Toast.LENGTH_SHORT).show()
         }
     }
 

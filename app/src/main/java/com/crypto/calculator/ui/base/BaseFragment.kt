@@ -97,6 +97,10 @@ abstract class BaseFragment : Fragment() {
         }
     }
 
+    fun copyTextToClipboard(context: Context, copyText: String?, label: String? = null) {
+        baseActivity.copyTextToClipboard(context, copyText, label)
+    }
+
     fun singleInputDialog(context: Context, title: String?, fieldName: String, fieldValue: String? = null, onConfirmCallBack: (editText: String) -> Unit) {
         baseActivity.singleInputDialog(context, title, fieldName, fieldValue, onConfirmCallBack)
     }

@@ -4,14 +4,16 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.core.view.marginBottom
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentOutputBinding
+import com.crypto.calculator.extension.requireManageFilePermission
+import com.crypto.calculator.ui.base.BaseActivity
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.ui.viewModel.OutputViewModel
+import com.crypto.calculator.util.ShareFileUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -43,6 +45,9 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
 
         binding.saveBtn.setOnClickListener {
             Log.d("saveBtn", "OnClick")
+            (requireActivity() as BaseActivity).requireManageFilePermission(it) {
+                ShareFileUtil.saveLogToFile(requireContext(), binding.logPanel.text.toString())
+            }
         }
 
         binding.clearBtn.setOnClickListener {
@@ -52,6 +57,7 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
 
         binding.copyBtn.setOnClickListener {
             Log.d("copyBtn", "OnClick")
+            copyTextToClipboard(requireContext(), binding.logPanel.text.toString())
         }
     }
 
@@ -66,7 +72,7 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
     }
 
     private fun printLog(logStr: String) {
-        val vlog = String.format("%s: %s\n", viewModel.getCurrentDateTime(true), logStr)
+        val vlog = String.format("%s %s\n", viewModel.getCurrentDateTime(true), logStr)
         binding.logPanel.append(vlog)
         Log.d("LogPanel", logStr)
         binding.logPanel.post {

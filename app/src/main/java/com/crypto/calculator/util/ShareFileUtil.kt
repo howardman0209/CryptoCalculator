@@ -126,6 +126,54 @@ object ShareFileUtil {
         }
     }
 
+    fun saveLogToFile(context: Context, text: String) {
+        val fileName = "log-${System.currentTimeMillis() / 1000}.txt"
+        val rootDir = Environment.DIRECTORY_DOCUMENTS
+        val relativePath = "${context.getString(R.string.app_name)}/Log"
+        Log.d("saveLog", "relativePath: $relativePath")
+        try {
+            val shareFileData = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "text/plain")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, "$rootDir/$relativePath")
+                }
+                val resolver = context.contentResolver
+                val uri = resolver.insert(MediaStore.Files.getContentUri("external"), contentValues)
+                uri?.let {
+                    resolver.openOutputStream(it)?.use { outputStream ->
+                        val file = File("$rootDir/$relativePath/$fileName")
+                        outputStream.write(text.toByteArray())
+                        ShareFileData(
+                            file = file,
+                            uri = file.toUri()
+                        )
+                    }
+                }
+            } else {
+                val dirPath = "${Environment.getExternalStorageDirectory().absolutePath}/$rootDir/$relativePath"
+                Log.d("saveLog", "dirPath: $dirPath")
+                val dir = File(dirPath)
+                if (!dir.exists()) {
+                    Log.d("saveLog", "mkdirs")
+                    dir.mkdirs()
+                }
+                val file = File(dir, fileName)
+                val writer = FileWriter(file)
+                writer.write(text)
+                writer.close()
+                ShareFileData(
+                    file = file,
+                    uri = file.toUri()
+                )
+            }
+            Log.d("saveLog", "shareFileData: $shareFileData")
+            Toast.makeText(context, "${shareFileData?.file?.name} saved", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(context, context.getString(R.string.label_save_file_failed), Toast.LENGTH_SHORT).show()
+        }
+    }
+
     fun saveConfigToJsonFile(context: Context, obj: Any, suffix: String? = null) {
         val fileName = "config-${obj::class.java.simpleName}-$suffix.json"
         val rootDir = Environment.DIRECTORY_DOCUMENTS

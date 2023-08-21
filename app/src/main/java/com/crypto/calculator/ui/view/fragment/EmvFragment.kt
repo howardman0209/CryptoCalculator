@@ -51,6 +51,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     private fun resetLayout() {
         binding.cardContainer.visibility = View.GONE
         binding.animationAwaitCard.visibility = View.GONE
+        CreditCardSimulator.apdu.removeObservers(viewLifecycleOwner)
     }
 
     private fun cardSimulator() {
@@ -62,8 +63,9 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                 binding.ivPaymentMethod.setImageResource(it.getColorIconResId())
             }
 
-            CreditCardSimulator.apdu.observe(viewLifecycleOwner) {
-                coreViewModel.printLog(it)
+            CreditCardSimulator.apdu.observe(viewLifecycleOwner) { apdu ->
+                Log.d("EmvFragment", "apdu: $apdu")
+                apdu?.let { coreViewModel.printLog(it) }
             }
 
             binding.ivPaymentMethod.setOnClickListener {

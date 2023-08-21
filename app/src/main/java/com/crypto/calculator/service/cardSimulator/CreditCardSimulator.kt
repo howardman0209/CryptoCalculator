@@ -25,7 +25,7 @@ import com.crypto.calculator.util.assetsPathCardVisa
 
 class CreditCardSimulator : BasicEMVCardSimulator() {
     companion object {
-        val apdu: MutableLiveData<String> = MutableLiveData()
+        val apdu: MutableLiveData<String?> = MutableLiveData()
         fun requestDefaultPaymentServiceIntent(context: Context): Intent {
             val intent = Intent().apply {
                 action = CardEmulation.ACTION_CHANGE_DEFAULT
@@ -90,5 +90,10 @@ class CreditCardSimulator : BasicEMVCardSimulator() {
         val rAPDU = super.responseConstructor(cAPDU)
         apdu.postValue(rAPDU)
         return rAPDU
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        apdu.value = null
     }
 }

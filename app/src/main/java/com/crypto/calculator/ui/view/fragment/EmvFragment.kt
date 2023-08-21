@@ -238,6 +238,9 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             }
         }
 
+        binding.opt1CheckBox.visibility = View.VISIBLE
+        binding.opt1CheckBox.text = getString(R.string.label_inspect_mode)
+
         binding.operationBtn1.visibility = View.VISIBLE
         binding.operationBtn1.text = getString(R.string.label_operation_start)
 

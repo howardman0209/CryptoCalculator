@@ -105,28 +105,37 @@
                     android:text="@={viewModel.inputData2}" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <androidx.appcompat.widget.AppCompatCheckBox
-                android:id="@+id/opt1CheckBox"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/space_default"
-                android:textAppearance="?textAppearanceSubtitle1"
-                tools:ignore="MissingConstraints"
-                tools:text="option1" />
+                android:layout_gravity="end"
+                android:gravity="end|center_vertical"
+                android:orientation="horizontal">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivSetting"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="@dimen/space_default"
-                android:background="?selectableItemBackgroundBorderless"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="@dimen/space_default"
-                android:src="@drawable/ic_baseline_settings"
-                android:tint="@color/secondary"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                <androidx.appcompat.widget.AppCompatCheckBox
+                    android:id="@+id/opt1CheckBox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="@dimen/space_default"
+                    android:textAppearance="?textAppearanceSubtitle1"
+                    tools:ignore="MissingConstraints"
+                    tools:text="option1" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivSetting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/space_default"
+                    android:background="?selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="@dimen/space_default"
+                    android:src="@drawable/ic_baseline_settings"
+                    android:tint="@color/secondary"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"

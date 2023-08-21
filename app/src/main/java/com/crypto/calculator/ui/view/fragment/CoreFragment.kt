@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.MainApplication
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentCoreBinding
+import com.crypto.calculator.extension.toDataClass
 import com.crypto.calculator.model.Category
 import com.crypto.calculator.model.NavigationMenuData
 import com.crypto.calculator.model.Tool
@@ -20,6 +21,7 @@ import com.crypto.calculator.model.getGroupList
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.util.PreferencesUtil
+import com.google.gson.JsonObject
 
 
 class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
@@ -109,6 +111,12 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
                 singleInputDialog(requireContext(), "Enter your message", "Message") {
                     viewModel.printLog(it)
                 }
+            }
+
+            R.id.action_test -> {
+                val test = ""
+                Log.d("@@", "test: $test")
+                viewModel.printLog("test: $test")
             }
 
             R.id.tool_logcat -> logcatSwitch()

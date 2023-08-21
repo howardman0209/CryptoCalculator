@@ -1,6 +1,8 @@
 package com.crypto.calculator.util
 
 import android.content.Context
+import com.crypto.calculator.extension.toDataClass
+import com.crypto.calculator.model.EmvConfig
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.service.model.CardProfile
@@ -81,5 +83,17 @@ object PreferencesUtil {
         return jsonStr?.let {
             Gson().fromJson(it, CardProfile::class.java)
         } ?: AssetsUtil.readFile(context, defaultPath)
+    }
+
+    fun saveEmvConfig(context: Context, emvConfig: EmvConfig) {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        val jsonStr = Gson().toJson(emvConfig)
+        localPref?.edit()?.putString(prefEmvConfig, jsonStr)?.apply()
+    }
+
+    fun getEmvConfig(context: Context): EmvConfig {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        val jsonStr = localPref.getString(prefEmvConfig, null)
+        return jsonStr?.toDataClass<EmvConfig>() ?: AssetsUtil.readFile(context, assetsPathTerminalEmvConfig)
     }
 }

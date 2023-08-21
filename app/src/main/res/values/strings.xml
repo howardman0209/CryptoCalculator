@@ -753,9 +753,12 @@
     <string name="label_operation_decode" translatable="false">Decode</string>
     <string name="label_operation_convert" translatable="false">Convert</string>
     <string name="label_operation_compute" translatable="false">Compute</string>
+    <string name="label_operation_start" translatable="false">Start</string>
+    <string name="label_operation_abort" translatable="false">Abort</string>
 
     <!--EmvFragment-->
     <string name="label_present_card_to_reader" translatable="false">Present card to reader</string>
+    <string name="label_inspect_mode" translatable="false">Inspect mode</string>
 
     <string name="label_app_version_no" translatable="false">v0.1</string>
     <string name="hce_service_description" translatable="false">Crypto Calculator HCE</string>

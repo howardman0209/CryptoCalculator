@@ -1,6 +1,7 @@
 package com.crypto.calculator.ui.view.fragment
 
 import android.os.Bundle
+import android.text.InputType
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
@@ -8,6 +9,8 @@ import com.crypto.calculator.R
 import com.crypto.calculator.databinding.FragmentEmvBinding
 import com.crypto.calculator.extension.getColorIconResId
 import com.crypto.calculator.extension.requireDefaultPaymentServicePermission
+import com.crypto.calculator.extension.toDataClass
+import com.crypto.calculator.model.DataFormat
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.service.cardSimulator.CreditCardSimulator
@@ -19,6 +22,8 @@ import com.crypto.calculator.ui.viewModel.EmvViewModel
 import com.crypto.calculator.util.AssetsUtil
 import com.crypto.calculator.util.PreferencesUtil
 import com.crypto.calculator.util.assetsPathCardVisa
+import com.crypto.calculator.util.bindInputFilters
+import com.google.gson.JsonObject
 
 class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     private lateinit var coreViewModel: CoreViewModel
@@ -37,6 +42,30 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             CreditCardSimulator.enablePaymentService(requireContext().applicationContext, false)
             setLayout(it)
         }
+
+        viewModel.inputData1InputType.observe(viewLifecycleOwner) {
+            binding.etData1.apply {
+                inputType = it or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                isSingleLine = false
+            }
+        }
+
+        viewModel.inputData1Filter.observe(viewLifecycleOwner) {
+            binding.etData1.bindInputFilters(it)
+            viewModel.inputData1.set("")
+        }
+
+        viewModel.inputData2InputType.observe(viewLifecycleOwner) {
+            binding.etData2.apply {
+                inputType = it or InputType.TYPE_TEXT_FLAG_MULTI_LINE
+                isSingleLine = false
+            }
+        }
+
+        viewModel.inputData2Filter.observe(viewLifecycleOwner) {
+            binding.etData2.bindInputFilters(it)
+            viewModel.inputData2.set("")
+        }
     }
 
     private fun setLayout(tool: Tool) {
@@ -49,8 +78,33 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     }
 
     private fun resetLayout() {
+        viewModel.promptMessage.set("")
+
+        binding.ivSetting.visibility = View.GONE
+        binding.ivSetting.setOnClickListener(null)
+
+        binding.operationBtn1.visibility = View.GONE
+        binding.operationBtn1.setOnClickListener(null)
+        binding.operationBtn2.visibility = View.GONE
+        binding.operationBtn2.setOnClickListener(null)
+
         binding.cardContainer.visibility = View.GONE
-        binding.animationAwaitCard.visibility = View.GONE
+
+        binding.opt1CheckBox.visibility = View.GONE
+        binding.opt1CheckBox.text = ""
+        binding.opt1CheckBox.isChecked = false
+
+        binding.ivPaymentMethod.setOnClickListener(null)
+        binding.ivCard.setOnClickListener(null)
+
+        binding.tilData1.visibility = View.GONE
+        viewModel.setInputData1Filter()
+        viewModel.inputData1Label.set("")
+
+        binding.tilData2.visibility = View.GONE
+        viewModel.setInputData2Filter()
+        viewModel.inputData2Label.set("")
+
         CreditCardSimulator.apdu.removeObservers(viewLifecycleOwner)
     }
 
@@ -65,7 +119,12 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
             CreditCardSimulator.apdu.observe(viewLifecycleOwner) { apdu ->
                 Log.d("EmvFragment", "apdu: $apdu")
-                apdu?.let { coreViewModel.printLog(it) }
+                if (!binding.opt1CheckBox.isChecked) {
+                    apdu?.let { coreViewModel.printLog(it) }
+                } else {
+//                    TODO: handle inspect mode
+                    Log.d("EmvFragment", "inspect mode APDU log")
+                }
             }
 
             binding.ivPaymentMethod.setOnClickListener {
@@ -138,6 +197,9 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                     }
                 }
             }
+
+            binding.opt1CheckBox.visibility = View.VISIBLE
+            binding.opt1CheckBox.text = getString(R.string.label_inspect_mode)
         }
     }
 
@@ -158,8 +220,29 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     }
 
     private fun emvKernel() {
-        binding.animationAwaitCard.visibility = View.VISIBLE
         viewModel.promptMessage.set(getString(R.string.emv_label_tap))
+
+        binding.tilData1.visibility = View.VISIBLE
+        viewModel.inputData1Label.set("Authorised amount")
+        viewModel.setInputData1Filter(12, inputFormat = DataFormat.DECIMAL)
+
+        binding.tilData2.visibility = View.VISIBLE
+        viewModel.inputData2Label.set("Cashback amount")
+        viewModel.setInputData2Filter(12, inputFormat = DataFormat.DECIMAL)
+
+        binding.ivSetting.visibility = View.VISIBLE
+        binding.ivSetting.setOnClickListener {
+            val emvConfig = PreferencesUtil.getEmvConfig(requireContext().applicationContext)
+            editConfigJson(requireContext(), it, emvConfig, true) { editedConfig ->
+                PreferencesUtil.saveEmvConfig(requireContext().applicationContext, editedConfig)
+            }
+        }
+
+        binding.operationBtn1.visibility = View.VISIBLE
+        binding.operationBtn1.text = getString(R.string.label_operation_start)
+
+        binding.operationBtn2.visibility = View.VISIBLE
+        binding.operationBtn2.text = getString(R.string.label_operation_abort)
     }
 
     override fun onResume() {

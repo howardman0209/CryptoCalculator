@@ -21,7 +21,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
+            android:gravity="end"
             android:orientation="vertical"
             android:paddingBottom="@dimen/space_default">
 
@@ -39,11 +39,12 @@
                 android:id="@+id/cardContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal"
+                tools:visibility="gone">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivPaymentMethod"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/item_preview_card_size"
                     android:layout_weight="1"
                     android:background="?selectableItemBackground"
@@ -55,7 +56,7 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivCard"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="@dimen/item_preview_card_size"
                     android:layout_weight="1"
                     android:background="?selectableItemBackground"
@@ -66,17 +67,98 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </LinearLayout>
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/animationAwaitCard"
-                android:layout_width="@dimen/animation_lottie_size_large"
-                android:layout_height="@dimen/animation_lottie_size_large"
-                android:paddingBottom="@dimen/space_default"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                app:lottie_rawRes="@raw/animation_emv"
-                tools:background="#ccc"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilData1"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/space_default"
+                android:hint="@{viewModel.inputData1Max != null? @string/input_hint_with_max(viewModel.inputData1Label,viewModel.inputData1.length,viewModel.inputData1Max) : @string/input_hint(viewModel.inputData1Label,viewModel.inputData1.length)}"
+                android:visibility="gone"
+                tools:hint="Data1"
+                tools:visibility="visible">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etData1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:importantForAutofill="no"
+                    android:text="@={viewModel.inputData1}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilData2"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/space_default"
+                android:hint="@{viewModel.inputData2Max != null? @string/input_hint_with_max(viewModel.inputData2Label, viewModel.inputData2.length,viewModel.inputData2Max) : @string/input_hint(viewModel.inputData2Label,viewModel.inputData2.length)}"
+                android:visibility="gone"
+                tools:hint="Data2"
+                tools:visibility="visible">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etData2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:importantForAutofill="no"
+                    android:text="@={viewModel.inputData2}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.appcompat.widget.AppCompatCheckBox
+                android:id="@+id/opt1CheckBox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/space_default"
+                android:textAppearance="?textAppearanceSubtitle1"
                 tools:ignore="MissingConstraints"
-                tools:visibility="visible" />
+                tools:text="option1" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/ivSetting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_default"
+                android:background="?selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/space_default"
+                android:src="@drawable/ic_baseline_settings"
+                android:tint="@color/secondary"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/space_default">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/operationBtn1"
+                    style="@style/Widget.Crypto.Calculator.Button.TextButton.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/space_default"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    tools:text="button 1"
+                    tools:visibility="visible" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/operationBtn2"
+                    style="@style/Widget.Crypto.Calculator.Button.TextButton.Secondary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/space_default"
+                    android:layout_weight="1"
+                    android:visibility="gone"
+                    tools:text="button 2"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
         </LinearLayout>
     </ScrollView>
 </layout>

@@ -3,13 +3,16 @@ package com.crypto.calculator.ui.view.fragment
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.R
+import com.crypto.calculator.cardReader.BasicCardReader
+import com.crypto.calculator.cardReader.EMVKernel
 import com.crypto.calculator.databinding.FragmentEmvBinding
 import com.crypto.calculator.extension.getColorIconResId
 import com.crypto.calculator.extension.requireDefaultPaymentServicePermission
-import com.crypto.calculator.extension.toDataClass
 import com.crypto.calculator.model.DataFormat
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.Tool
@@ -23,7 +26,6 @@ import com.crypto.calculator.util.AssetsUtil
 import com.crypto.calculator.util.PreferencesUtil
 import com.crypto.calculator.util.assetsPathCardVisa
 import com.crypto.calculator.util.bindInputFilters
-import com.google.gson.JsonObject
 
 class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     private lateinit var coreViewModel: CoreViewModel
@@ -31,6 +33,10 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         super.onCreate(savedInstanceState)
         coreViewModel = getCoreViewModel()
         viewModel.cardPreference.value = PreferencesUtil.getCardPreference(requireContext().applicationContext)
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -77,37 +83,6 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         }
     }
 
-    private fun resetLayout() {
-        viewModel.promptMessage.set("")
-
-        binding.ivSetting.visibility = View.GONE
-        binding.ivSetting.setOnClickListener(null)
-
-        binding.operationBtn1.visibility = View.GONE
-        binding.operationBtn1.setOnClickListener(null)
-        binding.operationBtn2.visibility = View.GONE
-        binding.operationBtn2.setOnClickListener(null)
-
-        binding.cardContainer.visibility = View.GONE
-
-        binding.opt1CheckBox.visibility = View.GONE
-        binding.opt1CheckBox.text = ""
-        binding.opt1CheckBox.isChecked = false
-
-        binding.ivPaymentMethod.setOnClickListener(null)
-        binding.ivCard.setOnClickListener(null)
-
-        binding.tilData1.visibility = View.GONE
-        viewModel.setInputData1Filter()
-        viewModel.inputData1Label.set("")
-
-        binding.tilData2.visibility = View.GONE
-        viewModel.setInputData2Filter()
-        viewModel.inputData2Label.set("")
-
-        CreditCardSimulator.apdu.removeObservers(viewLifecycleOwner)
-    }
-
     private fun cardSimulator() {
         CreditCardSimulator.enablePaymentService(requireContext().applicationContext, true)
         (requireActivity() as BaseActivity).requireDefaultPaymentServicePermission {
@@ -118,12 +93,12 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             }
 
             CreditCardSimulator.apdu.observe(viewLifecycleOwner) { apdu ->
-                Log.d("EmvFragment", "apdu: $apdu")
+                Log.d("cardSimulator", "apdu: $apdu")
                 if (!binding.opt1CheckBox.isChecked) {
                     apdu?.let { coreViewModel.printLog(it) }
                 } else {
 //                    TODO: handle inspect mode
-                    Log.d("EmvFragment", "inspect mode APDU log")
+                    Log.d("cardSimulator", "inspect mode APDU log")
                 }
             }
 
@@ -220,7 +195,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     }
 
     private fun emvKernel() {
-        viewModel.promptMessage.set(getString(R.string.emv_label_tap))
+        viewModel.prepareCardReader(requireContext().applicationContext, requireActivity())
 
         binding.tilData1.visibility = View.VISIBLE
         viewModel.inputData1Label.set("Authorised amount")
@@ -243,9 +218,84 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
         binding.operationBtn1.visibility = View.VISIBLE
         binding.operationBtn1.text = getString(R.string.label_operation_start)
+        binding.operationBtn1.isEnabled = true
+        binding.operationBtn1.setOnClickListener {
+            val authorizedAmount = (viewModel.inputData1.get() ?: "01").padStart(12, '0')
+            val cashbackAmount = (viewModel.inputData2.get() ?: "00").padStart(12, '0')
+            val emvConfig = PreferencesUtil.getEmvConfig(requireContext().applicationContext)
+            viewModel.cardReader?.startEMV(authorizedAmount, cashbackAmount, emvConfig)
+        }
 
         binding.operationBtn2.visibility = View.VISIBLE
         binding.operationBtn2.text = getString(R.string.label_operation_abort)
+        binding.operationBtn2.isEnabled = false
+        binding.operationBtn2.setOnClickListener {
+            viewModel.cardReader?.status?.postValue(BasicCardReader.Companion.CardReaderStatus.ABORT)
+            viewModel.cardReader?.disconnect()
+        }
+
+        EMVKernel.apdu.observe(viewLifecycleOwner) { apdu ->
+            Log.d("emvKernel", "apdu: $apdu")
+            if (!binding.opt1CheckBox.isChecked) {
+                apdu?.let { coreViewModel.printLog(it) }
+            } else {
+//              TODO: handle inspect mode
+                Log.d("emvKernel", "inspect mode APDU log")
+            }
+        }
+
+        viewModel.cardReader?.status?.observe(viewLifecycleOwner) {
+            it?.let {
+                viewModel.promptMessage.set(it.name)
+                when (it) {
+                    BasicCardReader.Companion.CardReaderStatus.READY -> {
+                        binding.operationBtn1.isEnabled = false
+                        binding.operationBtn2.isEnabled = true
+                    }
+
+                    else -> {
+                        binding.operationBtn1.isEnabled = true
+                        binding.operationBtn2.isEnabled = false
+                    }
+                }
+            }
+        }
+    }
+
+    private fun resetLayout() {
+        viewModel.finishCardReader()
+        viewModel.promptMessage.set("")
+
+        binding.ivSetting.visibility = View.GONE
+        binding.ivSetting.setOnClickListener(null)
+
+        binding.operationBtn1.visibility = View.GONE
+        binding.operationBtn1.setOnClickListener(null)
+        binding.operationBtn1.isEnabled = false
+        binding.operationBtn2.visibility = View.GONE
+        binding.operationBtn2.setOnClickListener(null)
+        binding.operationBtn2.isEnabled = false
+
+        binding.cardContainer.visibility = View.GONE
+
+        binding.opt1CheckBox.visibility = View.GONE
+        binding.opt1CheckBox.text = ""
+        binding.opt1CheckBox.isChecked = false
+
+        binding.ivPaymentMethod.setOnClickListener(null)
+        binding.ivCard.setOnClickListener(null)
+
+        binding.tilData1.visibility = View.GONE
+        viewModel.setInputData1Filter()
+        viewModel.inputData1Label.set("")
+
+        binding.tilData2.visibility = View.GONE
+        viewModel.setInputData2Filter()
+        viewModel.inputData2Label.set("")
+
+        CreditCardSimulator.apdu.removeObservers(viewLifecycleOwner)
+        EMVKernel.apdu.removeObservers(viewLifecycleOwner)
+        viewModel.cardReader?.status?.removeObservers(viewLifecycleOwner)
     }
 
     override fun onResume() {
@@ -259,6 +309,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         super.onDestroy()
         Log.d("EmvFragment", "onDestroy")
         CreditCardSimulator.enablePaymentService(requireContext().applicationContext, false)
+        viewModel.finishCardReader()
     }
 
     private fun getCoreViewModel(): CoreViewModel {

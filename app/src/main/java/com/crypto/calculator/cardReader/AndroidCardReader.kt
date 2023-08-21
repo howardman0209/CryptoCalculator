@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.nfc.NfcAdapter
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.crypto.calculator.extension.toISOAmountString
 import com.crypto.calculator.model.EMVTags
 import com.crypto.calculator.model.EmvConfig
@@ -94,21 +95,18 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
         Log.d("AndroidCR", "initSetting")
     }
 
-    override fun startEMV(amount: String?, amountCashback: String?, emvConfig: EmvConfig) {
+    override fun startEMV(authorizedAmount: String?, cashbackAmount: String?, emvConfig: EmvConfig) {
         val tmp = emvConfig.data
-        val currency = emvConfig.data[EMVTags.TRANSACTION_CURRENCY_CODE.getHexTag()]?.let { CurrencyUtil.getCurrencyByNumericCode(it) }
-            ?: throw Exception("INVALID_TRANSACTION_CURRENCY_CODE")
-        tmp[EMVTags.AUTHORISED_AMOUNT.getHexTag()] = amount?.toISOAmountString(currency.defaultFractionDigits)?.padStart(12, '0')
+        tmp[EMVTags.AUTHORISED_AMOUNT.getHexTag()] = authorizedAmount?.padStart(12, '0')
             ?: throw Exception("INVALID_AUTHORISED_AMOUNT")
-        tmp[EMVTags.AMOUNT_OTHER.getHexTag()] = amountCashback?.toISOAmountString(currency.defaultFractionDigits)?.padStart(12, '0')
-            ?: "0".padStart(12, '0')
+        tmp[EMVTags.AMOUNT_OTHER.getHexTag()] = cashbackAmount ?: "0".padStart(12, '0')
         getCurrentTime(DATE_TIME_PATTERN_EMV_9A)?.let { tmp[EMVTags.TRANSACTION_DATE.getHexTag()] = it }
         getCurrentTime(DATE_TIME_PATTERN_EMV_9F21)?.let { tmp[EMVTags.TRANSACTION_TIME.getHexTag()] = it }
         Log.d("AndroidCR", "startEMV - data: $tmp")
         enableReader(
             EMVKernel(context,
                 this.apply {
-                    onStatusChange(BasicNFCKernel.Companion.CardReaderStatus.READY)
+                    onStatusChange(BasicCardReader.Companion.CardReaderStatus.READY)
                 }
             ).apply {
                 saveTerminalData(tmp)
@@ -133,24 +131,15 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
         Log.d("AndroidCR", "pollCardRemove")
     }
 
-    override fun onStatusChange(status: BasicNFCKernel.Companion.CardReaderStatus) {
+    override fun onStatusChange(status: BasicCardReader.Companion.CardReaderStatus) {
         Log.d("AndroidCR", "CardReaderStatus: $status")
+        this.status.postValue(status)
         when (status) {
-            BasicNFCKernel.Companion.CardReaderStatus.READY -> {
-
+            BasicCardReader.Companion.CardReaderStatus.SUCCESS -> {
+                EMVKernel.apdu.postValue(null)
             }
 
-            BasicNFCKernel.Companion.CardReaderStatus.PROCESSING -> {
-
-            }
-
-            BasicNFCKernel.Companion.CardReaderStatus.SUCCESS -> {
-
-            }
-
-            BasicNFCKernel.Companion.CardReaderStatus.Fail -> {
-
-            }
+            else -> {}
         }
     }
 

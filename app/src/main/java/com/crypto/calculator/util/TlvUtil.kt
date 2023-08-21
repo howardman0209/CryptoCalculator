@@ -192,7 +192,7 @@ object TlvUtil {
             return tlv
         } catch (e: Exception) {
             Log.d("TLV_ENCODER", "Exception: $e")
-            throw Exception("TLV encode error: Invalid Tag")
+            throw Exception("TLV encode error: $e")
         }
     }
 
@@ -244,7 +244,7 @@ object TlvUtil {
             return tlv
         } catch (e: Exception) {
             Log.d("TLV_ENCODER", "Exception: $e")
-            throw Exception("TLV encode error: Invalid Tag")
+            throw Exception("TLV encode error: $e")
         }
     }
 

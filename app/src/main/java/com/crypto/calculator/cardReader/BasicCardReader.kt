@@ -1,6 +1,7 @@
 package com.crypto.calculator.cardReader
 
 import android.content.Context
+import androidx.lifecycle.MutableLiveData
 import com.crypto.calculator.model.EmvConfig
 import java.util.*
 
@@ -8,12 +9,24 @@ import java.util.*
   Mother class for card reader implementation
  */
 abstract class BasicCardReader(val context: Context) {
+    val status: MutableLiveData<CardReaderStatus> = MutableLiveData()
+
+    companion object {
+        enum class CardReaderStatus {
+            ABORT,
+            READY,
+            PROCESSING,
+            FAIL,
+            SUCCESS
+        }
+    }
+
     abstract fun init()
     abstract fun release()
     abstract fun disconnect()
     abstract fun connect()
     abstract fun initSetting()
-    abstract fun startEMV(amount: String?, amountCashback: String?, emvConfig: EmvConfig)
+    abstract fun startEMV(authorizedAmount: String?, cashbackAmount: String?, emvConfig: EmvConfig)
 
     abstract fun cancelCheckCard()
     abstract fun sendOnlineReply(replyTLV: String?)

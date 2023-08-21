@@ -22,6 +22,9 @@ import com.crypto.calculator.util.Encryption
 import com.crypto.calculator.util.PreferencesUtil
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.security.MessageDigest
 
 class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel(nfcDelegate) {
@@ -53,9 +56,11 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
 
     override fun communicator(isoDep: IsoDep, cmd: String): String {
         val cAPDU = cmd.uppercase()
-        apdu.value = cAPDU
         val rAPDU = super.communicator(isoDep, cmd)
-        apdu.postValue(rAPDU)
+        CoroutineScope(Dispatchers.Main).launch {
+            apdu.value = cAPDU
+            apdu.postValue(rAPDU)
+        }
         return rAPDU
     }
 

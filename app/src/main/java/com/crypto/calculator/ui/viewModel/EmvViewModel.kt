@@ -1,13 +1,21 @@
 package com.crypto.calculator.ui.viewModel
 
+import android.app.Activity
+import android.content.Context
 import android.text.InputFilter
 import android.text.InputType
+import android.util.Log
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.crypto.calculator.cardReader.AndroidCardReader
+import com.crypto.calculator.cardReader.BasicCardReader
 import com.crypto.calculator.model.DataFormat
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.ui.base.BaseViewModel
 import com.crypto.calculator.util.InputFilterUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class EmvViewModel : BaseViewModel() {
     val promptMessage: ObservableField<String> = ObservableField()
@@ -24,6 +32,8 @@ class EmvViewModel : BaseViewModel() {
     val inputData2Label: ObservableField<String> = ObservableField()
     val inputData2Filter: MutableLiveData<List<InputFilter>> = MutableLiveData(emptyList())
     val inputData2InputType: MutableLiveData<Int> = MutableLiveData(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS)
+
+    var cardReader: BasicCardReader? = null
 
     fun setInputData1Filter(maxLength: Int? = null, inputFormat: DataFormat = DataFormat.HEXADECIMAL) {
         inputData1Filter.value = emptyList()
@@ -63,5 +73,28 @@ class EmvViewModel : BaseViewModel() {
             }
         )
         inputData2Filter.postValue(filterList)
+    }
+
+    fun prepareCardReader(context: Context, activity: Activity) {
+        cardReader = AndroidCardReader.newInstance(context, activity)
+
+        //Use IO thread to do connect SDK such that in case SDK hang it won't hang the main thread
+        viewModelScope.launch(Dispatchers.IO) {
+            cardReader?.init() //init will trigger init completed and then check card will be called onwards
+            cardReader?.connect()
+        }
+    }
+
+    fun finishCardReader() {
+        Log.d("cardReader", "finishCardReader")
+
+        if (cardReader != null) {
+            Log.d("cardReader", "disconnect and release card reader")
+            //Unconditionally cancel check card and disconnect
+            cardReader?.cancelCheckCard()
+            cardReader?.disconnect()
+            cardReader?.release()
+            cardReader = null
+        }
     }
 }

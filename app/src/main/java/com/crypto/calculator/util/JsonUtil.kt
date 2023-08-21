@@ -6,7 +6,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 
-object JsonUtils {
+object JsonUtil {
     /// Do NOT sort the list otherwise cannot unflatten back to Json !!!
     fun flattenJson(json: String): List<String> {
         Log.d("flattenJson", "json: $json")

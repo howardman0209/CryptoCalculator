@@ -2,6 +2,7 @@ package com.crypto.calculator.util
 
 import android.content.Context
 import com.crypto.calculator.extension.toDataClass
+import com.crypto.calculator.model.CapkList
 import com.crypto.calculator.model.EmvConfig
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.Tool
@@ -95,5 +96,19 @@ object PreferencesUtil {
         val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
         val jsonStr = localPref.getString(prefEmvConfig, null)
         return jsonStr?.toDataClass<EmvConfig>() ?: AssetsUtil.readFile(context, assetsPathTerminalEmvConfig)
+    }
+
+    fun saveCapkData(context: Context, capkData: CapkList) {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        val jsonStr = Gson().toJson(capkData)
+        localPref?.edit()?.putString(prefCapkData, jsonStr)?.apply()
+    }
+
+    fun getCapkData(context: Context): CapkList {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        val jsonStr = localPref.getString(prefCapkData, null)
+        return jsonStr?.let {
+            Gson().fromJson(jsonStr, CapkList::class.java)
+        } ?: AssetsUtil.readFile(context, assetsPathTestCapk)
     }
 }

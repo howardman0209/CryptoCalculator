@@ -34,7 +34,7 @@ import com.crypto.calculator.model.PermissionRequestHandler
 import com.crypto.calculator.model.PermissionResult
 import com.crypto.calculator.ui.viewAdapter.ConfigItemsAdapter
 import com.crypto.calculator.uiComponent.ProgressDialog
-import com.crypto.calculator.util.JsonUtils
+import com.crypto.calculator.util.JsonUtil
 import com.crypto.calculator.util.ShareFileUtil
 import com.crypto.calculator.util.TAG
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -355,7 +355,7 @@ abstract class BaseActivity : LocalizationActivity() {
         val dialogBinding: DialogContentEditConfigJsonBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_content_edit_config_json, null, false)
 
         val jsonStr = Gson().toJson(config)
-        val list = JsonUtils.flattenJson(jsonStr).toMutableList()
+        val list = JsonUtil.flattenJson(jsonStr).toMutableList()
         /// Do NOT sort the list otherwise cannot unflatten back to Json !!!
 
         val adapter = ConfigItemsAdapter { position, adapter ->
@@ -385,7 +385,7 @@ abstract class BaseActivity : LocalizationActivity() {
                 ShareFileUtil.loadConfigFromJsonFile(context, config) { jsonStr ->
                     Log.d(TAG, "jsonStr: $jsonStr")
                     list.clear()
-                    list.addAll(JsonUtils.flattenJson(jsonStr))
+                    list.addAll(JsonUtil.flattenJson(jsonStr))
                     adapter.setData(list)
                 }
             }
@@ -397,7 +397,7 @@ abstract class BaseActivity : LocalizationActivity() {
             .setView(dialogBinding.root)
             .setPositiveButton(R.string.button_confirm) { _, _ ->
                 Log.d(TAG, "confirm")
-                val editedJsonStr = JsonUtils.unflattenJson(list)
+                val editedJsonStr = JsonUtil.unflattenJson(list)
                 try {
                     onConfirmClick.invoke(Gson().fromJson(editedJsonStr, T::class.java))
                 } catch (e: Exception) {

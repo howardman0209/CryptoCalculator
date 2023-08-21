@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
 import android.nfc.cardemulation.CardEmulation
 import android.util.Log
+import androidx.lifecycle.MutableLiveData
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.service.cardSimulator.delegate.AmexDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.DiscoverDelegate
@@ -24,6 +25,7 @@ import com.crypto.calculator.util.assetsPathCardVisa
 
 class CreditCardSimulator : BasicEMVCardSimulator() {
     companion object {
+        val apdu: MutableLiveData<String> = MutableLiveData()
         fun requestDefaultPaymentServiceIntent(context: Context): Intent {
             val intent = Intent().apply {
                 action = CardEmulation.ACTION_CHANGE_DEFAULT
@@ -81,5 +83,12 @@ class CreditCardSimulator : BasicEMVCardSimulator() {
             PaymentMethod.AMEX -> AmexDelegate.getInstance(cardProfile.data)
             else -> VisaDelegate.getInstance(cardProfile.data)
         }
+    }
+
+    override fun responseConstructor(cAPDU: String?): String {
+        cAPDU?.let { apdu.value = it }
+        val rAPDU = super.responseConstructor(cAPDU)
+        apdu.postValue(rAPDU)
+        return rAPDU
     }
 }

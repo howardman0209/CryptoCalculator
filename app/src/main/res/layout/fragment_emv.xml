@@ -30,9 +30,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingVertical="@dimen/space_default"
-                android:text="@string/emv_label_tap"
+                android:text="@{viewModel.promptMessage}"
                 android:textAlignment="center"
-                android:textAppearance="?textAppearanceHeadline3" />
+                android:textAppearance="?textAppearanceHeadline3"
+                tools:text="@string/emv_label_tap" />
 
             <LinearLayout
                 android:id="@+id/cardContainer"

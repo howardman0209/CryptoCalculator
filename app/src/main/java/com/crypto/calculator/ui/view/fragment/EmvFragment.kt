@@ -57,9 +57,15 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         CreditCardSimulator.enablePaymentService(requireContext().applicationContext, true)
         (requireActivity() as BaseActivity).requireDefaultPaymentServicePermission {
             binding.cardContainer.visibility = View.VISIBLE
+            viewModel.promptMessage.set(getString(R.string.label_present_card_to_reader))
             viewModel.cardPreference.observe(viewLifecycleOwner) {
                 binding.ivPaymentMethod.setImageResource(it.getColorIconResId())
             }
+
+            CreditCardSimulator.apdu.observe(viewLifecycleOwner) {
+                coreViewModel.printLog(it)
+            }
+
             binding.ivPaymentMethod.setOnClickListener {
                 arrayItemDialog(
                     context = requireContext(),
@@ -151,6 +157,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
     private fun emvKernel() {
         binding.animationAwaitCard.visibility = View.VISIBLE
+        viewModel.promptMessage.set(getString(R.string.emv_label_tap))
     }
 
     override fun onResume() {

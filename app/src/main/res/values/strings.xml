@@ -754,6 +754,9 @@
     <string name="label_operation_convert" translatable="false">Convert</string>
     <string name="label_operation_compute" translatable="false">Compute</string>
 
+    <!--EmvFragment-->
+    <string name="label_present_card_to_reader" translatable="false">Present card to reader</string>
+
     <string name="label_app_version_no" translatable="false">v0.1</string>
     <string name="hce_service_description" translatable="false">Crypto Calculator HCE</string>
 </resources>

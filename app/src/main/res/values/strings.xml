@@ -740,6 +740,7 @@
     <string name="label_tool_tlv_parser" translatable="false">TLV Parser</string>
     <string name="label_tool_card_simulator" translatable="false">Card Simulator</string>
     <string name="label_tool_emv_kernel" translatable="false">EMV Kernel</string>
+    <string name="label_tool_arqc" translatable="false">ARQC</string>
 
     <string name="label_category_generic" translatable="false">Generic</string>
     <string name="label_category_emv" translatable="false">EMV</string>
@@ -759,6 +760,7 @@
     <!--EmvFragment-->
     <string name="label_present_card_to_reader" translatable="false">Present card to reader</string>
     <string name="label_inspect_mode" translatable="false">Inspect mode</string>
+    <string name="label_data_object_list" translatable="false">Data object list</string>
 
     <string name="label_app_version_no" translatable="false">v0.1</string>
     <string name="hce_service_description" translatable="false">Crypto Calculator HCE</string>

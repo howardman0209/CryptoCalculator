@@ -14,6 +14,7 @@ enum class Tool(val id: Int, val resourceId: Int) {
     TLV_PARSER(8, R.string.label_tool_tlv_parser),
     CARD_SIMULATOR(9, R.string.label_tool_card_simulator),
     EMV_KERNEL(10, R.string.label_tool_emv_kernel),
+    ARQC(11, R.string.label_tool_arqc),
     ;
 
     companion object {
@@ -29,6 +30,7 @@ enum class Tool(val id: Int, val resourceId: Int) {
                 8 -> TLV_PARSER
                 9 -> CARD_SIMULATOR
                 10 -> EMV_KERNEL
+                11 -> ARQC
                 else -> UNKNOWN
             }
         }

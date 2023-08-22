@@ -123,10 +123,11 @@ abstract class BaseFragment : Fragment() {
         config: T,
         editable: Boolean = true,
         neutralBtn: String? = null,
+        enableSaveLoadButton: Boolean = true,
         noinline onNeutralBtnClick: (() -> Unit)? = null,
         crossinline onConfirmClick: (editResult: T) -> Unit
     ) {
-        (requireActivity() as BaseActivity).editConfigJson(context, view, config, editable, neutralBtn, onNeutralBtnClick, onConfirmClick)
+        (requireActivity() as BaseActivity).editConfigJson(context, view, config, editable, neutralBtn, enableSaveLoadButton, onNeutralBtnClick, onConfirmClick)
     }
 
     // Prevent unintended double/ multiple click

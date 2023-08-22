@@ -55,7 +55,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusableInTouchMode="true"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingTop="@dimen/space_default">
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvConfigItems"

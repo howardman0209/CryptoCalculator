@@ -349,6 +349,7 @@ abstract class BaseActivity : LocalizationActivity() {
         config: T,
         editable: Boolean = true,
         neutralBtn: String? = null,
+        enableSaveLoadButton: Boolean = true,
         noinline onNeutralBtnClick: (() -> Unit)? = null,
         crossinline onConfirmClick: (editResult: T) -> Unit
     ) {
@@ -369,6 +370,10 @@ abstract class BaseActivity : LocalizationActivity() {
         }
         dialogBinding.rvConfigItems.adapter = adapter
         adapter.setData(list)
+
+        if (!enableSaveLoadButton) {
+            dialogBinding.appBarLayout.visibility = View.GONE
+        }
 
         dialogBinding.saveBtn.setOnClickListener {
             requireManageFilePermission(it) {

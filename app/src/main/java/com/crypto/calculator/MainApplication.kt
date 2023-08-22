@@ -38,6 +38,7 @@ class MainApplication : Application(), ActivityLifecycleCallbacks {
                     Category.EMV to listOf(
                         Tool.CARD_SIMULATOR,
                         Tool.EMV_KERNEL,
+                        Tool.ARQC,
                     )
                 )
             )

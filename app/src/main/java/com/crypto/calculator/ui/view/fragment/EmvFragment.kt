@@ -13,6 +13,7 @@ import com.crypto.calculator.cardReader.EMVKernel
 import com.crypto.calculator.databinding.FragmentEmvBinding
 import com.crypto.calculator.extension.getColorIconResId
 import com.crypto.calculator.extension.requireDefaultPaymentServicePermission
+import com.crypto.calculator.extension.toDataClass
 import com.crypto.calculator.model.DataFormat
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.Tool
@@ -20,10 +21,12 @@ import com.crypto.calculator.service.cardSimulator.CreditCardSimulator
 import com.crypto.calculator.service.model.CardProfile
 import com.crypto.calculator.ui.base.BaseActivity
 import com.crypto.calculator.ui.base.MVVMFragment
+import com.crypto.calculator.ui.viewAdapter.DropDownMenuAdapter
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.ui.viewModel.EmvViewModel
 import com.crypto.calculator.util.AssetsUtil
 import com.crypto.calculator.util.PreferencesUtil
+import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.assetsPathCardVisa
 import com.crypto.calculator.util.bindInputFilters
 
@@ -79,12 +82,15 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         when (tool) {
             Tool.CARD_SIMULATOR -> cardSimulator()
             Tool.EMV_KERNEL -> emvKernel()
+            Tool.ARQC -> arqcCalculator()
             else -> {}
         }
     }
 
     private fun cardSimulator() {
         CreditCardSimulator.enablePaymentService(requireContext().applicationContext, true)
+        binding.tvPrompt.visibility = View.VISIBLE
+
         (requireActivity() as BaseActivity).requireDefaultPaymentServicePermission {
             binding.cardContainer.visibility = View.VISIBLE
             viewModel.promptMessage.set(getString(R.string.label_present_card_to_reader))
@@ -199,6 +205,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
     private fun emvKernel() {
         viewModel.prepareCardReader(requireContext().applicationContext, requireActivity())
+        binding.tvPrompt.visibility = View.VISIBLE
 
         binding.tilData1.visibility = View.VISIBLE
         viewModel.inputData1Label.set("Authorised amount")
@@ -270,8 +277,63 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         }
     }
 
+    private fun arqcCalculator() {
+        binding.arqcContainer.visibility = View.VISIBLE
+        binding.tilCondition1.hint = "Card Type"
+        val cardTypeList = listOf(
+            PaymentMethod.VISA,
+            PaymentMethod.MASTER,
+            PaymentMethod.UNIONPAY,
+            PaymentMethod.JCB,
+            PaymentMethod.DISCOVER,
+            PaymentMethod.AMEX,
+        )
+        binding.autoTvCondition1.setAdapter(
+            DropDownMenuAdapter(
+                requireContext(),
+                R.layout.view_drop_down_menu_item,
+                cardTypeList,
+            )
+        )
+        binding.autoTvCondition1.setText(cardTypeList.first().name)
+        var data = hashMapOf<String, String>()
+        val tagList = "9F029F039F1A955F2A9A9C9F37829F369F10575F34"
+        TlvUtil.readTagList(tagList).forEach {
+            data[it] = ""
+        }
+
+        binding.operationBtn3.visibility = View.VISIBLE
+        binding.operationBtn3.text = getString(R.string.label_data_object_list)
+        binding.operationBtn3.isEnabled = true
+        binding.operationBtn3.setOnClickListener {
+            editConfigJson(requireContext(), it, data, true, enableSaveLoadButton = false) { editedDOL ->
+                Log.d("arqcCalculator", "editedDOL: $editedDOL")
+                data = editedDOL
+            }
+        }
+
+        binding.operationBtn1.visibility = View.VISIBLE
+        binding.operationBtn1.text = getString(R.string.label_operation_compute)
+        binding.operationBtn1.isEnabled = true
+        binding.operationBtn1.setOnClickListener {
+            val cardType = binding.autoTvCondition1.text.toString().toDataClass<PaymentMethod>()
+            Log.d("arqcCalculator", "cardType: $cardType")
+            when (cardType) {
+                PaymentMethod.VISA -> {}
+                PaymentMethod.MASTER -> {}
+                PaymentMethod.UNIONPAY -> {}
+                PaymentMethod.JCB -> {}
+                PaymentMethod.DISCOVER -> {}
+                PaymentMethod.AMEX -> {}
+                else -> {}
+            }
+        }
+
+    }
+
     private fun resetLayout() {
         viewModel.finishCardReader()
+        binding.tvPrompt.visibility = View.GONE
         viewModel.promptMessage.set("")
 
         binding.ivSetting.visibility = View.GONE
@@ -283,6 +345,9 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.operationBtn2.visibility = View.GONE
         binding.operationBtn2.setOnClickListener(null)
         binding.operationBtn2.isEnabled = false
+        binding.operationBtn3.visibility = View.GONE
+        binding.operationBtn3.setOnClickListener(null)
+        binding.operationBtn3.isEnabled = false
 
         binding.cardContainer.visibility = View.GONE
 
@@ -304,6 +369,9 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         CreditCardSimulator.apdu.removeObservers(viewLifecycleOwner)
         EMVKernel.apdu.removeObservers(viewLifecycleOwner)
         viewModel.cardReader?.status?.removeObservers(viewLifecycleOwner)
+
+        binding.arqcContainer.visibility = View.GONE
+        binding.autoTvCondition1.onItemClickListener = null
     }
 
     override fun onResume() {

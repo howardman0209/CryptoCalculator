@@ -5,12 +5,9 @@ import android.app.Activity
 import android.content.Context
 import android.nfc.NfcAdapter
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
-import com.crypto.calculator.extension.toISOAmountString
 import com.crypto.calculator.model.EMVTags
 import com.crypto.calculator.model.EmvConfig
 import com.crypto.calculator.model.getHexTag
-import com.crypto.calculator.util.CurrencyUtil
 import com.crypto.calculator.util.DATE_TIME_PATTERN_EMV_9A
 import com.crypto.calculator.util.DATE_TIME_PATTERN_EMV_9F21
 import com.crypto.calculator.util.TlvUtil
@@ -103,15 +100,14 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
         getCurrentTime(DATE_TIME_PATTERN_EMV_9A)?.let { tmp[EMVTags.TRANSACTION_DATE.getHexTag()] = it }
         getCurrentTime(DATE_TIME_PATTERN_EMV_9F21)?.let { tmp[EMVTags.TRANSACTION_TIME.getHexTag()] = it }
         Log.d("AndroidCR", "startEMV - data: $tmp")
-        enableReader(
-            EMVKernel(context,
-                this.apply {
-                    onStatusChange(BasicCardReader.Companion.CardReaderStatus.READY)
-                }
-            ).apply {
-                saveTerminalData(tmp)
+        EMVKernel(context,
+            this.apply {
+                onStatusChange(BasicCardReader.Companion.CardReaderStatus.READY)
             }
-        )
+        ).apply {
+            saveTerminalData(tmp)
+            enableReader(this)
+        }
     }
 
     override fun cancelCheckCard() {

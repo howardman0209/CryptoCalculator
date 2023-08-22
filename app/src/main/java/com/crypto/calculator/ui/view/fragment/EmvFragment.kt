@@ -220,8 +220,10 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.operationBtn1.text = getString(R.string.label_operation_start)
         binding.operationBtn1.isEnabled = true
         binding.operationBtn1.setOnClickListener {
-            val authorizedAmount = (viewModel.inputData1.get() ?: "01").padStart(12, '0')
+            val authorizedAmount = viewModel.inputData1.get().let { if (!it.isNullOrEmpty()) it else "100" }.padStart(12, '0')
             val cashbackAmount = (viewModel.inputData2.get() ?: "00").padStart(12, '0')
+            viewModel.inputData1.set(authorizedAmount)
+            viewModel.inputData2.set(cashbackAmount)
             val emvConfig = PreferencesUtil.getEmvConfig(requireContext().applicationContext)
             viewModel.cardReader?.startEMV(authorizedAmount, cashbackAmount, emvConfig)
         }

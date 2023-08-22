@@ -15,6 +15,7 @@ import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.ui.base.BaseViewModel
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
 import com.crypto.calculator.util.InputFilterUtil
+import com.crypto.calculator.util.LogPanelUtil
 import com.crypto.calculator.util.TlvUtil
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -146,8 +147,13 @@ class EmvViewModel : BaseViewModel() {
                 logBuilder.append("\nrAPDU: ")
                 logBuilder.append("$apdu\n")
                 if (apdu.endsWith(APDU_RESPONSE_CODE_OK)) {
-                    val jsonString = gsonBeautifier.toJson(TlvUtil.decodeTLV(apdu))
-                    logBuilder.append(jsonString)
+                    LogPanelUtil.safeExecute(false) { gsonBeautifier.toJson(TlvUtil.decodeTLV(apdu)) }.also { jsonString ->
+                        if (jsonString.isNotEmpty()) {
+                            logBuilder.append(jsonString)
+                        } else {
+                            logBuilder.append("Not in ASN.1")
+                        }
+                    }
                 } else {
                     logBuilder.append("Command not supported")
                 }

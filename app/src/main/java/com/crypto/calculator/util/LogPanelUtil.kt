@@ -1,11 +1,11 @@
 package com.crypto.calculator.util
 
 object LogPanelUtil {
-    fun safeExecute(task: () -> String): String {
+    fun safeExecute(showError: Boolean = true, task: () -> String): String {
         return try {
             task.invoke()
         } catch (ex: Exception) {
-            "Error: ${ex.message ?: ex}"
+            if (showError) "Error: ${ex.message ?: ex}" else ""
         }
     }
 }

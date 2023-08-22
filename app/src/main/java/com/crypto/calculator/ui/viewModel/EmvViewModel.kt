@@ -13,7 +13,11 @@ import com.crypto.calculator.cardReader.BasicCardReader
 import com.crypto.calculator.model.DataFormat
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.ui.base.BaseViewModel
+import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
 import com.crypto.calculator.util.InputFilterUtil
+import com.crypto.calculator.util.TlvUtil
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -34,6 +38,7 @@ class EmvViewModel : BaseViewModel() {
     val inputData2InputType: MutableLiveData<Int> = MutableLiveData(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS)
 
     var cardReader: BasicCardReader? = null
+    val gsonBeautifier: Gson = GsonBuilder().setPrettyPrinting().create()
 
     fun setInputData1Filter(maxLength: Int? = null, inputFormat: DataFormat = DataFormat.HEXADECIMAL) {
         inputData1Filter.value = emptyList()
@@ -96,5 +101,59 @@ class EmvViewModel : BaseViewModel() {
             cardReader?.release()
             cardReader = null
         }
+    }
+
+    fun getInspectLog(apdu: String): String {
+        val logBuilder = StringBuilder()
+        when {
+            apdu == "00A404000E325041592E5359532E444446303100" -> {
+                logBuilder.append("Select Proximity Payment System Environment (PPSE)")
+                logBuilder.append("\ncAPDU: ")
+                logBuilder.append(apdu)
+            }
+
+            apdu.startsWith("00A40400") -> {
+                logBuilder.append("Select Application Identifier (AID)")
+                logBuilder.append("\ncAPDU: ")
+                logBuilder.append(apdu)
+            }
+
+            apdu.startsWith("80A80000") -> {
+                logBuilder.append("Get Processing Options (GPO)")
+                logBuilder.append("\ncAPDU: ")
+                logBuilder.append(apdu)
+            }
+
+            apdu.startsWith("00B2") -> {
+                logBuilder.append("Read Record")
+                logBuilder.append("\ncAPDU: ")
+                logBuilder.append(apdu)
+            }
+
+            apdu.startsWith("80AE") -> {
+                logBuilder.append("Generate Application Cryptogram (GenAC)")
+                logBuilder.append("\ncAPDU: ")
+                logBuilder.append(apdu)
+            }
+
+            apdu == "0084000000" -> {
+                logBuilder.append("Get Challenge")
+                logBuilder.append("\ncAPDU: ")
+                logBuilder.append(apdu)
+            }
+
+            else -> {
+                logBuilder.append("\nrAPDU: ")
+                logBuilder.append("$apdu\n")
+                if (apdu.endsWith(APDU_RESPONSE_CODE_OK)) {
+                    val jsonString = gsonBeautifier.toJson(TlvUtil.decodeTLV(apdu))
+                    logBuilder.append(jsonString)
+                } else {
+                    logBuilder.append("Command not supported")
+                }
+                logBuilder.append("\n")
+            }
+        }
+        return logBuilder.toString()
     }
 }

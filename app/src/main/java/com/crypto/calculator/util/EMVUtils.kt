@@ -485,6 +485,7 @@ object EMVUtils {
 
     private fun getIssuerMasterKeyByPan(pan: String): String? {
         return when (getPaymentMethodByPan(pan)) {
+            PaymentMethod.AMEX -> "10E516B5A8469775548FE3689D75F129"
             PaymentMethod.VISA -> "2315208C9110AD402315208C9110AD40"
             PaymentMethod.MASTER -> "9E15204313F7318ACB79B90BD986AD29"
             PaymentMethod.UNIONPAY -> "476F6C6470616320496E6974204D444B"
@@ -492,7 +493,6 @@ object EMVUtils {
             PaymentMethod.DINERS,
             PaymentMethod.DISCOVER -> "11111111111111112222222222222222"
 
-            PaymentMethod.AMEX -> "10E516B5A8469775548FE3689D75F129"
             else -> null
         }
     }

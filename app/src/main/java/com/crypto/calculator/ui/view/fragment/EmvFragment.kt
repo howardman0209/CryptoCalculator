@@ -97,8 +97,11 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                 if (!binding.opt1CheckBox.isChecked) {
                     apdu?.let { coreViewModel.printLog(it) }
                 } else {
-//                    TODO: handle inspect mode
-                    Log.d("cardSimulator", "inspect mode APDU log")
+                    apdu?.let {
+                        viewModel.getInspectLog(it)
+                    }?.apply {
+                        coreViewModel.printLog(this)
+                    }
                 }
             }
 
@@ -241,8 +244,11 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             if (!binding.opt1CheckBox.isChecked) {
                 apdu?.let { coreViewModel.printLog(it) }
             } else {
-//              TODO: handle inspect mode
-                Log.d("emvKernel", "inspect mode APDU log")
+                apdu?.let {
+                    viewModel.getInspectLog(it)
+                }?.apply {
+                    coreViewModel.printLog(this)
+                }
             }
         }
 

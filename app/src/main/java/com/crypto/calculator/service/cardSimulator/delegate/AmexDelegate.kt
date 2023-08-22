@@ -16,12 +16,54 @@ class AmexDelegate(private val iccData: HashMap<String, String>) : BasicEMVCardS
         fun getInstance(iccData: HashMap<String, String>) = AmexDelegate(iccData)
         const val CVN01_TAGS = "9F029F039F1A955F2A9A9C9F37829F369F10"
         const val CVN02_TAGS = "9F379F369F10"
-    }
 
-    private fun readCVNFromIAD(iad: String): Int {
-        val cvn = iad.substring(4, 6).toInt(16)
-        Log.d("AmexDelegate", "readCVNFromIAD - cvn: $cvn")
-        return cvn
+        private fun readCVNFromIAD(iad: String): Int {
+            try {
+                val cvn = iad.substring(4, 6).toInt(16)
+                Log.d("AmexDelegate", "readCVNFromIAD - cvn: $cvn")
+                return cvn
+            } catch (ex: Exception) {
+                throw Exception("INVALID_ICC_DATA [9F10]")
+            }
+        }
+
+        fun calculateAC(type: ApplicationCryptogram.Type, dolMap: HashMap<String, String>): String {
+            val dataBuilder = StringBuilder()
+            val cvn = dolMap["9F10"]?.let {
+                readCVNFromIAD(it)
+            } ?: 1
+            val pan = dolMap["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [57]")
+            val psn = dolMap["5F34"] ?: throw Exception("INVALID_ICC_DATA [5F34]")
+            val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
+
+            return when (type) {
+                ApplicationCryptogram.Type.TC,
+                ApplicationCryptogram.Type.ARQC -> {
+                    when (cvn) {
+                        1 -> {
+                            TlvUtil.readTagList(CVN01_TAGS).forEach {
+                                if (it != "9F10") {
+                                    dataBuilder.append(dolMap[it])
+                                } else {
+                                    dataBuilder.append(dolMap[it]?.substring(6))
+                                }
+                            }
+                            Encryption.calculateMAC(iccMK, dataBuilder.toString())?.uppercase() ?: throw Exception("CALCULATE_MAC_ERROR")
+                        }
+
+                        else -> {
+                            // TODO: calculate other CVN
+                            throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                        }
+                    }
+                }
+
+                ApplicationCryptogram.Type.AAC -> {
+                    // TODO: calculate AAC
+                    ""
+                }
+            }
+        }
     }
 
     private fun calculateAC(type: ApplicationCryptogram.Type): String {

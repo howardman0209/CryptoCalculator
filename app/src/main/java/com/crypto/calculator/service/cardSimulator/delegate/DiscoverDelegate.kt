@@ -18,13 +18,54 @@ class DiscoverDelegate(private val iccData: HashMap<String, String>) : BasicEMVC
         fun getInstance(iccData: HashMap<String, String>) = DiscoverDelegate(iccData)
         const val CVN15_TAGS = "9F029F1A9F379F369F10"
         const val CVN16_TAGS = ""
-    }
 
-    private fun readCVNFromIAD(iad: String): Int {
-        Log.d("DiscoverDelegate", "readCVNFromIAD - iad: $iad")
-        val cvn = iad.substring(2, 4).toInt()
-        Log.d("DiscoverDelegate", "readCVNFromIAD - cvn: $cvn")
-        return cvn
+        private fun readCVNFromIAD(iad: String): Int {
+            try {
+                Log.d("DiscoverDelegate", "readCVNFromIAD - iad: $iad")
+                val cvn = iad.substring(2, 4).toInt()
+                Log.d("DiscoverDelegate", "readCVNFromIAD - cvn: $cvn")
+                return cvn
+            } catch (ex: Exception) {
+                throw Exception("INVALID_ICC_DATA [9F10]")
+            }
+        }
+
+        fun calculateAC(type: ApplicationCryptogram.Type, dolMap: HashMap<String, String>): String {
+            val dataBuilder = StringBuilder()
+            val cvn = dolMap["9F10"]?.let {
+                readCVNFromIAD(it)
+            } ?: 1
+            val pan = dolMap["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [57]")
+            val psn = dolMap["5F34"] ?: throw Exception("INVALID_ICC_DATA [5F34]")
+//        val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
+
+            return when (type) {
+                ApplicationCryptogram.Type.TC,
+                ApplicationCryptogram.Type.ARQC -> {
+                    when (cvn) {
+                        15 -> {
+                            val atc = dolMap["9F36"] ?: throw Exception("INVALID_ICC_DATA [9F36]")
+                            val sk = EMVUtils.deriveACSessionKey(pan, psn, atc) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
+                            TlvUtil.readTagList(CVN15_TAGS).forEach {
+                                dataBuilder.append(dolMap[it])
+                            }
+                            Log.d("calculateAC", "DOL: $dataBuilder, SK: $sk")
+                            Encryption.calculateMAC(sk, dataBuilder.toString().applyPadding(PaddingMethod.ISO9797_1_M2)).uppercase()
+                        }
+
+                        else -> {
+                            // TODO: calculate other CVN
+                            throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                        }
+                    }
+                }
+
+                ApplicationCryptogram.Type.AAC -> {
+                    // TODO: calculate AAC
+                    ""
+                }
+            }
+        }
     }
 
     private fun calculateAC(type: ApplicationCryptogram.Type): String {
@@ -131,7 +172,7 @@ class DiscoverDelegate(private val iccData: HashMap<String, String>) : BasicEMVC
                     "5F25" to iccData["5F25"],
                     "5F28" to iccData["5F28"],
                     "5F34" to iccData["5F34"],
-                    "9F08" to  iccData["9F08"],
+                    "9F08" to iccData["9F08"],
                     "9F10" to iccData["9F10"],
                     "9F26" to calculateAC(ApplicationCryptogram.Type.ARQC),
                     "9F27" to ApplicationCryptogram.getCryptogramInformationData(ApplicationCryptogram.Type.ARQC),

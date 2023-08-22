@@ -18,6 +18,13 @@ import com.crypto.calculator.model.DataFormat
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.service.cardSimulator.CreditCardSimulator
+import com.crypto.calculator.service.cardSimulator.delegate.AmexDelegate
+import com.crypto.calculator.service.cardSimulator.delegate.DiscoverDelegate
+import com.crypto.calculator.service.cardSimulator.delegate.JcbDelegate
+import com.crypto.calculator.service.cardSimulator.delegate.MastercardDelegate
+import com.crypto.calculator.service.cardSimulator.delegate.UnionPayDelegate
+import com.crypto.calculator.service.cardSimulator.delegate.VisaDelegate
+import com.crypto.calculator.service.model.ApplicationCryptogram
 import com.crypto.calculator.service.model.CardProfile
 import com.crypto.calculator.ui.base.BaseActivity
 import com.crypto.calculator.ui.base.MVVMFragment
@@ -25,6 +32,7 @@ import com.crypto.calculator.ui.viewAdapter.DropDownMenuAdapter
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.ui.viewModel.EmvViewModel
 import com.crypto.calculator.util.AssetsUtil
+import com.crypto.calculator.util.LogPanelUtil
 import com.crypto.calculator.util.PreferencesUtil
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.assetsPathCardVisa
@@ -318,17 +326,19 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.operationBtn1.setOnClickListener {
             val cardType = binding.autoTvCondition1.text.toString().toDataClass<PaymentMethod>()
             Log.d("arqcCalculator", "cardType: $cardType")
-            when (cardType) {
-                PaymentMethod.VISA -> {}
-                PaymentMethod.MASTER -> {}
-                PaymentMethod.UNIONPAY -> {}
-                PaymentMethod.JCB -> {}
-                PaymentMethod.DISCOVER -> {}
-                PaymentMethod.AMEX -> {}
-                else -> {}
+            val arqc = when (cardType) {
+                PaymentMethod.VISA -> LogPanelUtil.safeExecute { VisaDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
+                PaymentMethod.MASTER -> LogPanelUtil.safeExecute { MastercardDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
+                PaymentMethod.UNIONPAY -> LogPanelUtil.safeExecute { UnionPayDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
+                PaymentMethod.JCB -> LogPanelUtil.safeExecute { JcbDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
+                PaymentMethod.DISCOVER -> LogPanelUtil.safeExecute { DiscoverDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
+                PaymentMethod.AMEX -> LogPanelUtil.safeExecute { AmexDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
+                else -> null
             }
-        }
 
+            Log.d("arqcCalculator", "arqc: $arqc")
+            coreViewModel.printLog("ARQC: $arqc")
+        }
     }
 
     private fun resetLayout() {

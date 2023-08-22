@@ -19,6 +19,7 @@ import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.ui.viewModel.InputViewModel
 import com.crypto.calculator.util.ConverterUtil
 import com.crypto.calculator.util.HashUtil
+import com.crypto.calculator.util.LogPanelUtil
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.bindInputFilters
 import com.google.gson.JsonObject
@@ -107,7 +108,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
             val data = viewModel.inputData1.get() ?: ""
             val exponent = viewModel.inputData2.get() ?: ""
             val modulus = viewModel.inputData3.get() ?: ""
-            val result = safeExecute {
+            val result = LogPanelUtil.safeExecute {
                 viewModel.rsaCompute(data, exponent, modulus)
             }
             coreViewModel.printLog("RSA_CALCULATOR \nData: $data \nExponent: $exponent \nModulus: $modulus \nResult: $result\n")
@@ -161,7 +162,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
             val adjustedKey = viewModel.fixDESKeyParity(key)
             val mode = binding.autoTvCondition1.text.toString()
             val padding = binding.autoTvCondition2.text.toString().toDataClass<PaddingMethod>()
-            val result = safeExecute {
+            val result = LogPanelUtil.safeExecute {
                 viewModel.desEncrypt(
                     data = data,
                     key = key,
@@ -183,7 +184,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
             val adjustedKey = viewModel.fixDESKeyParity(key)
             val mode = binding.autoTvCondition1.text.toString()
             val padding = binding.autoTvCondition2.text.toString().toDataClass<PaddingMethod>()
-            val result = safeExecute {
+            val result = LogPanelUtil.safeExecute {
                 viewModel.desDecrypt(
                     data = data,
                     key = key,
@@ -234,17 +235,17 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
             viewModel.inputData1.get()?.also { data ->
                 when (selected) {
                     0 -> {
-                        val result = safeExecute { coreViewModel.gsonBeautifier.toJson(TlvUtil.decodeTLV(data)) }
+                        val result = LogPanelUtil.safeExecute { coreViewModel.gsonBeautifier.toJson(TlvUtil.decodeTLV(data)) }
                         Log.d("tlvParser", "result: $result")
                         coreViewModel.printLog("TLV_PARSER \nTLV: \n$data \nresult: \n$result\n")
                     }
 
                     else -> {
-                        val displayJson = safeExecute {
+                        val displayJson = LogPanelUtil.safeExecute {
                             val jsonObj = data.toDataClass<JsonObject>()
                             coreViewModel.gsonBeautifier.toJson(jsonObj)
                         }
-                        val result = safeExecute { TlvUtil.encodeTLV(data) }
+                        val result = LogPanelUtil.safeExecute { TlvUtil.encodeTLV(data) }
                         Log.d("tlvParser", "result: $result")
                         coreViewModel.printLog("TLV_PARSER \nJSON: \n$displayJson \nresult: \n$result\n")
                     }
@@ -295,7 +296,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
             val fromFormat = binding.autoTvCondition1.text.toString().toDataClass<DataFormat>()
             val toFormat = binding.autoTvCondition2.text.toString().toDataClass<DataFormat>()
             Log.d("converter", "data: $data, from: $fromFormat, to: $toFormat")
-            val result = safeExecute { ConverterUtil.convertString(data, fromFormat, toFormat) }
+            val result = LogPanelUtil.safeExecute { ConverterUtil.convertString(data, fromFormat, toFormat) }
             Log.d("converter", "result: $result")
             coreViewModel.printLog("CONVERTER \nData: $data \nFrom: $fromFormat \nto: $toFormat \nresult: $result\n")
         }
@@ -322,7 +323,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
         binding.operationBtn1.setOnClickListener {
             val data = viewModel.inputData1.get() ?: ""
             val algorithm = binding.autoTvCondition1.text.toString()
-            val result = safeExecute { HashUtil.getHexHash(data, algorithm) }
+            val result = LogPanelUtil.safeExecute { HashUtil.getHexHash(data, algorithm) }
             Log.d("hashCalculator", "algorithm: $algorithm, result: $result")
             coreViewModel.printLog("HASH_CALCULATOR \nData: $data \nAlgorithm: $algorithm \nresult: $result\n")
         }
@@ -358,7 +359,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
             val key = viewModel.inputData2.get() ?: ""
             val adjustedKey = viewModel.fixDESKeyParity(key)
             val padding = binding.autoTvCondition1.text.toString().toDataClass<PaddingMethod>()
-            val result = safeExecute {
+            val result = LogPanelUtil.safeExecute {
                 viewModel.macCompute(data, adjustedKey, padding)
             }
             Log.d("macCalculator", "result: $result")
@@ -405,7 +406,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
             val data1 = viewModel.inputData1.get() ?: ""
             val data2 = viewModel.inputData2.get() ?: ""
             val operation = opList[selected]
-            val result = safeExecute {
+            val result = LogPanelUtil.safeExecute {
                 data1.hexBitwise(data2, operation)
             }
             Log.d("bitwiseCalculator", "result: $result")
@@ -443,14 +444,6 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
 
         viewModel.setInputData3Filter()
         viewModel.inputData3Label.set("")
-    }
-
-    private fun safeExecute(task: () -> String): String {
-        return try {
-            task.invoke()
-        } catch (ex: Exception) {
-            "Error: ${ex.message ?: ex}"
-        }
     }
 
     private fun getCoreViewModel(): CoreViewModel {

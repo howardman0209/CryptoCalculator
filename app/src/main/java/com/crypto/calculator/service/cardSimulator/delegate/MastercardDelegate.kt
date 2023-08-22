@@ -27,6 +27,36 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
     companion object {
         const val CVN10_TAGS = "9F029F039F1A955F2A9A9C9F37829F369F10"
         fun getInstance(iccData: HashMap<String, String>) = MastercardDelegate(iccData)
+
+        fun calculateAC(type: ApplicationCryptogram.Type, dolMap: HashMap<String, String>): String {
+            val dataBuilder = StringBuilder()
+            val pan = dolMap["5A"] ?: dolMap["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [5A, 57]")
+            val psn = dolMap["5F34"] ?: throw Exception("INVALID_ICC_DATA [5F34]")
+//        val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
+
+            return when (type) {
+                ApplicationCryptogram.Type.TC,
+                ApplicationCryptogram.Type.ARQC -> {
+                    val atc = dolMap["9F36"] ?: throw Exception("INVALID_ICC_DATA [9F36]")
+                    val un = dolMap["9F37"] ?: throw Exception("INVALID_TERMINAL_DATA [9F37]")
+                    val sk = EMVUtils.deriveACSessionKey(pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
+                    TlvUtil.readTagList(CVN10_TAGS).forEach {
+                        if (it != "9F10") {
+                            dataBuilder.append(dolMap[it])
+                        } else {
+                            dataBuilder.append(dolMap[it]?.substring(4, 16))
+                        }
+                    }
+                    Log.d("MastercardDelegate", "DOL - $dataBuilder, sk: $sk")
+                    Encryption.calculateMAC(sk, dataBuilder.toString().applyPadding(PaddingMethod.ISO9797_1_M2)).uppercase()
+                }
+
+                ApplicationCryptogram.Type.AAC -> {
+                    // TODO: calculate AAC
+                    ""
+                }
+            }
+        }
     }
 
     private val iccPublicKey = EMVPublicKey(

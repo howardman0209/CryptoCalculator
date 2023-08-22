@@ -12,6 +12,11 @@ import java.util.Locale
 
 object PreferencesUtil {
 
+    fun clearPreferenceData(context: Context, path: String) {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        localPref?.edit()?.remove(path)?.apply()
+    }
+
     fun saveLocale(context: Context?, locale: Locale) {
         val localPref = context?.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
         localPref?.edit()?.apply {

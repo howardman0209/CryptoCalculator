@@ -16,7 +16,7 @@ class JcbDelegate(private val iccData: HashMap<String, String>) : BasicEMVCardSi
         fun getInstance(iccData: HashMap<String, String>) = JcbDelegate(iccData)
         const val CVN01_TAGS = "9F029F039F1A955F2A9A9C9F37829F369F10"
 
-        private fun readCVNFromIAD(iad: String): Int {
+        fun readCVNFromIAD(iad: String): Int {
             try {
                 val cvn = iad.substring(4, 6).toInt(16)
                 Log.d("JcbDelegate", "readCVNFromIAD - cvn: $cvn")

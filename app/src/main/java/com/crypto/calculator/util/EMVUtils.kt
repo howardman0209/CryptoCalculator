@@ -8,6 +8,11 @@ import com.crypto.calculator.extension.toHexString
 import com.crypto.calculator.model.BitwiseOperation
 import com.crypto.calculator.model.EntryMode
 import com.crypto.calculator.model.PaymentMethod
+import com.crypto.calculator.service.cardSimulator.delegate.DiscoverDelegate
+import com.crypto.calculator.service.cardSimulator.delegate.JcbDelegate
+import com.crypto.calculator.service.cardSimulator.delegate.MastercardDelegate
+import com.crypto.calculator.service.cardSimulator.delegate.UnionPayDelegate
+import com.crypto.calculator.service.cardSimulator.delegate.VisaDelegate
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
@@ -495,5 +500,43 @@ object EMVUtils {
 
             else -> null
         }
+    }
+
+    fun getIssuerMasterKeyByPaymentMethod(paymentMethod: PaymentMethod): String? {
+        return when (paymentMethod) {
+            PaymentMethod.AMEX -> "10E516B5A8469775548FE3689D75F129"
+            PaymentMethod.VISA -> "2315208C9110AD402315208C9110AD40"
+            PaymentMethod.MASTER -> "9E15204313F7318ACB79B90BD986AD29"
+            PaymentMethod.UNIONPAY -> "476F6C6470616320496E6974204D444B"
+            PaymentMethod.JCB -> "DA61514AF464AD7FC21AB0FD92681AC8"
+            PaymentMethod.DINERS,
+            PaymentMethod.DISCOVER -> "11111111111111112222222222222222"
+
+            else -> null
+        }
+    }
+
+    fun getAcTagListByPaymentMethod(paymentMethod: PaymentMethod, iad: String): String {
+        val cvn = when (paymentMethod) {
+            PaymentMethod.VISA -> VisaDelegate.readCVNFromIAD(iad)
+            PaymentMethod.UNIONPAY -> UnionPayDelegate.readCVNFromIAD(iad)
+            PaymentMethod.JCB -> JcbDelegate.readCVNFromIAD(iad)
+            PaymentMethod.DINERS,
+            PaymentMethod.DISCOVER -> DiscoverDelegate.readCVNFromIAD(iad)
+
+            else -> null
+        }
+        val dol = when {
+            paymentMethod == PaymentMethod.VISA && cvn == 17 -> "9F029F379F369F10"
+            (paymentMethod == PaymentMethod.DISCOVER || paymentMethod == PaymentMethod.DINERS)
+                    && cvn == 15 -> "9F029F1A9F379F369F10"
+
+            else -> "9F029F039F1A955F2A9A9C9F37829F369F10"
+        }
+        return dol
+    }
+
+    fun getAcDOLByPaymentMethod(){
+
     }
 }

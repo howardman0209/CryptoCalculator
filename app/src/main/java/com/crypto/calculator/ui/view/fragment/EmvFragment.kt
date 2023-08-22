@@ -14,6 +14,7 @@ import com.crypto.calculator.databinding.FragmentEmvBinding
 import com.crypto.calculator.extension.getColorIconResId
 import com.crypto.calculator.extension.requireDefaultPaymentServicePermission
 import com.crypto.calculator.extension.toDataClass
+import com.crypto.calculator.model.AcDOL
 import com.crypto.calculator.model.DataFormat
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.Tool
@@ -32,11 +33,13 @@ import com.crypto.calculator.ui.viewAdapter.DropDownMenuAdapter
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.ui.viewModel.EmvViewModel
 import com.crypto.calculator.util.AssetsUtil
+import com.crypto.calculator.util.EMVUtils
 import com.crypto.calculator.util.LogPanelUtil
 import com.crypto.calculator.util.PreferencesUtil
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.assetsPathCardVisa
 import com.crypto.calculator.util.bindInputFilters
+import com.crypto.calculator.util.prefEmvConfig
 
 class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     private lateinit var coreViewModel: CoreViewModel
@@ -226,7 +229,12 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.ivSetting.visibility = View.VISIBLE
         binding.ivSetting.setOnClickListener {
             val emvConfig = PreferencesUtil.getEmvConfig(requireContext().applicationContext)
-            editConfigJson(requireContext(), it, emvConfig, true) { editedConfig ->
+            editConfigJson(requireContext(), it, emvConfig, true,
+                neutralBtn = getString(R.string.button_reset),
+                onNeutralBtnClick = {
+                    PreferencesUtil.clearPreferenceData(requireContext(), prefEmvConfig)
+                }
+            ) { editedConfig ->
                 PreferencesUtil.saveEmvConfig(requireContext().applicationContext, editedConfig)
             }
         }
@@ -286,6 +294,16 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     }
 
     private fun arqcCalculator() {
+        fun initData(): HashMap<String, String> {
+            val data = hashMapOf<String, String>()
+            val tagList = "9F029F039F1A955F2A9A9C9F37829F369F10575F349F38"
+            TlvUtil.readTagList(tagList).forEach {
+                data[it] = ""
+            }
+            return data
+        }
+
+        var data = initData()
         binding.arqcContainer.visibility = View.VISIBLE
         binding.tilCondition1.hint = "Card Type"
         val cardTypeList = listOf(
@@ -304,19 +322,22 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             )
         )
         binding.autoTvCondition1.setText(cardTypeList.first().name)
-        var data = hashMapOf<String, String>()
-        val tagList = "9F029F039F1A955F2A9A9C9F37829F369F10575F34"
-        TlvUtil.readTagList(tagList).forEach {
-            data[it] = ""
+        binding.autoTvCondition1.setOnItemClickListener { _, _, _, _ ->
+            data = initData()
         }
 
         binding.operationBtn3.visibility = View.VISIBLE
         binding.operationBtn3.text = getString(R.string.label_data_object_list)
         binding.operationBtn3.isEnabled = true
         binding.operationBtn3.setOnClickListener {
-            editConfigJson(requireContext(), it, data, true, enableSaveLoadButton = false) { editedDOL ->
+            editConfigJson(requireContext(), it, AcDOL(data), true,
+                neutralBtn = getString(R.string.button_reset),
+                onNeutralBtnClick = {
+                    data = initData()
+                }
+            ) { editedDOL ->
                 Log.d("arqcCalculator", "editedDOL: $editedDOL")
-                data = editedDOL
+                data = editedDOL.data
             }
         }
 
@@ -326,6 +347,15 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.operationBtn1.setOnClickListener {
             val cardType = binding.autoTvCondition1.text.toString().toDataClass<PaymentMethod>()
             Log.d("arqcCalculator", "cardType: $cardType")
+            val imk = LogPanelUtil.safeExecute { EMVUtils.getIssuerMasterKeyByPaymentMethod(cardType) ?: "Issuer master key not found" }
+            val pan = LogPanelUtil.safeExecute { data["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [57]") }
+            val psn = LogPanelUtil.safeExecute { data["5F34"] ?: throw Exception("INVALID_ICC_DATA [5F34]") }
+
+            val iccMK = LogPanelUtil.safeExecute { EMVUtils.deriveICCMasterKey(pan, psn) ?: "Derive ICC master key fail" }
+            val atc = LogPanelUtil.safeExecute { data["9F36"] ?: throw Exception("INVALID_ICC_DATA [9F36]") }
+            val un = LogPanelUtil.safeExecute { data["9F38"] ?: throw Exception("INVALID_ICC_DATA [9F38]") }
+            val udk = LogPanelUtil.safeExecute { EMVUtils.deriveACSessionKey(pan, psn, un) ?: "Issuer master key not found" }
+            val dol = LogPanelUtil.safeExecute { "" }
             val arqc = when (cardType) {
                 PaymentMethod.VISA -> LogPanelUtil.safeExecute { VisaDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
                 PaymentMethod.MASTER -> LogPanelUtil.safeExecute { MastercardDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
@@ -337,7 +367,13 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             }
 
             Log.d("arqcCalculator", "arqc: $arqc")
-            coreViewModel.printLog("ARQC: $arqc")
+            coreViewModel.printLog(
+                "ARQC_CALCULATOR: " +
+                        "\nIssuer master key: $imk " +
+                        "\nPAN [5A]: $pan \nPSN [5F34]: $psn \nICC master key: $iccMK " +
+                        "\nATC [9F36]: $atc \nUN [9F38]: $un \nAC session key: $udk " +
+                        "\nDOL: $dol \nARQC: $arqc"
+            )
         }
     }
 

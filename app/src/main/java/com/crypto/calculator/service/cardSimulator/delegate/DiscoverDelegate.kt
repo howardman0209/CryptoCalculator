@@ -19,7 +19,7 @@ class DiscoverDelegate(private val iccData: HashMap<String, String>) : BasicEMVC
         const val CVN15_TAGS = "9F029F1A9F379F369F10"
         const val CVN16_TAGS = ""
 
-        private fun readCVNFromIAD(iad: String): Int {
+        fun readCVNFromIAD(iad: String): Int {
             try {
                 Log.d("DiscoverDelegate", "readCVNFromIAD - iad: $iad")
                 val cvn = iad.substring(2, 4).toInt()
@@ -34,7 +34,7 @@ class DiscoverDelegate(private val iccData: HashMap<String, String>) : BasicEMVC
             val dataBuilder = StringBuilder()
             val cvn = dolMap["9F10"]?.let {
                 readCVNFromIAD(it)
-            } ?: 1
+            } ?: 15
             val pan = dolMap["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [57]")
             val psn = dolMap["5F34"] ?: throw Exception("INVALID_ICC_DATA [5F34]")
 //        val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")

@@ -327,7 +327,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             )
         )
 //        binding.autoTvCondition1.setText(cardTypeList.first().name)
-        binding.autoTvCondition1.setOnItemClickListener { _, view, _, _ ->
+        binding.autoTvCondition1.setOnItemClickListener { _, _, _, _ ->
             try {
                 val cardType = binding.autoTvCondition1.text.toString().toDataClass<PaymentMethod>()
                 val cvn = viewModel.inputData1.get()?.let { iad -> EMVUtils.getCVNByPaymentMethod(cardType, iad) }
@@ -335,7 +335,9 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                 tagList = EMVUtils.getAcTagListByPaymentMethod(cardType, cvn)
                 data = initData(tagList)
             } catch (ex: Exception) {
-                Snackbar.make(view, "Invalid IAD [9F10]", Snackbar.LENGTH_LONG).show()
+                Log.d("arqcCalculator", "Invalid IAD [9F10]")
+                data = hashMapOf()
+                Snackbar.make(binding.root, "Invalid IAD [9F10]", Snackbar.LENGTH_LONG).show()
             }
         }
 
@@ -343,18 +345,14 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.operationBtn3.text = getString(R.string.label_data_object_list)
         binding.operationBtn3.isEnabled = true
         binding.operationBtn3.setOnClickListener {
-            try {
-                editConfigJson(requireContext(), it, AcDOL(data), true,
-                    neutralBtn = getString(R.string.button_reset),
-                    onNeutralBtnClick = {
-                        data = initData(tagList)
-                    }
-                ) { editedDOL ->
-                    Log.d("arqcCalculator", "editedDOL: $editedDOL")
-                    data = editedDOL.data
+            editConfigJson(requireContext(), it, AcDOL(data), true,
+                neutralBtn = getString(R.string.button_reset),
+                onNeutralBtnClick = {
+                    data = initData(tagList)
                 }
-            } catch (ex: Exception) {
-                Snackbar.make(it, "Invalid IAD [9F10]", Snackbar.LENGTH_LONG).show()
+            ) { editedDOL ->
+                Log.d("arqcCalculator", "editedDOL: $editedDOL")
+                data = editedDOL.data
             }
         }
 

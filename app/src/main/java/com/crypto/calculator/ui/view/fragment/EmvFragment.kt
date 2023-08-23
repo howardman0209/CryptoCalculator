@@ -11,11 +11,13 @@ import com.crypto.calculator.R
 import com.crypto.calculator.cardReader.BasicCardReader
 import com.crypto.calculator.cardReader.EMVKernel
 import com.crypto.calculator.databinding.FragmentEmvBinding
+import com.crypto.calculator.extension.applyPadding
 import com.crypto.calculator.extension.getColorIconResId
 import com.crypto.calculator.extension.requireDefaultPaymentServicePermission
 import com.crypto.calculator.extension.toDataClass
 import com.crypto.calculator.model.AcDOL
 import com.crypto.calculator.model.DataFormat
+import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.service.cardSimulator.CreditCardService
@@ -34,6 +36,7 @@ import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.ui.viewModel.EmvViewModel
 import com.crypto.calculator.util.AssetsUtil
 import com.crypto.calculator.util.EMVUtils
+import com.crypto.calculator.util.Encryption
 import com.crypto.calculator.util.LogPanelUtil
 import com.crypto.calculator.util.PreferencesUtil
 import com.crypto.calculator.util.TlvUtil
@@ -347,6 +350,8 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.operationBtn1.setOnClickListener {
             val cardType = binding.autoTvCondition1.text.toString().toDataClass<PaymentMethod>()
             Log.d("arqcCalculator", "cardType: $cardType")
+            val iad = LogPanelUtil.safeExecute { data["9F10"] ?: "" }
+            val cvn = LogPanelUtil.safeExecute(onFail = {}, task = { EMVUtils.getCVNByPaymentMethod(cardType, iad) })
             val imk = LogPanelUtil.safeExecute { EMVUtils.getIssuerMasterKeyByPaymentMethod(cardType) ?: "Issuer master key not found" }
             val pan = LogPanelUtil.safeExecute { data["57"]?.substringBefore('D') ?: "" }
             val psn = LogPanelUtil.safeExecute { data["5F34"] ?: "" }
@@ -355,16 +360,13 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             val atc = LogPanelUtil.safeExecute { data["9F36"] ?: "" }
             val un = LogPanelUtil.safeExecute { data["9F37"] ?: "" }
             val udk = LogPanelUtil.safeExecute { EMVUtils.deriveACSessionKey(pan, psn, atc, un) ?: "Derive AC session key fail" }
-            val dol = LogPanelUtil.safeExecute { EMVUtils.getAcDOLByPaymentMethod(cardType, data) }
-            val arqc = when (cardType) {
-                PaymentMethod.VISA -> LogPanelUtil.safeExecute { VisaDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
-                PaymentMethod.MASTER -> LogPanelUtil.safeExecute { MastercardDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
-                PaymentMethod.UNIONPAY -> LogPanelUtil.safeExecute { UnionPayDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
-                PaymentMethod.JCB -> LogPanelUtil.safeExecute { JcbDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
-                PaymentMethod.DISCOVER -> LogPanelUtil.safeExecute { DiscoverDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
-                PaymentMethod.AMEX -> LogPanelUtil.safeExecute { AmexDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
-                else -> null
-            }
+            Log.d("arqcCalculator", "udk: $udk")
+
+            val key = LogPanelUtil.safeExecute { EMVUtils.getACCalculationKey(cardType, cvn, pan, psn, atc, un) ?: "Key Derivation Fail" }
+            Log.d("arqcCalculator", "key: $key")
+            val dol = LogPanelUtil.safeExecute { EMVUtils.getAcDOLByPaymentMethod(cardType, cvn, data) }
+            val paddingMethod = LogPanelUtil.safeExecute(onFail = {}, task = { EMVUtils.getAcDOLPaddingByPaymentMethod(cardType, cvn) }) ?: PaddingMethod.ISO9797_1_M1
+            val arqc = LogPanelUtil.safeExecute { Encryption.calculateMAC(key, dol.applyPadding(paddingMethod)).uppercase() }
 
             Log.d("arqcCalculator", "arqc: $arqc")
             coreViewModel.printLog(
@@ -373,10 +375,12 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                         (if (pan.isNotEmpty()) "\nPAN [5A]: $pan " else "") +
                         (if (psn.isNotEmpty()) "\nPSN [5F34]: $psn " else "") +
                         "\nICC master key: $iccMK " +
-                        (if (atc.isNotEmpty()) "\nATC [9F36]: $atc " else "") +
-                        (if (un.isNotEmpty() && cardType == PaymentMethod.MASTER) "\nUN [9F37]: $un " else "") +
-                        "\nAC session key: $udk " +
-                        "\nDOL: $dol \nARQC: $arqc\n"
+                        (if (atc.isNotEmpty() && key == udk) "\nATC [9F36]: $atc " else "") +
+                        (if (un.isNotEmpty() && key == udk && cardType == PaymentMethod.MASTER) "\nUN [9F37]: $un " else "") +
+                        (if (key == udk) "\nAC session key: $udk " else "") +
+                        "\nDOL: $dol " +
+                        "\nPadding method: ${paddingMethod.name} " +
+                        "\nARQC: $arqc\n"
             )
         }
     }

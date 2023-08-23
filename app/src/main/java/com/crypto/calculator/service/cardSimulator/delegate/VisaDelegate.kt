@@ -14,8 +14,6 @@ import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
 
 class VisaDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(iccData), BasicEMVService.EMVFlowDelegate {
-    private val terminalData: HashMap<String, String> = hashMapOf()
-
     companion object {
         fun getInstance(iccData: HashMap<String, String>) = VisaDelegate(iccData)
         const val CVN10_TAGS = "9F029F039F1A955F2A9A9C9F37829F369F10"
@@ -77,59 +75,21 @@ class VisaDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(
             }
         }
 
-        fun calculateAC(type: ApplicationCryptogram.Type, dolMap: HashMap<String, String>): String {
-            val dataBuilder = StringBuilder()
-            val cvn = dolMap["9F10"]?.let {
-                readCVNFromIAD(it)
-            } ?: 10
-            val pan = dolMap["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [57]")
-            val psn = dolMap["5F34"] ?: throw Exception("INVALID_ICC_DATA [5F34]")
+        fun getACCalculationKey(cvn: Int? = 10, pan: String? = null, psn: String? = null, atc: String? = null, un: String? = null): String {
+            pan ?: throw Exception("INVALID_ICC_DATA [57]")
+            psn ?: throw Exception("INVALID_ICC_DATA [5F34]")
             val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
-
-            return when (type) {
-                ApplicationCryptogram.Type.TC,
-                ApplicationCryptogram.Type.ARQC -> {
-                    when (cvn) {
-                        10 -> {
-                            TlvUtil.readTagList(CVN10_TAGS).forEach {
-                                if (it != "9F10") {
-                                    dataBuilder.append(dolMap[it])
-                                } else {
-                                    dataBuilder.append(dolMap[it]?.substring(6, 14))
-                                }
-                            }
-                            Encryption.calculateMAC(iccMK, dataBuilder.toString()).uppercase()
-                        }
-
-                        17 -> {
-                            TlvUtil.readTagList(CVN17_TAGS).forEach {
-                                if (it != "9F10") {
-                                    dataBuilder.append(dolMap[it])
-                                } else {
-                                    dataBuilder.append(dolMap[it]?.substring(8, 10))
-                                }
-                            }
-                            Encryption.calculateMAC(iccMK, dataBuilder.toString()).uppercase()
-                        }
-
-                        else -> {
-                            val atc = dolMap["9F36"] ?: throw Exception("INVALID_ICC_DATA [9F36]")
-                            val sk = EMVUtils.deriveACSessionKey(pan, psn, atc) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
-                            TlvUtil.readTagList(CVN18_TAGS).forEach {
-                                dataBuilder.append(dolMap[it])
-                            }
-                            Encryption.calculateMAC(sk, dataBuilder.toString().applyPadding(PaddingMethod.ISO9797_1_M2)).uppercase()
-                        }
-                    }
-                }
-
-                ApplicationCryptogram.Type.AAC -> {
-                    // TODO: calculate AAC
-                    ""
-                }
+            atc ?: throw Exception("INVALID_ICC_DATA [9F36]")
+            val sk = EMVUtils.deriveACSessionKey(pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
+            return when (cvn) {
+                10 -> iccMK
+                17 -> iccMK
+                else -> sk
             }
         }
     }
+
+    private val terminalData: HashMap<String, String> = hashMapOf()
 
     private fun calculateAC(type: ApplicationCryptogram.Type): String {
         val dataBuilder = StringBuilder()

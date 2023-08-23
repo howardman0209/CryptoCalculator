@@ -20,11 +20,6 @@ import com.crypto.calculator.util.UUidUtil
 import java.security.MessageDigest
 
 class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(iccData), BasicEMVService.EMVFlowDelegate {
-    private val terminalData: HashMap<String, String> = hashMapOf()
-    private var odaData = ""
-    private var transactionData = ""
-    private val iccDynamicNumber = "F9DFE983F6C08091"
-
     companion object {
         const val CVN10_TAGS = "9F029F039F1A955F2A9A9C9F37829F369F10"
         fun getInstance(iccData: HashMap<String, String>) = MastercardDelegate(iccData)
@@ -71,49 +66,27 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
             }
         }
 
-        fun calculateAC(type: ApplicationCryptogram.Type, dolMap: HashMap<String, String>): String {
-            val dataBuilder = StringBuilder()
-            val cvn = dolMap["9F10"]?.let {
-                readCVNFromIAD(it)
-            } ?: 10
-            val pan = dolMap["5A"] ?: dolMap["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [5A, 57]")
-            val psn = dolMap["5F34"] ?: throw Exception("INVALID_ICC_DATA [5F34]")
-//        val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
-
-            return when (type) {
-                ApplicationCryptogram.Type.TC,
-                ApplicationCryptogram.Type.ARQC -> {
-                    when (cvn) {
-                        10 -> {
-                            val atc = dolMap["9F36"] ?: throw Exception("INVALID_ICC_DATA [9F36]")
-                            val un = dolMap["9F37"] ?: throw Exception("INVALID_TERMINAL_DATA [9F37]")
-                            val sk = EMVUtils.deriveACSessionKey(pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
-                            TlvUtil.readTagList(CVN10_TAGS).forEach {
-                                if (it != "9F10") {
-                                    dataBuilder.append(dolMap[it])
-                                } else {
-                                    dataBuilder.append(dolMap[it]?.substring(4, 16))
-                                }
-                            }
-                            Log.d("MastercardDelegate", "DOL - $dataBuilder, sk: $sk")
-                            Encryption.calculateMAC(sk, dataBuilder.toString().applyPadding(PaddingMethod.ISO9797_1_M2)).uppercase()
-                        }
-
-                        else -> {
-                            // TODO: calculate other CVN
-                            throw Exception("UNHANDLED CRYPTOGRAM VERSION")
-                        }
-                    }
-                }
-
-                ApplicationCryptogram.Type.AAC -> {
-                    // TODO: calculate AAC
-                    ""
+        fun getACCalculationKey(cvn: Int? = 10, pan: String? = null, psn: String? = null, atc: String? = null, un: String? = null): String {
+            pan ?: throw Exception("INVALID_ICC_DATA [57]")
+            psn ?: throw Exception("INVALID_ICC_DATA [5F34]")
+//            val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
+            atc ?: throw Exception("INVALID_ICC_DATA [9F36]")
+            un ?: throw Exception("INVALID_TERMINAL_DATA [9F37]")
+            val sk = EMVUtils.deriveACSessionKey(pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
+            return when (cvn) {
+                10 -> sk
+                else -> {
+                    // TODO: calculate other CVN
+                    throw Exception("UNHANDLED CRYPTOGRAM VERSION")
                 }
             }
         }
     }
 
+    private val terminalData: HashMap<String, String> = hashMapOf()
+    private var odaData = ""
+    private var transactionData = ""
+    private val iccDynamicNumber = "F9DFE983F6C08091"
     private val iccPublicKey = EMVPublicKey(
         exponent = "03",
         modulus = "900000000000000000000000001200000000000000000000000000000000480000000000000000000000000000000010800000000000000000000000019800000000000000000000000000000006600000000000000000000000000000000055"

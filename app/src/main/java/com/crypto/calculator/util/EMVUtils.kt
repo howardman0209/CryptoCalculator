@@ -2,11 +2,13 @@ package com.crypto.calculator.util
 
 import android.util.Log
 import com.crypto.calculator.extension.adjustDESParity
+import com.crypto.calculator.extension.applyPadding
 import com.crypto.calculator.extension.hexBitwise
 import com.crypto.calculator.extension.hexToByteArray
 import com.crypto.calculator.extension.toHexString
 import com.crypto.calculator.model.BitwiseOperation
 import com.crypto.calculator.model.EntryMode
+import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.service.cardSimulator.delegate.AmexDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.DiscoverDelegate
@@ -14,6 +16,7 @@ import com.crypto.calculator.service.cardSimulator.delegate.JcbDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.MastercardDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.UnionPayDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.VisaDelegate
+import com.crypto.calculator.service.model.ApplicationCryptogram
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
@@ -534,8 +537,7 @@ object EMVUtils {
 
     }
 
-    private fun getAcTagListByPaymentMethod(paymentMethod: PaymentMethod, iad: String): String {
-        val cvn = getCVNByPaymentMethod(paymentMethod, iad)
+    private fun getAcTagListByPaymentMethod(paymentMethod: PaymentMethod, cvn: Int?): String {
         val tagList = when {
             paymentMethod == PaymentMethod.VISA && cvn == 17 -> "9F029F379F369F10"
             (paymentMethod == PaymentMethod.DISCOVER || paymentMethod == PaymentMethod.DINERS)
@@ -546,10 +548,7 @@ object EMVUtils {
         return tagList
     }
 
-    fun getAcDOLByPaymentMethod(paymentMethod: PaymentMethod, data: HashMap<String, String>): String {
-        val iad = data["9F10"]!!
-        val cvn = getCVNByPaymentMethod(paymentMethod, iad)
-
+    fun getAcDOLByPaymentMethod(paymentMethod: PaymentMethod, cvn: Int?, data: HashMap<String, String>): String {
         return when (paymentMethod) {
             PaymentMethod.VISA -> VisaDelegate.getAcDOL(data, cvn)
             PaymentMethod.MASTER -> MastercardDelegate.getAcDOL(data, cvn)
@@ -560,6 +559,34 @@ object EMVUtils {
 
             PaymentMethod.AMEX -> AmexDelegate.getAcDOL(data, cvn)
             else -> ""
+        }
+    }
+
+    fun getAcDOLPaddingByPaymentMethod(paymentMethod: PaymentMethod, cvn: Int?): PaddingMethod {
+        return when (paymentMethod) {
+            PaymentMethod.VISA -> VisaDelegate.getAcPaddingMethod(cvn)
+            PaymentMethod.MASTER -> MastercardDelegate.getAcPaddingMethod(cvn)
+            PaymentMethod.UNIONPAY -> UnionPayDelegate.getAcPaddingMethod(cvn)
+            PaymentMethod.JCB -> JcbDelegate.getAcPaddingMethod(cvn)
+            PaymentMethod.DINERS,
+            PaymentMethod.DISCOVER -> DiscoverDelegate.getAcPaddingMethod(cvn)
+
+            PaymentMethod.AMEX -> AmexDelegate.getAcPaddingMethod(cvn)
+            else -> PaddingMethod.ISO9797_1_M1
+        }
+    }
+
+    fun getACCalculationKey(paymentMethod: PaymentMethod, cvn: Int?, pan: String?, psn: String?, atc: String?, un: String?): String? {
+        return when (paymentMethod) {
+            PaymentMethod.VISA -> VisaDelegate.getACCalculationKey(cvn, pan, psn, atc, un)
+            PaymentMethod.MASTER -> MastercardDelegate.getACCalculationKey(cvn, pan, psn, atc, un)
+            PaymentMethod.UNIONPAY -> UnionPayDelegate.getACCalculationKey(cvn, pan, psn, atc, un)
+            PaymentMethod.JCB -> JcbDelegate.getACCalculationKey(cvn, pan, psn, atc, un)
+            PaymentMethod.DINERS,
+            PaymentMethod.DISCOVER -> DiscoverDelegate.getACCalculationKey(cvn, pan, psn, atc, un)
+
+            PaymentMethod.AMEX -> AmexDelegate.getACCalculationKey(cvn, pan, psn, atc, un)
+            else -> null
         }
     }
 }

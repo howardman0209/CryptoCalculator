@@ -8,4 +8,13 @@ object LogPanelUtil {
             if (showError) "Error: ${ex.message ?: ex}" else ""
         }
     }
+
+    fun <T> safeExecute(onFail: (() -> Unit)? = null, task: () -> T): T? {
+        return try {
+            task.invoke()
+        } catch (ex: Exception) {
+            onFail?.invoke()
+            null
+        }
+    }
 }

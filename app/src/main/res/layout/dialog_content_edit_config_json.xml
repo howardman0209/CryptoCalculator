@@ -41,31 +41,21 @@
                     app:icon="@drawable/ic_baseline_drive_file_move" />
 
             </LinearLayout>
-
         </com.google.android.material.appbar.AppBarLayout>
 
-        <ScrollView
-            android:id="@+id/scrollView2"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:overScrollMode="ifContentScrolls"
-            android:translationZ="0dp">
+            android:focusableInTouchMode="true"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/space_default">
 
-            <LinearLayout
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvConfigItems"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:focusableInTouchMode="true"
-                android:orientation="vertical"
-                android:paddingTop="@dimen/space_default">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvConfigItems"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    tools:listitem="@layout/view_holder_map_data" />
-
-            </LinearLayout>
-        </ScrollView>
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/view_holder_map_data" />
+        </LinearLayout>
     </LinearLayout>
 </layout>

@@ -3,7 +3,8 @@ package com.crypto.calculator.service.cardSimulator.delegate
 import android.util.Log
 import com.crypto.calculator.extension.applyPadding
 import com.crypto.calculator.model.PaddingMethod
-import com.crypto.calculator.service.cardSimulator.BasicEMVCardSimulator
+import com.crypto.calculator.service.cardSimulator.BasicEMVCard
+import com.crypto.calculator.service.cardSimulator.BasicEMVService
 import com.crypto.calculator.service.model.ApplicationCryptogram
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
 import com.crypto.calculator.util.EMVUtils
@@ -11,7 +12,7 @@ import com.crypto.calculator.util.Encryption
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
 
-class DiscoverDelegate(private val iccData: HashMap<String, String>) : BasicEMVCardSimulator.EMVFlowDelegate {
+class DiscoverDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(iccData), BasicEMVService.EMVFlowDelegate {
     private val terminalData: HashMap<String, String> = hashMapOf()
 
     companion object {
@@ -27,6 +28,33 @@ class DiscoverDelegate(private val iccData: HashMap<String, String>) : BasicEMVC
                 return cvn
             } catch (ex: Exception) {
                 throw Exception("INVALID_ICC_DATA [9F10]")
+            }
+        }
+
+        fun getAcDOL(data: HashMap<String, String>, cvn: Int? = 15): String {
+            val dolBuilder = StringBuilder()
+            return when (cvn) {
+                15 -> {
+                    TlvUtil.readTagList(CVN15_TAGS).forEach {
+                        dolBuilder.append(data[it])
+                    }
+                    dolBuilder.toString().uppercase()
+                }
+
+                else -> {
+                    // TODO: calculate other CVN
+                    throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                }
+            }
+        }
+
+        fun getAcPaddingMethod(cvn: Int? = 15): PaddingMethod {
+            return when (cvn) {
+                15 -> PaddingMethod.ISO9797_1_M2
+                else -> {
+                    // TODO: calculate other CVN
+                    throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                }
             }
         }
 
@@ -72,7 +100,7 @@ class DiscoverDelegate(private val iccData: HashMap<String, String>) : BasicEMVC
         val dataBuilder = StringBuilder()
         val cvn = iccData["9F10"]?.let {
             readCVNFromIAD(it)
-        } ?: 1
+        } ?: 15
         val pan = iccData["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [57]")
         val psn = iccData["5F34"] ?: throw Exception("INVALID_ICC_DATA [5F34]")
 //        val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")

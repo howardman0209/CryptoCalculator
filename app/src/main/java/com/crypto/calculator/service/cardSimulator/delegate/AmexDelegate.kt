@@ -1,7 +1,9 @@
 package com.crypto.calculator.service.cardSimulator.delegate
 
 import android.util.Log
-import com.crypto.calculator.service.cardSimulator.BasicEMVCardSimulator
+import com.crypto.calculator.model.PaddingMethod
+import com.crypto.calculator.service.cardSimulator.BasicEMVCard
+import com.crypto.calculator.service.cardSimulator.BasicEMVService
 import com.crypto.calculator.service.model.ApplicationCryptogram
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
 import com.crypto.calculator.util.EMVUtils
@@ -9,7 +11,7 @@ import com.crypto.calculator.util.Encryption
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
 
-class AmexDelegate(private val iccData: HashMap<String, String>) : BasicEMVCardSimulator.EMVFlowDelegate {
+class AmexDelegate(private val iccData: HashMap<String, String>): BasicEMVCard(iccData), BasicEMVService.EMVFlowDelegate {
     private val terminalData: HashMap<String, String> = hashMapOf()
 
     companion object {
@@ -17,13 +19,44 @@ class AmexDelegate(private val iccData: HashMap<String, String>) : BasicEMVCardS
         const val CVN01_TAGS = "9F029F039F1A955F2A9A9C9F37829F369F10"
         const val CVN02_TAGS = "9F379F369F10"
 
-        private fun readCVNFromIAD(iad: String): Int {
+        fun readCVNFromIAD(iad: String): Int {
             try {
                 val cvn = iad.substring(4, 6).toInt(16)
                 Log.d("AmexDelegate", "readCVNFromIAD - cvn: $cvn")
                 return cvn
             } catch (ex: Exception) {
                 throw Exception("INVALID_ICC_DATA [9F10]")
+            }
+        }
+
+        fun getAcDOL(data: HashMap<String, String>, cvn: Int? = 1): String {
+            val dolBuilder = StringBuilder()
+            return when (cvn) {
+                1 -> {
+                    TlvUtil.readTagList(CVN01_TAGS).forEach {
+                        if (it != "9F10") {
+                            dolBuilder.append(data[it])
+                        } else {
+                            dolBuilder.append(data[it]?.substring(6))
+                        }
+                    }
+                    dolBuilder.toString().uppercase()
+                }
+
+                else -> {
+                    // TODO: calculate other CVN
+                    throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                }
+            }
+        }
+
+        fun getAcPaddingMethod(cvn: Int? = 1): PaddingMethod {
+            return when (cvn) {
+                1 -> PaddingMethod.ISO9797_1_M1
+                else -> {
+                    // TODO: calculate other CVN
+                    throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                }
             }
         }
 
@@ -48,7 +81,7 @@ class AmexDelegate(private val iccData: HashMap<String, String>) : BasicEMVCardS
                                     dataBuilder.append(dolMap[it]?.substring(6))
                                 }
                             }
-                            Encryption.calculateMAC(iccMK, dataBuilder.toString())?.uppercase() ?: throw Exception("CALCULATE_MAC_ERROR")
+                            Encryption.calculateMAC(iccMK, dataBuilder.toString()).uppercase()
                         }
 
                         else -> {
@@ -87,7 +120,7 @@ class AmexDelegate(private val iccData: HashMap<String, String>) : BasicEMVCardS
                                 dataBuilder.append(iccData[it]?.substring(6))
                             }
                         }
-                        Encryption.calculateMAC(iccMK, dataBuilder.toString())?.uppercase() ?: throw Exception("CALCULATE_MAC_ERROR")
+                        Encryption.calculateMAC(iccMK, dataBuilder.toString()).uppercase()
                     }
 
                     else -> {

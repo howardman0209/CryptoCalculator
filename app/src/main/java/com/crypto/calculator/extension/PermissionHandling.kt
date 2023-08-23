@@ -8,13 +8,12 @@ import android.os.Build
 import android.os.Environment
 import android.provider.Settings
 import android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION
-import android.util.Log
 import android.view.View
 import com.crypto.calculator.R
 import com.crypto.calculator.model.PermissionRequestHandler
 import com.crypto.calculator.model.PermissionResult
-import com.crypto.calculator.service.cardSimulator.CreditCardSimulator.Companion.isDefaultPaymentService
-import com.crypto.calculator.service.cardSimulator.CreditCardSimulator.Companion.requestDefaultPaymentServiceIntent
+import com.crypto.calculator.service.cardSimulator.CreditCardService.Companion.isDefaultPaymentService
+import com.crypto.calculator.service.cardSimulator.CreditCardService.Companion.requestDefaultPaymentServiceIntent
 import com.crypto.calculator.ui.base.BaseActivity
 import com.crypto.calculator.util.REQUEST_CODE_BLUETOOTH
 import com.crypto.calculator.util.REQUEST_CODE_CAMERA

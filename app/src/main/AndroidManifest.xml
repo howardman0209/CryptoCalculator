@@ -74,7 +74,7 @@
             android:screenOrientation="portrait" />
 
         <service
-            android:name=".service.cardSimulator.CreditCardSimulator"
+            android:name=".service.cardSimulator.CreditCardService"
             android:exported="true"
             android:permission="android.permission.BIND_NFC_SERVICE">
             <intent-filter>

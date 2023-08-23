@@ -23,13 +23,13 @@ import com.crypto.calculator.util.assetsPathCardMaster
 import com.crypto.calculator.util.assetsPathCardUnionPay
 import com.crypto.calculator.util.assetsPathCardVisa
 
-class CreditCardSimulator : BasicEMVCardSimulator() {
+class CreditCardService : BasicEMVService() {
     companion object {
         val apdu: MutableLiveData<String?> = MutableLiveData()
         fun requestDefaultPaymentServiceIntent(context: Context): Intent {
             val intent = Intent().apply {
                 action = CardEmulation.ACTION_CHANGE_DEFAULT
-                putExtra(CardEmulation.EXTRA_SERVICE_COMPONENT, ComponentName(context, CreditCardSimulator::class.java))
+                putExtra(CardEmulation.EXTRA_SERVICE_COMPONENT, ComponentName(context, CreditCardService::class.java))
                 putExtra(CardEmulation.EXTRA_CATEGORY, CardEmulation.CATEGORY_PAYMENT)
             }
             return intent
@@ -38,7 +38,7 @@ class CreditCardSimulator : BasicEMVCardSimulator() {
         fun isDefaultPaymentService(context: Context): Boolean {
             val nfcAdapter = NfcAdapter.getDefaultAdapter(context)
             val cardEmulation = CardEmulation.getInstance(nfcAdapter)
-            val paymentServiceName = ComponentName(context, CreditCardSimulator::class.java)
+            val paymentServiceName = ComponentName(context, CreditCardService::class.java)
 //            Log.d("CreditCardSimulator", "paymentServiceName: $paymentServiceName")
             return cardEmulation.isDefaultServiceForCategory(paymentServiceName, CardEmulation.CATEGORY_PAYMENT)
         }
@@ -46,7 +46,7 @@ class CreditCardSimulator : BasicEMVCardSimulator() {
         fun enablePaymentService(context: Context, enable: Boolean = true) {
             val flag = if (enable) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
             context.packageManager.setComponentEnabledSetting(
-                ComponentName(context, CreditCardSimulator::class.java),
+                ComponentName(context, CreditCardService::class.java),
                 flag,
                 PackageManager.DONT_KILL_APP
             )

@@ -3,7 +3,8 @@ package com.crypto.calculator.service.cardSimulator.delegate
 import android.util.Log
 import com.crypto.calculator.extension.applyPadding
 import com.crypto.calculator.model.PaddingMethod
-import com.crypto.calculator.service.cardSimulator.BasicEMVCardSimulator
+import com.crypto.calculator.service.cardSimulator.BasicEMVCard
+import com.crypto.calculator.service.cardSimulator.BasicEMVService
 import com.crypto.calculator.service.model.ApplicationCryptogram
 import com.crypto.calculator.service.model.ApplicationCryptogram.getCryptogramInformationData
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
@@ -12,7 +13,7 @@ import com.crypto.calculator.util.Encryption
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
 
-class VisaDelegate(private val iccData: HashMap<String, String>) : BasicEMVCardSimulator.EMVFlowDelegate {
+class VisaDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(iccData), BasicEMVService.EMVFlowDelegate {
     private val terminalData: HashMap<String, String> = hashMapOf()
 
     companion object {
@@ -32,6 +33,47 @@ class VisaDelegate(private val iccData: HashMap<String, String>) : BasicEMVCardS
                 return cvn
             } catch (ex: Exception) {
                 throw Exception("INVALID_ICC_DATA [9F10]")
+            }
+        }
+
+        fun getAcDOL(data: HashMap<String, String>, cvn: Int? = 10): String {
+            val dolBuilder = StringBuilder()
+            return when (cvn) {
+                10 -> {
+                    TlvUtil.readTagList(CVN10_TAGS).forEach {
+                        if (it != "9F10") {
+                            dolBuilder.append(data[it])
+                        } else {
+                            dolBuilder.append(data[it]?.substring(6, 14))
+                        }
+                    }
+                    dolBuilder.toString().uppercase()
+                }
+
+                17 -> {
+                    TlvUtil.readTagList(CVN17_TAGS).forEach {
+                        if (it != "9F10") {
+                            dolBuilder.append(data[it])
+                        } else {
+                            dolBuilder.append(data[it]?.substring(8, 10))
+                        }
+                    }
+                    dolBuilder.toString().uppercase()
+                }
+
+                else -> {
+                    TlvUtil.readTagList(CVN18_TAGS).forEach {
+                        dolBuilder.append(data[it])
+                    }
+                    dolBuilder.toString().uppercase()
+                }
+            }
+        }
+
+        fun getAcPaddingMethod(cvn: Int? = 10): PaddingMethod {
+            return when (cvn) {
+                10, 17 -> PaddingMethod.ISO9797_1_M1
+                else -> PaddingMethod.ISO9797_1_M2
             }
         }
 

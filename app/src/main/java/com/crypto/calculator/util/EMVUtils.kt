@@ -8,6 +8,7 @@ import com.crypto.calculator.extension.toHexString
 import com.crypto.calculator.model.BitwiseOperation
 import com.crypto.calculator.model.EntryMode
 import com.crypto.calculator.model.PaymentMethod
+import com.crypto.calculator.service.cardSimulator.delegate.AmexDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.DiscoverDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.JcbDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.MastercardDelegate
@@ -16,6 +17,7 @@ import com.crypto.calculator.service.cardSimulator.delegate.VisaDelegate
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.collections.HashMap
 
 object EMVUtils {
 
@@ -483,6 +485,7 @@ object EMVUtils {
                 PaymentMethod.UNIONPAY -> atc.hexBitwise(operation = BitwiseOperation.NOT).padStart(16, '0')
                 else -> ""
             }
+
             val sk = "${Encryption.doTDESEncryptECB(f1, iccMK)}${Encryption.doTDESEncryptECB(f2, iccMK)}"
             sk.hexToByteArray().adjustDESParity().toHexString().uppercase()
         }
@@ -490,7 +493,6 @@ object EMVUtils {
 
     private fun getIssuerMasterKeyByPan(pan: String): String? {
         return when (getPaymentMethodByPan(pan)) {
-            PaymentMethod.AMEX -> "10E516B5A8469775548FE3689D75F129"
             PaymentMethod.VISA -> "2315208C9110AD402315208C9110AD40"
             PaymentMethod.MASTER -> "9E15204313F7318ACB79B90BD986AD29"
             PaymentMethod.UNIONPAY -> "476F6C6470616320496E6974204D444B"
@@ -498,13 +500,13 @@ object EMVUtils {
             PaymentMethod.DINERS,
             PaymentMethod.DISCOVER -> "11111111111111112222222222222222"
 
+            PaymentMethod.AMEX -> "10E516B5A8469775548FE3689D75F129"
             else -> null
         }
     }
 
     fun getIssuerMasterKeyByPaymentMethod(paymentMethod: PaymentMethod): String? {
         return when (paymentMethod) {
-            PaymentMethod.AMEX -> "10E516B5A8469775548FE3689D75F129"
             PaymentMethod.VISA -> "2315208C9110AD402315208C9110AD40"
             PaymentMethod.MASTER -> "9E15204313F7318ACB79B90BD986AD29"
             PaymentMethod.UNIONPAY -> "476F6C6470616320496E6974204D444B"
@@ -512,31 +514,52 @@ object EMVUtils {
             PaymentMethod.DINERS,
             PaymentMethod.DISCOVER -> "11111111111111112222222222222222"
 
+            PaymentMethod.AMEX -> "10E516B5A8469775548FE3689D75F129"
             else -> null
         }
     }
 
-    fun getAcTagListByPaymentMethod(paymentMethod: PaymentMethod, iad: String): String {
-        val cvn = when (paymentMethod) {
+    fun getCVNByPaymentMethod(paymentMethod: PaymentMethod, iad: String): Int? {
+        return when (paymentMethod) {
             PaymentMethod.VISA -> VisaDelegate.readCVNFromIAD(iad)
+            PaymentMethod.MASTER -> MastercardDelegate.readCVNFromIAD(iad)
             PaymentMethod.UNIONPAY -> UnionPayDelegate.readCVNFromIAD(iad)
             PaymentMethod.JCB -> JcbDelegate.readCVNFromIAD(iad)
             PaymentMethod.DINERS,
             PaymentMethod.DISCOVER -> DiscoverDelegate.readCVNFromIAD(iad)
 
+            PaymentMethod.AMEX -> AmexDelegate.readCVNFromIAD(iad)
             else -> null
         }
-        val dol = when {
+
+    }
+
+    private fun getAcTagListByPaymentMethod(paymentMethod: PaymentMethod, iad: String): String {
+        val cvn = getCVNByPaymentMethod(paymentMethod, iad)
+        val tagList = when {
             paymentMethod == PaymentMethod.VISA && cvn == 17 -> "9F029F379F369F10"
             (paymentMethod == PaymentMethod.DISCOVER || paymentMethod == PaymentMethod.DINERS)
                     && cvn == 15 -> "9F029F1A9F379F369F10"
 
             else -> "9F029F039F1A955F2A9A9C9F37829F369F10"
         }
-        return dol
+        return tagList
     }
 
-    fun getAcDOLByPaymentMethod(){
+    fun getAcDOLByPaymentMethod(paymentMethod: PaymentMethod, data: HashMap<String, String>): String {
+        val iad = data["9F10"]!!
+        val cvn = getCVNByPaymentMethod(paymentMethod, iad)
 
+        return when (paymentMethod) {
+            PaymentMethod.VISA -> VisaDelegate.getAcDOL(data, cvn)
+            PaymentMethod.MASTER -> MastercardDelegate.getAcDOL(data, cvn)
+            PaymentMethod.UNIONPAY -> UnionPayDelegate.getAcDOL(data, cvn)
+            PaymentMethod.JCB -> JcbDelegate.getAcDOL(data, cvn)
+            PaymentMethod.DINERS,
+            PaymentMethod.DISCOVER -> DiscoverDelegate.getAcDOL(data, cvn)
+
+            PaymentMethod.AMEX -> AmexDelegate.getAcDOL(data, cvn)
+            else -> ""
+        }
     }
 }

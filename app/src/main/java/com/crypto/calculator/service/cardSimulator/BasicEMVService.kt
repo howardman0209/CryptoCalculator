@@ -3,7 +3,7 @@ package com.crypto.calculator.service.cardSimulator
 import android.util.Log
 import com.crypto.calculator.service.BasicApduService
 
-abstract class BasicEMVCardSimulator : BasicApduService() {
+abstract class BasicEMVService : BasicApduService() {
     var emvFlowDelegate: EMVFlowDelegate? = null
 
     interface EMVFlowDelegate {

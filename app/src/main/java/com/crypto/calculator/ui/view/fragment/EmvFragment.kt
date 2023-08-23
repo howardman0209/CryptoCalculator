@@ -18,7 +18,7 @@ import com.crypto.calculator.model.AcDOL
 import com.crypto.calculator.model.DataFormat
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.Tool
-import com.crypto.calculator.service.cardSimulator.CreditCardSimulator
+import com.crypto.calculator.service.cardSimulator.CreditCardService
 import com.crypto.calculator.service.cardSimulator.delegate.AmexDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.DiscoverDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.JcbDelegate
@@ -59,7 +59,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
         coreViewModel.currentTool.observe(viewLifecycleOwner) {
             Log.d("EmvFragment", "currentTool: $it")
-            CreditCardSimulator.enablePaymentService(requireContext().applicationContext, false)
+            CreditCardService.enablePaymentService(requireContext().applicationContext, false)
             setLayout(it)
         }
 
@@ -99,7 +99,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     }
 
     private fun cardSimulator() {
-        CreditCardSimulator.enablePaymentService(requireContext().applicationContext, true)
+        CreditCardService.enablePaymentService(requireContext().applicationContext, true)
         binding.tvPrompt.visibility = View.VISIBLE
 
         (requireActivity() as BaseActivity).requireDefaultPaymentServicePermission {
@@ -109,7 +109,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                 binding.ivPaymentMethod.setImageResource(it.getColorIconResId())
             }
 
-            CreditCardSimulator.apdu.observe(viewLifecycleOwner) { apdu ->
+            CreditCardService.apdu.observe(viewLifecycleOwner) { apdu ->
                 Log.d("cardSimulator", "apdu: $apdu")
                 if (!binding.opt1CheckBox.isChecked) {
                     apdu?.let { coreViewModel.printLog(it) }
@@ -183,7 +183,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                                     requireContext().applicationContext,
                                     AssetsUtil.readFile(
                                         requireContext().applicationContext,
-                                        CreditCardSimulator.getDefaultCardAssetsPath(cardPreference)
+                                        CreditCardService.getDefaultCardAssetsPath(cardPreference)
                                     ),
                                     cardPreference
                                 )
@@ -296,7 +296,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     private fun arqcCalculator() {
         fun initData(): HashMap<String, String> {
             val data = hashMapOf<String, String>()
-            val tagList = "9F029F039F1A955F2A9A9C9F37829F369F10575F349F38"
+            val tagList = "9F029F039F1A955F2A9A9C9F37829F369F10575F34"
             TlvUtil.readTagList(tagList).forEach {
                 data[it] = ""
             }
@@ -348,14 +348,14 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             val cardType = binding.autoTvCondition1.text.toString().toDataClass<PaymentMethod>()
             Log.d("arqcCalculator", "cardType: $cardType")
             val imk = LogPanelUtil.safeExecute { EMVUtils.getIssuerMasterKeyByPaymentMethod(cardType) ?: "Issuer master key not found" }
-            val pan = LogPanelUtil.safeExecute { data["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [57]") }
-            val psn = LogPanelUtil.safeExecute { data["5F34"] ?: throw Exception("INVALID_ICC_DATA [5F34]") }
+            val pan = LogPanelUtil.safeExecute { data["57"]?.substringBefore('D') ?: "" }
+            val psn = LogPanelUtil.safeExecute { data["5F34"] ?: "" }
 
             val iccMK = LogPanelUtil.safeExecute { EMVUtils.deriveICCMasterKey(pan, psn) ?: "Derive ICC master key fail" }
-            val atc = LogPanelUtil.safeExecute { data["9F36"] ?: throw Exception("INVALID_ICC_DATA [9F36]") }
-            val un = LogPanelUtil.safeExecute { data["9F38"] ?: throw Exception("INVALID_ICC_DATA [9F38]") }
-            val udk = LogPanelUtil.safeExecute { EMVUtils.deriveACSessionKey(pan, psn, un) ?: "Issuer master key not found" }
-            val dol = LogPanelUtil.safeExecute { "" }
+            val atc = LogPanelUtil.safeExecute { data["9F36"] ?: "" }
+            val un = LogPanelUtil.safeExecute { data["9F37"] ?: "" }
+            val udk = LogPanelUtil.safeExecute { EMVUtils.deriveACSessionKey(pan, psn, atc, un) ?: "Derive AC session key fail" }
+            val dol = LogPanelUtil.safeExecute { EMVUtils.getAcDOLByPaymentMethod(cardType, data) }
             val arqc = when (cardType) {
                 PaymentMethod.VISA -> LogPanelUtil.safeExecute { VisaDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
                 PaymentMethod.MASTER -> LogPanelUtil.safeExecute { MastercardDelegate.calculateAC(ApplicationCryptogram.Type.ARQC, data) }
@@ -370,9 +370,13 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             coreViewModel.printLog(
                 "ARQC_CALCULATOR: " +
                         "\nIssuer master key: $imk " +
-                        "\nPAN [5A]: $pan \nPSN [5F34]: $psn \nICC master key: $iccMK " +
-                        "\nATC [9F36]: $atc \nUN [9F38]: $un \nAC session key: $udk " +
-                        "\nDOL: $dol \nARQC: $arqc"
+                        (if (pan.isNotEmpty()) "\nPAN [5A]: $pan " else "") +
+                        (if (psn.isNotEmpty()) "\nPSN [5F34]: $psn " else "") +
+                        "\nICC master key: $iccMK " +
+                        (if (atc.isNotEmpty()) "\nATC [9F36]: $atc " else "") +
+                        (if (un.isNotEmpty() && cardType == PaymentMethod.MASTER) "\nUN [9F37]: $un " else "") +
+                        "\nAC session key: $udk " +
+                        "\nDOL: $dol \nARQC: $arqc\n"
             )
         }
     }
@@ -412,7 +416,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         viewModel.setInputData2Filter()
         viewModel.inputData2Label.set("")
 
-        CreditCardSimulator.apdu.removeObservers(viewLifecycleOwner)
+        CreditCardService.apdu.removeObservers(viewLifecycleOwner)
         EMVKernel.apdu.removeObservers(viewLifecycleOwner)
         viewModel.cardReader?.status?.removeObservers(viewLifecycleOwner)
 
@@ -423,14 +427,14 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     override fun onResume() {
         super.onResume()
         if (coreViewModel.currentTool.value == Tool.CARD_SIMULATOR) {
-            CreditCardSimulator.enablePaymentService(requireContext().applicationContext, true)
+            CreditCardService.enablePaymentService(requireContext().applicationContext, true)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.d("EmvFragment", "onDestroy")
-        CreditCardSimulator.enablePaymentService(requireContext().applicationContext, false)
+        CreditCardService.enablePaymentService(requireContext().applicationContext, false)
         viewModel.finishCardReader()
     }
 

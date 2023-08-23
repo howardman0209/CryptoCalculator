@@ -8,7 +8,8 @@ import com.crypto.calculator.model.EMVPublicKey
 import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.model.getExponentLength
 import com.crypto.calculator.model.getModulusLength
-import com.crypto.calculator.service.cardSimulator.BasicEMVCardSimulator
+import com.crypto.calculator.service.cardSimulator.BasicEMVCard
+import com.crypto.calculator.service.cardSimulator.BasicEMVService
 import com.crypto.calculator.service.model.ApplicationCryptogram
 import com.crypto.calculator.service.model.ApplicationCryptogram.getCryptogramInformationData
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
@@ -18,7 +19,7 @@ import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
 import java.security.MessageDigest
 
-class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEMVCardSimulator.EMVFlowDelegate {
+class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(iccData), BasicEMVService.EMVFlowDelegate {
     private val terminalData: HashMap<String, String> = hashMapOf()
     private var odaData = ""
     private var transactionData = ""
@@ -28,8 +29,53 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
         const val CVN10_TAGS = "9F029F039F1A955F2A9A9C9F37829F369F10"
         fun getInstance(iccData: HashMap<String, String>) = MastercardDelegate(iccData)
 
+        fun readCVNFromIAD(iad: String): Int {
+            try {
+                Log.d("MastercardDelegate", "readCVNFromIAD - iad: $iad")
+                val cvn = iad.substring(2, 4).toInt()
+                Log.d("MastercardDelegate", "readCVNFromIAD - cvn: $cvn")
+                return cvn
+            } catch (ex: Exception) {
+                throw Exception("INVALID_ICC_DATA [9F10]")
+            }
+        }
+
+        fun getAcDOL(data: HashMap<String, String>, cvn: Int? = 10): String {
+            val dolBuilder = StringBuilder()
+            return when (cvn) {
+                10 -> {
+                    TlvUtil.readTagList(CVN10_TAGS).forEach {
+                        if (it != "9F10") {
+                            dolBuilder.append(data[it])
+                        } else {
+                            dolBuilder.append(data[it]?.substring(4, 16))
+                        }
+                    }
+                    dolBuilder.toString().uppercase()
+                }
+
+                else -> {
+                    // TODO: calculate other CVN
+                    throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                }
+            }
+        }
+
+        fun getAcPaddingMethod(cvn: Int? = 10): PaddingMethod {
+            return when (cvn) {
+                10 -> PaddingMethod.ISO9797_1_M2
+                else -> {
+                    // TODO: calculate other CVN
+                    throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                }
+            }
+        }
+
         fun calculateAC(type: ApplicationCryptogram.Type, dolMap: HashMap<String, String>): String {
             val dataBuilder = StringBuilder()
+            val cvn = dolMap["9F10"]?.let {
+                readCVNFromIAD(it)
+            } ?: 10
             val pan = dolMap["5A"] ?: dolMap["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [5A, 57]")
             val psn = dolMap["5F34"] ?: throw Exception("INVALID_ICC_DATA [5F34]")
 //        val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
@@ -37,18 +83,27 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
             return when (type) {
                 ApplicationCryptogram.Type.TC,
                 ApplicationCryptogram.Type.ARQC -> {
-                    val atc = dolMap["9F36"] ?: throw Exception("INVALID_ICC_DATA [9F36]")
-                    val un = dolMap["9F37"] ?: throw Exception("INVALID_TERMINAL_DATA [9F37]")
-                    val sk = EMVUtils.deriveACSessionKey(pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
-                    TlvUtil.readTagList(CVN10_TAGS).forEach {
-                        if (it != "9F10") {
-                            dataBuilder.append(dolMap[it])
-                        } else {
-                            dataBuilder.append(dolMap[it]?.substring(4, 16))
+                    when (cvn) {
+                        10 -> {
+                            val atc = dolMap["9F36"] ?: throw Exception("INVALID_ICC_DATA [9F36]")
+                            val un = dolMap["9F37"] ?: throw Exception("INVALID_TERMINAL_DATA [9F37]")
+                            val sk = EMVUtils.deriveACSessionKey(pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
+                            TlvUtil.readTagList(CVN10_TAGS).forEach {
+                                if (it != "9F10") {
+                                    dataBuilder.append(dolMap[it])
+                                } else {
+                                    dataBuilder.append(dolMap[it]?.substring(4, 16))
+                                }
+                            }
+                            Log.d("MastercardDelegate", "DOL - $dataBuilder, sk: $sk")
+                            Encryption.calculateMAC(sk, dataBuilder.toString().applyPadding(PaddingMethod.ISO9797_1_M2)).uppercase()
+                        }
+
+                        else -> {
+                            // TODO: calculate other CVN
+                            throw Exception("UNHANDLED CRYPTOGRAM VERSION")
                         }
                     }
-                    Log.d("MastercardDelegate", "DOL - $dataBuilder, sk: $sk")
-                    Encryption.calculateMAC(sk, dataBuilder.toString().applyPadding(PaddingMethod.ISO9797_1_M2)).uppercase()
                 }
 
                 ApplicationCryptogram.Type.AAC -> {
@@ -112,6 +167,9 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
 
     private fun calculateAC(type: ApplicationCryptogram.Type): String {
         val dataBuilder = StringBuilder()
+        val cvn = iccData["9F10"]?.let {
+            readCVNFromIAD(it)
+        } ?: 10
         val pan = iccData["5A"] ?: iccData["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [5A, 57]")
         val psn = iccData["5F34"] ?: throw Exception("INVALID_ICC_DATA [5F34]")
 //        val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
@@ -119,18 +177,27 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
         return when (type) {
             ApplicationCryptogram.Type.TC,
             ApplicationCryptogram.Type.ARQC -> {
-                val atc = iccData["9F36"] ?: throw Exception("INVALID_ICC_DATA [9F36]")
-                val un = terminalData["9F37"] ?: throw Exception("INVALID_TERMINAL_DATA [9F37]")
-                val sk = EMVUtils.deriveACSessionKey(pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
-                TlvUtil.readTagList(CVN10_TAGS).forEach {
-                    if (it != "9F10") {
-                        dataBuilder.append(terminalData[it] ?: iccData[it])
-                    } else {
-                        dataBuilder.append(iccData[it]?.substring(4, 16))
+                when (cvn) {
+                    10 -> {
+                        val atc = iccData["9F36"] ?: throw Exception("INVALID_ICC_DATA [9F36]")
+                        val un = terminalData["9F37"] ?: throw Exception("INVALID_TERMINAL_DATA [9F37]")
+                        val sk = EMVUtils.deriveACSessionKey(pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
+                        TlvUtil.readTagList(CVN10_TAGS).forEach {
+                            if (it != "9F10") {
+                                dataBuilder.append(terminalData[it] ?: iccData[it])
+                            } else {
+                                dataBuilder.append(iccData[it]?.substring(4, 16))
+                            }
+                        }
+                        Log.d("MastercardDelegate", "DOL - $dataBuilder, sk: $sk")
+                        Encryption.calculateMAC(sk, dataBuilder.toString().applyPadding(PaddingMethod.ISO9797_1_M2)).uppercase()
+                    }
+
+                    else -> {
+                        // TODO: calculate other CVN
+                        throw Exception("UNHANDLED CRYPTOGRAM VERSION")
                     }
                 }
-                Log.d("MastercardDelegate", "DOL - $dataBuilder, sk: $sk")
-                Encryption.calculateMAC(sk, dataBuilder.toString().applyPadding(PaddingMethod.ISO9797_1_M2)).uppercase()
             }
 
             ApplicationCryptogram.Type.AAC -> {

@@ -35,6 +35,7 @@ import com.crypto.calculator.util.PreferencesUtil
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.assetsPathCardVisa
 import com.crypto.calculator.util.bindInputFilters
+import com.crypto.calculator.util.prefCardProfile
 import com.crypto.calculator.util.prefEmvConfig
 import com.google.android.material.snackbar.Snackbar
 
@@ -149,45 +150,27 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
             binding.ivCard.setOnClickListener {
                 val cardPreference = PreferencesUtil.getCardPreference(requireContext().applicationContext)
-                Log.d("ivCardProfile", "cardPreference: $cardPreference")
-                when (cardPreference) {
-                    PaymentMethod.VISA -> {
-                        editConfigJson(
-                            view = binding.root,
-                            context = requireContext(),
-                            config = PreferencesUtil.getCardProfile(requireContext().applicationContext, cardPreference),
-                            onConfirmClick = {
-                                PreferencesUtil.saveCardProfile(requireContext().applicationContext, it, cardPreference)
-                            },
-                            neutralBtn = getString(R.string.button_reset),
-                            onNeutralBtnClick = {
-                                selectVisaCardProfile()
-                            }
-                        )
+                editConfigJson(
+                    view = binding.root,
+                    context = requireContext(),
+                    config = PreferencesUtil.getCardProfile(requireContext().applicationContext, cardPreference),
+                    onConfirmClick = {
+                        PreferencesUtil.saveCardProfile(requireContext().applicationContext, it, cardPreference)
+                    },
+                    neutralBtn = getString(R.string.button_reset),
+                    onNeutralBtnClick = {
+                        PreferencesUtil.clearPreferenceData(requireContext(), "${cardPreference}-$prefCardProfile")
                     }
+                )
 
-                    else -> {
-                        editConfigJson(
-                            view = binding.root,
-                            context = requireContext(),
-                            config = PreferencesUtil.getCardProfile(requireContext().applicationContext, cardPreference),
-                            onConfirmClick = {
-                                PreferencesUtil.saveCardProfile(requireContext().applicationContext, it, cardPreference)
-                            },
-                            neutralBtn = getString(R.string.button_reset),
-                            onNeutralBtnClick = {
-                                PreferencesUtil.saveCardProfile(
-                                    requireContext().applicationContext,
-                                    AssetsUtil.readFile(
-                                        requireContext().applicationContext,
-                                        CreditCardService.getDefaultCardAssetsPath(cardPreference)
-                                    ),
-                                    cardPreference
-                                )
-                            }
-                        )
-                    }
+            }
+
+            binding.ivCard.setOnLongClickListener {
+                when (PreferencesUtil.getCardPreference(requireContext().applicationContext)) {
+                    PaymentMethod.VISA -> selectVisaCardProfile()
+                    else -> {}
                 }
+                true
             }
 
             binding.opt1CheckBox.visibility = View.VISIBLE

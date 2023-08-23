@@ -7,7 +7,6 @@ import com.crypto.calculator.service.cardSimulator.BasicEMVService
 import com.crypto.calculator.service.model.ApplicationCryptogram
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
 import com.crypto.calculator.util.EMVUtils
-import com.crypto.calculator.util.Encryption
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
 
@@ -70,46 +69,6 @@ class JcbDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(i
                     // TODO: calculate other CVN
                     throw Exception("UNHANDLED CRYPTOGRAM VERSION")
                 }
-            }
-        }
-    }
-
-    private val terminalData: HashMap<String, String> = hashMapOf()
-
-    private fun calculateAC(type: ApplicationCryptogram.Type): String {
-        val dataBuilder = StringBuilder()
-        val cvn = iccData["9F10"]?.let {
-            readCVNFromIAD(it)
-        } ?: 1
-        val pan = iccData["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [57]")
-        val psn = iccData["5F34"] ?: throw Exception("INVALID_ICC_DATA [5F34]")
-        val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
-
-        return when (type) {
-            ApplicationCryptogram.Type.TC,
-            ApplicationCryptogram.Type.ARQC -> {
-                when (cvn) {
-                    1 -> {
-                        TlvUtil.readTagList(CVN01_TAGS).forEach {
-                            if (it != "9F10") {
-                                dataBuilder.append(terminalData[it] ?: iccData[it])
-                            } else {
-                                dataBuilder.append(iccData[it]?.substring(6))
-                            }
-                        }
-                        Encryption.calculateMAC(iccMK, dataBuilder.toString()).uppercase()
-                    }
-
-                    else -> {
-                        // TODO: calculate other CVN
-                        throw Exception("UNHANDLED CRYPTOGRAM VERSION")
-                    }
-                }
-            }
-
-            ApplicationCryptogram.Type.AAC -> {
-                // TODO: calculate AAC
-                ""
             }
         }
     }
@@ -209,7 +168,7 @@ class JcbDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(i
         val sb = StringBuilder()
         sb.append(ApplicationCryptogram.getCryptogramInformationData(ApplicationCryptogram.Type.ARQC))
         sb.append(iccData["9F36"])
-        sb.append(calculateAC(ApplicationCryptogram.Type.ARQC))
+        sb.append(calculateCryptogram())
         sb.append(iccData["9F10"])
         val rAPDU = TlvUtil.encodeTLV(
             mapOf(
@@ -223,5 +182,57 @@ class JcbDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(i
     override fun onGetChallengeReply(cAPDU: String): String {
         Log.d("JcbDelegate", "onGenerateACReply - cAPDU: $cAPDU")
         return "${UUidUtil.genHexIdByLength(16)}9000"
+    }
+
+    override fun readCryptogramVersionNumber(iad: String): Int {
+        try {
+            val cvn = iad.substring(4, 6).toInt(16)
+            Log.d("JcbDelegate", "readCVNFromIAD - cvn: $cvn")
+            return cvn
+        } catch (ex: Exception) {
+            throw Exception("INVALID_ICC_DATA [9F10]")
+        }
+    }
+
+    override fun getCryptogramCalculationDOL(data: HashMap<String, String>, cvn: Int): String {
+        val dolBuilder = StringBuilder()
+        return when (cvn) {
+            1 -> {
+                TlvUtil.readTagList(CVN01_TAGS).forEach {
+                    if (it != "9F10") {
+                        dolBuilder.append(data[it])
+                    } else {
+                        dolBuilder.append(data[it]?.substring(6))
+                    }
+                }
+                dolBuilder.toString().uppercase()
+            }
+
+            else -> {
+                // TODO: calculate other CVN
+                throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+            }
+        }
+    }
+
+    override fun getCryptogramCalculationPadding(cvn: Int): PaddingMethod {
+        return when (cvn) {
+            1 -> PaddingMethod.ISO9797_1_M1
+            else -> {
+                // TODO: calculate other CVN
+                throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+            }
+        }
+    }
+
+    override fun getCryptogramCalculationKey(cvn: Int, pan: String, psn: String, atc: String, un: String?): String {
+        val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
+        return when (cvn) {
+            1 -> iccMK
+            else -> {
+                // TODO: calculate other CVN
+                throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+            }
+        }
     }
 }

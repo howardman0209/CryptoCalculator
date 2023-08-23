@@ -21,13 +21,6 @@ import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.service.cardSimulator.CreditCardService
-import com.crypto.calculator.service.cardSimulator.delegate.AmexDelegate
-import com.crypto.calculator.service.cardSimulator.delegate.DiscoverDelegate
-import com.crypto.calculator.service.cardSimulator.delegate.JcbDelegate
-import com.crypto.calculator.service.cardSimulator.delegate.MastercardDelegate
-import com.crypto.calculator.service.cardSimulator.delegate.UnionPayDelegate
-import com.crypto.calculator.service.cardSimulator.delegate.VisaDelegate
-import com.crypto.calculator.service.model.ApplicationCryptogram
 import com.crypto.calculator.service.model.CardProfile
 import com.crypto.calculator.ui.base.BaseActivity
 import com.crypto.calculator.ui.base.MVVMFragment
@@ -43,6 +36,7 @@ import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.assetsPathCardVisa
 import com.crypto.calculator.util.bindInputFilters
 import com.crypto.calculator.util.prefEmvConfig
+import com.google.android.material.snackbar.Snackbar
 
 class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     private lateinit var coreViewModel: CoreViewModel
@@ -297,16 +291,24 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     }
 
     private fun arqcCalculator() {
-        fun initData(): HashMap<String, String> {
+        fun initData(tagList: String = "9F029F039F1A955F2A9A9C9F37829F369F10"): HashMap<String, String> {
+            val sb = StringBuilder()
+            sb.append(tagList)
+            sb.append("57")
+            sb.append("5F34")
             val data = hashMapOf<String, String>()
-            val tagList = "9F029F039F1A955F2A9A9C9F37829F369F10575F34"
-            TlvUtil.readTagList(tagList).forEach {
+            TlvUtil.readTagList(sb.toString()).forEach {
                 data[it] = ""
             }
             return data
         }
 
-        var data = initData()
+        binding.tilData1.visibility = View.VISIBLE
+        viewModel.inputData1Label.set("Issuer Application Data [9F10]")
+        viewModel.setInputData1Filter(inputFormat = DataFormat.HEXADECIMAL)
+
+        var data = hashMapOf<String, String>()
+        var tagList = ""
         binding.arqcContainer.visibility = View.VISIBLE
         binding.tilCondition1.hint = "Card Type"
         val cardTypeList = listOf(
@@ -324,23 +326,35 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                 cardTypeList,
             )
         )
-        binding.autoTvCondition1.setText(cardTypeList.first().name)
-        binding.autoTvCondition1.setOnItemClickListener { _, _, _, _ ->
-            data = initData()
+//        binding.autoTvCondition1.setText(cardTypeList.first().name)
+        binding.autoTvCondition1.setOnItemClickListener { _, view, _, _ ->
+            try {
+                val cardType = binding.autoTvCondition1.text.toString().toDataClass<PaymentMethod>()
+                val cvn = viewModel.inputData1.get()?.let { iad -> EMVUtils.getCVNByPaymentMethod(cardType, iad) }
+                Log.d("arqcCalculator", "cvn: $cvn")
+                tagList = EMVUtils.getAcTagListByPaymentMethod(cardType, cvn)
+                data = initData(tagList)
+            } catch (ex: Exception) {
+                Snackbar.make(view, "Invalid IAD [9F10]", Snackbar.LENGTH_LONG).show()
+            }
         }
 
         binding.operationBtn3.visibility = View.VISIBLE
         binding.operationBtn3.text = getString(R.string.label_data_object_list)
         binding.operationBtn3.isEnabled = true
         binding.operationBtn3.setOnClickListener {
-            editConfigJson(requireContext(), it, AcDOL(data), true,
-                neutralBtn = getString(R.string.button_reset),
-                onNeutralBtnClick = {
-                    data = initData()
+            try {
+                editConfigJson(requireContext(), it, AcDOL(data), true,
+                    neutralBtn = getString(R.string.button_reset),
+                    onNeutralBtnClick = {
+                        data = initData(tagList)
+                    }
+                ) { editedDOL ->
+                    Log.d("arqcCalculator", "editedDOL: $editedDOL")
+                    data = editedDOL.data
                 }
-            ) { editedDOL ->
-                Log.d("arqcCalculator", "editedDOL: $editedDOL")
-                data = editedDOL.data
+            } catch (ex: Exception) {
+                Snackbar.make(it, "Invalid IAD [9F10]", Snackbar.LENGTH_LONG).show()
             }
         }
 
@@ -426,6 +440,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
         binding.arqcContainer.visibility = View.GONE
         binding.autoTvCondition1.onItemClickListener = null
+        binding.autoTvCondition1.text.clear()
     }
 
     override fun onResume() {

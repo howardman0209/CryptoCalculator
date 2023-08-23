@@ -2,7 +2,6 @@ package com.crypto.calculator.util
 
 import android.util.Log
 import com.crypto.calculator.extension.adjustDESParity
-import com.crypto.calculator.extension.applyPadding
 import com.crypto.calculator.extension.hexBitwise
 import com.crypto.calculator.extension.hexToByteArray
 import com.crypto.calculator.extension.toHexString
@@ -16,7 +15,6 @@ import com.crypto.calculator.service.cardSimulator.delegate.JcbDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.MastercardDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.UnionPayDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.VisaDelegate
-import com.crypto.calculator.service.model.ApplicationCryptogram
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
@@ -537,7 +535,7 @@ object EMVUtils {
 
     }
 
-    private fun getAcTagListByPaymentMethod(paymentMethod: PaymentMethod, cvn: Int?): String {
+    fun getAcTagListByPaymentMethod(paymentMethod: PaymentMethod, cvn: Int?): String {
         val tagList = when {
             paymentMethod == PaymentMethod.VISA && cvn == 17 -> "9F029F379F369F10"
             (paymentMethod == PaymentMethod.DISCOVER || paymentMethod == PaymentMethod.DINERS)

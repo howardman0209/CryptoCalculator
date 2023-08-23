@@ -171,6 +171,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="@dimen/space_default"
+                    android:enabled="@{!viewModel.inputData1.empty &amp;&amp; !autoTvCondition1.text.toString().empty}"
                     android:visibility="gone"
                     tools:text="button 3"
                     tools:visibility="visible" />

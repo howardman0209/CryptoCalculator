@@ -32,9 +32,9 @@ class UnionPayDelegate(private val iccData: HashMap<String, String>) : BasicEMVC
                 1 -> {
                     TlvUtil.readTagList(CVN01_TAGS).forEach {
                         if (it != "9F10") {
-                            dolBuilder.append(data[it])
+                            dolBuilder.append(data[it] ?: "")
                         } else {
-                            dolBuilder.append(data[it]?.substring(6, 14))
+                            dolBuilder.append(data[it]?.substring(6, 14) ?: "")
                         }
                     }
                     dolBuilder.toString().uppercase()

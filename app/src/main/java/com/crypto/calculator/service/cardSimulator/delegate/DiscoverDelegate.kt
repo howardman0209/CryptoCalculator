@@ -32,7 +32,7 @@ class DiscoverDelegate(private val iccData: HashMap<String, String>) : BasicEMVC
             return when (cvn) {
                 15 -> {
                     TlvUtil.readTagList(CVN15_TAGS).forEach {
-                        dolBuilder.append(data[it])
+                        dolBuilder.append(data[it] ?: "")
                     }
                     dolBuilder.toString().uppercase()
                 }

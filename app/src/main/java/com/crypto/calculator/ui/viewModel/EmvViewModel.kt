@@ -10,6 +10,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.crypto.calculator.cardReader.AndroidCardReader
 import com.crypto.calculator.cardReader.BasicCardReader
+import com.crypto.calculator.extension.findByKey
+import com.crypto.calculator.extension.toDataClass
 import com.crypto.calculator.model.DataFormat
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.ui.base.BaseViewModel
@@ -19,6 +21,7 @@ import com.crypto.calculator.util.LogPanelUtil
 import com.crypto.calculator.util.TlvUtil
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -39,7 +42,8 @@ class EmvViewModel : BaseViewModel() {
     val inputData2InputType: MutableLiveData<Int> = MutableLiveData(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS)
 
     var cardReader: BasicCardReader? = null
-    val gsonBeautifier: Gson = GsonBuilder().setPrettyPrinting().create()
+    private val gsonBeautifier: Gson = GsonBuilder().setPrettyPrinting().create()
+    val currentTransactionData: HashMap<String, String> = hashMapOf()
 
     fun setInputData1Filter(maxLength: Int? = null, inputFormat: DataFormat = DataFormat.HEXADECIMAL) {
         inputData1Filter.value = emptyList()
@@ -104,6 +108,52 @@ class EmvViewModel : BaseViewModel() {
         }
     }
 
+    private fun saveRequiredTransactionData(jsonString: String, tag: String) {
+        if (jsonString.contains(tag, ignoreCase = true)) {
+            val jsonObject = jsonString.toDataClass<JsonObject>()
+            if (!currentTransactionData.containsKey(tag)) {
+                jsonObject.findByKey(tag).also {
+                    if (it.isNotEmpty()) {
+                        currentTransactionData[tag] = it.first().asString
+                        Log.d("saveRequiredTransactionData", "currentTransactionData: $currentTransactionData")
+                    }
+                }
+            }
+        }
+    }
+
+    private fun processPDOLFromGPO(cAPDU: String): String {
+        val stringBuilder = StringBuilder()
+        val data = cAPDU.substring(14).dropLast(2)
+        currentTransactionData["9F38"]?.let { TlvUtil.readDOL(it) }?.also { pdolMap ->
+            stringBuilder.append("\n*** Processing Options Data [9F38] ***")
+            var cursor = 0
+            pdolMap.forEach {
+                stringBuilder.append("\n[${it.key}]: ${data.substring(cursor, cursor + it.value.toInt(16) * 2)}")
+                cursor += it.value.toInt(16) * 2
+            }
+            stringBuilder.append("\n*** Processing Options Data [9F38] ***")
+        }
+        Log.d("processPDOLFromGPO", "Processing Options Data [9F38]: $stringBuilder")
+        return stringBuilder.toString()
+    }
+
+    private fun processCDOLFromGenAC(cAPDU: String): String {
+        val stringBuilder = StringBuilder()
+        val data = cAPDU.substring(10).dropLast(2)
+        currentTransactionData["8C"]?.let { TlvUtil.readDOL(it) }?.also { cdolMap ->
+            stringBuilder.append("\n*** Card Risk Management Data [8C] ***")
+            var cursor = 0
+            cdolMap.forEach {
+                stringBuilder.append("\n[${it.key}]: ${data.substring(cursor, cursor + it.value.toInt(16) * 2)}")
+                cursor += it.value.toInt(16) * 2
+            }
+            stringBuilder.append("\n*** Card Risk Management Data [8C] ***")
+        }
+        Log.d("processCDOLFromGenAC", "Card Risk Management Data: $stringBuilder")
+        return stringBuilder.toString()
+    }
+
     fun getInspectLog(apdu: String): String {
         val logBuilder = StringBuilder()
         when {
@@ -117,24 +167,33 @@ class EmvViewModel : BaseViewModel() {
                 logBuilder.append("Select Application Identifier (AID)")
                 logBuilder.append("\ncAPDU: ")
                 logBuilder.append(apdu)
+                val size = apdu.substringAfter("00A40400").take(2).toInt(16) * 2
+                val aid = apdu.substringAfter("00A40400").substring(2, 2 + size)
+                logBuilder.append("\nAID: $aid")
             }
 
             apdu.startsWith("80A80000") -> {
                 logBuilder.append("Get Processing Options (GPO)")
                 logBuilder.append("\ncAPDU: ")
                 logBuilder.append(apdu)
+                logBuilder.append(processPDOLFromGPO(apdu))
             }
 
             apdu.startsWith("00B2") -> {
                 logBuilder.append("Read Record")
                 logBuilder.append("\ncAPDU: ")
                 logBuilder.append(apdu)
+                val recordNumber = apdu.substringAfter("00B2").substring(0, 2).toInt(16)
+                val sfi = ""
+                logBuilder.append("\nRecord number: $recordNumber, ")
+                logBuilder.append("Short File Identifier (SFI): $sfi")
             }
 
             apdu.startsWith("80AE") -> {
                 logBuilder.append("Generate Application Cryptogram (GenAC)")
                 logBuilder.append("\ncAPDU: ")
                 logBuilder.append(apdu)
+                logBuilder.append(processCDOLFromGenAC(apdu))
             }
 
             apdu == "0084000000" -> {
@@ -149,6 +208,8 @@ class EmvViewModel : BaseViewModel() {
                 if (apdu.endsWith(APDU_RESPONSE_CODE_OK)) {
                     LogPanelUtil.safeExecute(false) { gsonBeautifier.toJson(TlvUtil.decodeTLV(apdu)) }.also { jsonString ->
                         if (jsonString.isNotEmpty()) {
+                            saveRequiredTransactionData(jsonString, "9F38")
+                            saveRequiredTransactionData(jsonString, "8C")
                             logBuilder.append(jsonString)
                         } else {
                             logBuilder.append("Not in ASN.1")

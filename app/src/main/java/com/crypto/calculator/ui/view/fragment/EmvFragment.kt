@@ -109,14 +109,14 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
             CreditCardService.apdu.observe(viewLifecycleOwner) { apdu ->
                 Log.d("cardSimulator", "apdu: $apdu")
-                if (!binding.opt1CheckBox.isChecked) {
-                    apdu?.let { coreViewModel.printLog(it) }
-                } else {
-                    apdu?.let {
-                        viewModel.getInspectLog(it)
-                    }?.apply {
-                        coreViewModel.printLog(this)
+                apdu?.let {
+                    if (!binding.opt1CheckBox.isChecked) {
+                        coreViewModel.printLog(it)
+                    } else {
+                        coreViewModel.printLog(viewModel.getInspectLog(it))
                     }
+                } ?: run {
+                    viewModel.currentTransactionData.clear()
                 }
             }
 
@@ -264,10 +264,16 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                         binding.operationBtn2.isEnabled = true
                     }
 
-                    else -> {
+                    BasicCardReader.Companion.CardReaderStatus.FAIL,
+                    BasicCardReader.Companion.CardReaderStatus.ABORT,
+                    BasicCardReader.Companion.CardReaderStatus.SUCCESS -> {
+                        viewModel.currentTransactionData.clear()
+                        viewModel.cardReader?.disconnect()
                         binding.operationBtn1.isEnabled = true
                         binding.operationBtn2.isEnabled = false
                     }
+
+                    else -> {}
                 }
             }
         }
@@ -360,10 +366,12 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             val key = LogPanelUtil.safeExecute { EMVUtils.getACCalculationKey(cardType, cvn, pan, psn, atc, un) ?: "Key Derivation Fail" }
             Log.d("arqcCalculator", "key: $key")
             val dol = LogPanelUtil.safeExecute { EMVUtils.getAcDOLByPaymentMethod(cardType, cvn, data) }
+            Log.d("arqcCalculator", "dol: $dol")
             val paddingMethod = LogPanelUtil.safeExecute(onFail = {}, task = { EMVUtils.getAcDOLPaddingByPaymentMethod(cardType, cvn) }) ?: PaddingMethod.ISO9797_1_M1
+            Log.d("arqcCalculator", "paddingMethod: $paddingMethod")
             val arqc = LogPanelUtil.safeExecute { Encryption.calculateMAC(key, dol.applyPadding(paddingMethod)).uppercase() }
-
             Log.d("arqcCalculator", "arqc: $arqc")
+
             coreViewModel.printLog(
                 "ARQC_CALCULATOR: " +
                         "\nIssuer master key: $imk " +
@@ -422,6 +430,8 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.arqcContainer.visibility = View.GONE
         binding.autoTvCondition1.onItemClickListener = null
         binding.autoTvCondition1.text.clear()
+
+        viewModel.currentTransactionData.clear()
     }
 
     override fun onResume() {

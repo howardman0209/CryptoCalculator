@@ -34,9 +34,9 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
                 10 -> {
                     TlvUtil.readTagList(CVN10_TAGS).forEach {
                         if (it != "9F10") {
-                            dolBuilder.append(data[it])
+                            dolBuilder.append(data[it] ?: "")
                         } else {
-                            dolBuilder.append(data[it]?.substring(4, 16))
+                            dolBuilder.append(data[it]?.substring(4, 16) ?: "")
                         }
                     }
                     dolBuilder.toString().uppercase()

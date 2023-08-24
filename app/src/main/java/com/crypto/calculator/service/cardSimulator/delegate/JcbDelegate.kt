@@ -31,9 +31,9 @@ class JcbDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(i
                 1 -> {
                     TlvUtil.readTagList(CVN01_TAGS).forEach {
                         if (it != "9F10") {
-                            dolBuilder.append(data[it])
+                            dolBuilder.append(data[it] ?: "")
                         } else {
-                            dolBuilder.append(data[it]?.substring(6))
+                            dolBuilder.append(data[it]?.substring(6) ?: "")
                         }
                     }
                     dolBuilder.toString().uppercase()

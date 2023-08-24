@@ -38,9 +38,9 @@ class VisaDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(
                 10 -> {
                     TlvUtil.readTagList(CVN10_TAGS).forEach {
                         if (it != "9F10") {
-                            dolBuilder.append(data[it])
+                            dolBuilder.append(data[it] ?: "")
                         } else {
-                            dolBuilder.append(data[it]?.substring(6, 14))
+                            dolBuilder.append(data[it]?.substring(6, 14) ?: "")
                         }
                     }
                     dolBuilder.toString().uppercase()
@@ -49,9 +49,9 @@ class VisaDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(
                 17 -> {
                     TlvUtil.readTagList(CVN17_TAGS).forEach {
                         if (it != "9F10") {
-                            dolBuilder.append(data[it])
+                            dolBuilder.append(data[it] ?: "")
                         } else {
-                            dolBuilder.append(data[it]?.substring(8, 10))
+                            dolBuilder.append(data[it]?.substring(8, 10) ?: "")
                         }
                     }
                     dolBuilder.toString().uppercase()
@@ -59,7 +59,7 @@ class VisaDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(
 
                 else -> {
                     TlvUtil.readTagList(CVN18_TAGS).forEach {
-                        dolBuilder.append(data[it])
+                        dolBuilder.append(data[it] ?: "")
                     }
                     dolBuilder.toString().uppercase()
                 }

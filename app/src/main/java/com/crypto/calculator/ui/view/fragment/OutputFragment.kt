@@ -13,6 +13,7 @@ import com.crypto.calculator.ui.base.BaseActivity
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.ui.viewModel.OutputViewModel
+import com.crypto.calculator.util.LogPanelUtil
 import com.crypto.calculator.util.ShareFileUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -28,7 +29,7 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        coreViewModel.logMessage.observe(viewLifecycleOwner) {
+        LogPanelUtil.logMessage.observe(viewLifecycleOwner) {
             printLog(it)
         }
 
@@ -46,7 +47,13 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
         binding.saveBtn.setOnClickListener {
             Log.d("saveBtn", "OnClick")
             (requireActivity() as BaseActivity).requireManageFilePermission(it) {
-                ShareFileUtil.saveLogToFile(requireContext(), binding.logPanel.text.toString())
+                if (binding.logPanel.text.toString().isNotEmpty()) {
+                    singleInputDialog(requireContext(), "Please input a file suffix", "Suffix") { suffix ->
+                        if (suffix.isNotEmpty()) {
+                            ShareFileUtil.saveLogToFile(requireContext(), binding.logPanel.text.toString(), suffix)
+                        }
+                    }
+                }
             }
         }
 

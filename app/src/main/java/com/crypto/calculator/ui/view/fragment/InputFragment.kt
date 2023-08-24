@@ -111,7 +111,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
             val result = LogPanelUtil.safeExecute {
                 viewModel.rsaCompute(data, exponent, modulus)
             }
-            coreViewModel.printLog("RSA_CALCULATOR \nData: $data \nExponent: $exponent \nModulus: $modulus \nResult: $result\n")
+            LogPanelUtil.printLog("RSA_CALCULATOR \nData: $data \nExponent: $exponent \nModulus: $modulus \nResult: $result\n")
         }
     }
 
@@ -171,7 +171,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
                 )
             }
             Log.d("desCalculator, encrypt", "result: $result")
-            coreViewModel.printLog(
+            LogPanelUtil.printLog(
                 "DES_CALCULATOR \nData: $data \nKey: $adjustedKey " +
                         (if (adjustedKey != key) "(Parity Fixed)" else "") +
                         "\nOperation: Encrypt \nMode: $mode \nPadding: $padding \nEncrypted data: $result\n"
@@ -193,7 +193,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
                 )
             }
             Log.d("desCalculator, decrypt", "result: $result")
-            coreViewModel.printLog(
+            LogPanelUtil.printLog(
                 "DES_CALCULATOR \nData: $data \nKey: $adjustedKey " +
                         (if (adjustedKey != key) "(Parity Fixed)" else "") +
                         "\nOperation: Decrypt \nMode: $mode \nPadding: $padding \nDecrypted data: $result\n"
@@ -237,7 +237,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
                     0 -> {
                         val result = LogPanelUtil.safeExecute { coreViewModel.gsonBeautifier.toJson(TlvUtil.decodeTLV(data)) }
                         Log.d("tlvParser", "result: $result")
-                        coreViewModel.printLog("TLV_PARSER \nTLV: \n$data \nresult: \n$result\n")
+                        LogPanelUtil.printLog("TLV_PARSER \nTLV: \n$data \nresult: \n$result\n")
                     }
 
                     else -> {
@@ -247,7 +247,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
                         }
                         val result = LogPanelUtil.safeExecute { TlvUtil.encodeTLV(data) }
                         Log.d("tlvParser", "result: $result")
-                        coreViewModel.printLog("TLV_PARSER \nJSON: \n$displayJson \nresult: \n$result\n")
+                        LogPanelUtil.printLog("TLV_PARSER \nJSON: \n$displayJson \nresult: \n$result\n")
                     }
                 }
             }
@@ -298,7 +298,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
             Log.d("converter", "data: $data, from: $fromFormat, to: $toFormat")
             val result = LogPanelUtil.safeExecute { ConverterUtil.convertString(data, fromFormat, toFormat) }
             Log.d("converter", "result: $result")
-            coreViewModel.printLog("CONVERTER \nData: $data \nFrom: $fromFormat \nto: $toFormat \nresult: $result\n")
+            LogPanelUtil.printLog("CONVERTER \nData: $data \nFrom: $fromFormat \nto: $toFormat \nresult: $result\n")
         }
     }
 
@@ -325,7 +325,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
             val algorithm = binding.autoTvCondition1.text.toString()
             val result = LogPanelUtil.safeExecute { HashUtil.getHexHash(data, algorithm) }
             Log.d("hashCalculator", "algorithm: $algorithm, result: $result")
-            coreViewModel.printLog("HASH_CALCULATOR \nData: $data \nAlgorithm: $algorithm \nresult: $result\n")
+            LogPanelUtil.printLog("HASH_CALCULATOR \nData: $data \nAlgorithm: $algorithm \nresult: $result\n")
         }
     }
 
@@ -363,7 +363,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
                 viewModel.macCompute(data, adjustedKey, padding)
             }
             Log.d("macCalculator", "result: $result")
-            coreViewModel.printLog(
+            LogPanelUtil.printLog(
                 "MAC_CALCULATOR \nData: $data \nKey: $adjustedKey " +
                         (if (adjustedKey != key) "(Parity Fixed)" else "") +
                         "\nresult: $result\n"
@@ -410,7 +410,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
                 data1.hexBitwise(data2, operation)
             }
             Log.d("bitwiseCalculator", "result: $result")
-            coreViewModel.printLog(
+            LogPanelUtil.printLog(
                 "BITWISE_CALCULATOR \n" +
                         "Operation: $operation \nData 1: $data1 " +
                         (if (selected != 3) "\nData 2: $data2 " else "") +

@@ -19,6 +19,7 @@ import com.crypto.calculator.model.Tool
 import com.crypto.calculator.model.getGroupList
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
+import com.crypto.calculator.util.LogPanelUtil
 import com.crypto.calculator.util.PreferencesUtil
 
 class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
@@ -106,14 +107,14 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
         when (item.itemId) {
             R.id.action_settings -> {
                 singleInputDialog(requireContext(), "Enter your message", "Message") {
-                    viewModel.printLog(it)
+                    LogPanelUtil.printLog(it)
                 }
             }
 
             R.id.action_test -> {
                 val test = ""
                 Log.d("@@", "test: $test")
-                viewModel.printLog("test: $test")
+                LogPanelUtil.printLog("test: $test")
             }
 
             R.id.tool_logcat -> logcatSwitch()

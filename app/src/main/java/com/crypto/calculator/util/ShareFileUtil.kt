@@ -126,8 +126,8 @@ object ShareFileUtil {
         }
     }
 
-    fun saveLogToFile(context: Context, text: String) {
-        val fileName = "log-${System.currentTimeMillis() / 1000}.txt"
+    fun saveLogToFile(context: Context, text: String, suffix: String = "") {
+        val fileName = "log-${System.currentTimeMillis() / 1000}-$suffix.txt"
         val rootDir = Environment.DIRECTORY_DOCUMENTS
         val relativePath = "${context.getString(R.string.app_name)}/Log"
         Log.d("saveLog", "relativePath: $relativePath")

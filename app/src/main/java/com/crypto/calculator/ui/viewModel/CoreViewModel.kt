@@ -11,11 +11,6 @@ import com.google.gson.GsonBuilder
 
 class CoreViewModel : BaseViewModel() {
     val gsonBeautifier: Gson = GsonBuilder().setPrettyPrinting().create()
-    val logMessage: MutableLiveData<String> = MutableLiveData()
     val currentTool: MutableLiveData<Tool> = MutableLiveData()
     val currentCategory: MutableLiveData<Category> = MutableLiveData()
-
-    fun printLog(message: String) {
-        logMessage.postValue(message)
-    }
 }

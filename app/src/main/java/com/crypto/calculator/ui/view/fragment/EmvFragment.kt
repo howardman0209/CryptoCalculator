@@ -111,9 +111,9 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                 Log.d("cardSimulator", "apdu: $apdu")
                 apdu?.let {
                     if (!binding.opt1CheckBox.isChecked) {
-                        coreViewModel.printLog(it)
+                        LogPanelUtil.printLog(it)
                     } else {
-                        coreViewModel.printLog(viewModel.getInspectLog(it))
+                        LogPanelUtil.printLog(viewModel.getInspectLog(it))
                     }
                 } ?: run {
                     viewModel.currentTransactionData.clear()
@@ -245,12 +245,12 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         EMVKernel.apdu.observe(viewLifecycleOwner) { apdu ->
             Log.d("emvKernel", "apdu: $apdu")
             if (!binding.opt1CheckBox.isChecked) {
-                apdu?.let { coreViewModel.printLog(it) }
+                apdu?.let { LogPanelUtil.printLog(it) }
             } else {
                 apdu?.let {
                     viewModel.getInspectLog(it)
                 }?.apply {
-                    coreViewModel.printLog(this)
+                    LogPanelUtil.printLog(this)
                 }
             }
         }
@@ -372,7 +372,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             val arqc = LogPanelUtil.safeExecute { Encryption.calculateMAC(key, dol.applyPadding(paddingMethod)).uppercase() }
             Log.d("arqcCalculator", "arqc: $arqc")
 
-            coreViewModel.printLog(
+            LogPanelUtil.printLog(
                 "ARQC_CALCULATOR: " +
                         "\nIssuer master key: $imk " +
                         (if (pan.isNotEmpty()) "\nPAN [5A]: $pan " else "") +

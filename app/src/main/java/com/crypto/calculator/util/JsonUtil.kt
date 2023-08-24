@@ -13,7 +13,7 @@ object JsonUtil {
         val jsonObject = Gson().fromJson(json, JsonObject::class.java)
         Log.d("flattenJson", "jsonObject: $jsonObject")
         /// Do NOT sort the list otherwise cannot unflatten back to Json !!!
-        return flattenJsonObject("", jsonObject).sorted()
+        return flattenJsonObject("", jsonObject)
     }
 
     private fun flattenJsonObject(prefix: String, jsonObject: JsonObject): List<String> {

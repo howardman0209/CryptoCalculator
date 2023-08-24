@@ -1,6 +1,7 @@
 package com.crypto.calculator.util
 
 import android.util.Log
+import com.crypto.calculator.extension.sorted
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
@@ -11,9 +12,8 @@ object JsonUtil {
     fun flattenJson(json: String): List<String> {
         Log.d("flattenJson", "json: $json")
         val jsonObject = Gson().fromJson(json, JsonObject::class.java)
-        Log.d("flattenJson", "jsonObject: $jsonObject")
         /// Do NOT sort the list otherwise cannot unflatten back to Json !!!
-        return flattenJsonObject("", jsonObject)
+        return flattenJsonObject("", jsonObject.sorted())
     }
 
     private fun flattenJsonObject(prefix: String, jsonObject: JsonObject): List<String> {

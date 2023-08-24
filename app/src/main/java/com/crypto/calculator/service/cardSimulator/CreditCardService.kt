@@ -22,6 +22,9 @@ import com.crypto.calculator.util.assetsPathCardJcb
 import com.crypto.calculator.util.assetsPathCardMaster
 import com.crypto.calculator.util.assetsPathCardUnionPay
 import com.crypto.calculator.util.assetsPathCardVisa
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class CreditCardService : BasicEMVService() {
     companion object {
@@ -86,9 +89,11 @@ class CreditCardService : BasicEMVService() {
     }
 
     override fun responseConstructor(cAPDU: String?): String {
-        cAPDU?.let { apdu.value = it }
         val rAPDU = super.responseConstructor(cAPDU)
-        apdu.postValue(rAPDU)
+        CoroutineScope(Dispatchers.Main).launch {
+            cAPDU?.let { apdu.value = it }
+            apdu.postValue(rAPDU)
+        }
         return rAPDU
     }
 

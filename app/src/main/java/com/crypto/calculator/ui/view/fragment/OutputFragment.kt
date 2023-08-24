@@ -104,6 +104,20 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        Log.d("OutputFragment", "onResume")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("OutputFragment", "onPause")
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("OutputFragment", "onDestroy")
+    }
+
     private fun getCoreViewModel(): CoreViewModel {
         Log.d("OutputFragment", "getCoreViewModel")
         return activity?.supportFragmentManager?.fragments?.let { fragmentList ->

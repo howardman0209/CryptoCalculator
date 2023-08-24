@@ -71,17 +71,6 @@ class DiscoverDelegate(private val iccData: HashMap<String, String>) : BasicEMVC
         }
     }
 
-    private fun processTerminalData(cAPDU: String) {
-        val data = cAPDU.substring(14).dropLast(2)
-        val pdolMap = iccData["9F38"]?.let { TlvUtil.readDOL(it) } ?: throw Exception("INVALID_ICC_DATA [9F38]")
-        var cursor = 0
-        pdolMap.forEach {
-            terminalData[it.key] = data.substring(cursor, cursor + it.value.toInt(16) * 2)
-            cursor += it.value.toInt(16) * 2
-        }
-        Log.d("DiscoverDelegate", "processTerminalData - terminalData: $terminalData")
-    }
-
     override fun onPPSEReply(cAPDU: String): String {
         Log.d("DiscoverDelegate", "onPPSEReply - cAPDU: $cAPDU")
         val rAPDU = TlvUtil.encodeTLV(
@@ -128,7 +117,7 @@ class DiscoverDelegate(private val iccData: HashMap<String, String>) : BasicEMVC
     override fun onExecuteGPOReply(cAPDU: String): String {
         Log.d("DiscoverDelegate", "onExecuteGPOReply - cAPDU: $cAPDU")
 
-        processTerminalData(cAPDU)
+        processTerminalDataFromGPO(cAPDU)
 
         val rAPDU = TlvUtil.encodeTLV(
             mapOf(

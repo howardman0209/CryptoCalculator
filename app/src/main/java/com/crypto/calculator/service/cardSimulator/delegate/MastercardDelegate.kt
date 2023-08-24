@@ -1,22 +1,16 @@
 package com.crypto.calculator.service.cardSimulator.delegate
 
 import android.util.Log
-import com.crypto.calculator.extension.hexToByteArray
-import com.crypto.calculator.extension.toHexString
 import com.crypto.calculator.model.EMVPublicKey
 import com.crypto.calculator.model.PaddingMethod
-import com.crypto.calculator.model.getExponentLength
-import com.crypto.calculator.model.getModulusLength
 import com.crypto.calculator.service.cardSimulator.BasicEMVCard
 import com.crypto.calculator.service.cardSimulator.BasicEMVService
 import com.crypto.calculator.service.model.ApplicationCryptogram
 import com.crypto.calculator.service.model.ApplicationCryptogram.getCryptogramInformationData
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
 import com.crypto.calculator.util.EMVUtils
-import com.crypto.calculator.util.Encryption
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
-import java.security.MessageDigest
 
 class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(iccData), BasicEMVService.EMVFlowDelegate {
     companion object {
@@ -103,6 +97,13 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
         modulus = "A0DCF4BDE19C3546B4B6F0414D174DDE294AABBB828C5A834D73AAE27C99B0B053A90278007239B6459FF0BBCD7B4B9C6C50AC02CE91368DA1BD21AAEADBC65347337D89B68F5C99A09D05BE02DD1F8C5BA20E2F13FB2A27C41D3F85CAD5CF6668E75851EC66EDBF98851FD4E42C44C1D59F5984703B27D5B9F21B8FA0D93279FBBF69E090642909C9EA27F898959541AA6757F5F624104F6E1D3A9532F2A6E51515AEAD1B43B3D7835088A2FAFA7BE7"
     )
     override val caPrivateExponent = "1ACF7E1FA59A08E11E1E7D603783E24FB18C71F495C20F15E23DF1D06A199D72B89C2B140013099E60EFFD74A23F3744BCB81CAB226D89179AF4DAF1D1CF4BB88BDDEA419E6D3A199AC4D64A55CF85420F45AD07D8A9DC5BB25B06D78F6C6D48FA137128910007A4DFD5B113EF10F828D37D8C7AA1F7ED1E81692B4F019FB80DB925821ED2F6ACCC5BEA7D3F8F2613CEC62A499F941712BA108FAF437AB3D102DDBFDB3BFBB312D644E138D0D90C023B"
+
+    override val iccPublicKeyCertExpiration = "1249"
+    override val iccPublicKeyCertSerialNumber = "000001"
+    override val issuerPublicKeyCertExpiration = "1249"
+    override val issuerPublicKeyCertSerialNumber = "000001"
+
+
     override fun readCryptogramVersionNumber(iad: String): Int {
         try {
             Log.d("MastercardDelegate", "readCVNFromIAD - iad: $iad")
@@ -155,173 +156,6 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
                 throw Exception("UNHANDLED CRYPTOGRAM VERSION")
             }
         }
-    }
-
-    private fun processTerminalData(cAPDU: String) {
-        val data = cAPDU.substring(10).dropLast(2)
-        transactionData = data
-        val cdolMap = iccData["8C"]?.let { TlvUtil.readDOL(it) } ?: throw Exception("INVALID_ICC_DATA [8C]")
-        var cursor = 0
-        cdolMap.forEach {
-            terminalData[it.key] = data.substring(cursor, cursor + it.value.toInt(16) * 2)
-            cursor += it.value.toInt(16) * 2
-        }
-        Log.d("MastercardDelegate", "processTerminalData - terminalData: $terminalData")
-    }
-
-    private fun processODAData(rAPDU: String) {
-        TlvUtil.decodeTLV(rAPDU).let {
-            odaData = TlvUtil.encodeTLV("${it["70"]}")
-            Log.d("MastercardDelegate", "processODAData - odaData: $odaData")
-        }
-    }
-
-    private fun getStaticAuthData(): String {
-        var data = ""
-        iccData["9F4A"]?.let { tagList ->
-            TlvUtil.readTagList(tagList).forEach { tag ->
-                data += iccData[tag] ?: terminalData[tag] ?: ""
-            }
-        }
-        return data
-    }
-
-    private fun calculateIssuerPKCert(): String? {
-        if (capk.modulus == null) return null
-        if (issuerPublicKey.modulus == null) return null
-
-        val dataToHash = StringBuilder()
-        dataToHash.append("02")
-        dataToHash.append("${iccData["5A"]?.take(8)}")
-        dataToHash.append("1249")
-        dataToHash.append("000001")
-        dataToHash.append("01")
-        dataToHash.append("01")
-        dataToHash.append(issuerPublicKey.getModulusLength())
-        dataToHash.append(issuerPublicKey.getExponentLength())
-        if (issuerPublicKey.modulus.length <= capk.modulus.length - 72) {
-            dataToHash.append(issuerPublicKey.modulus.padEnd(capk.modulus.length - 72, 'B'))
-        } else {
-            issuerPublicRemainder = issuerPublicKey.modulus.substring(capk.modulus.length - 72)
-            dataToHash.append(issuerPublicKey.modulus.take(capk.modulus.length - 72))
-        }
-        Log.d("calculateIssuerPKCert", "issuerPublicRemainder: $issuerPublicRemainder")
-        dataToHash.append(issuerPublicRemainder)
-        dataToHash.append(issuerPublicKey.exponent)
-        val hash = getHash(dataToHash.toString())
-
-        val plainCert = StringBuilder()
-        plainCert.append("6A")
-        plainCert.append("02")
-        plainCert.append("${iccData["5A"]?.take(8)}")
-        plainCert.append("1249")
-        plainCert.append("000001")
-        plainCert.append("01")
-        plainCert.append("01")
-        plainCert.append(issuerPublicKey.getModulusLength())
-        plainCert.append(issuerPublicKey.getExponentLength())
-        if (issuerPublicKey.modulus.length <= capk.modulus.length - 72) {
-            plainCert.append(issuerPublicKey.modulus.padEnd(capk.modulus.length - 72, 'B'))
-        } else {
-            plainCert.append(issuerPublicKey.modulus.take(capk.modulus.length - 72))
-        }
-        plainCert.append(hash)
-        plainCert.append("BC")
-        Log.d("calculateIssuerPKCert", "plainCert: $plainCert")
-
-        return Encryption.doRSA(plainCert.toString(), caPrivateExponent, capk.modulus)
-    }
-
-    private fun calculateICCPKCert(): String? {
-        if (issuerPublicKey.modulus == null) return null
-        if (iccPublicKey.modulus == null) return null
-
-        val dataToHash = StringBuilder()
-        dataToHash.append("04")
-        dataToHash.append("${iccData["5A"]}FFFF")
-        dataToHash.append("1249")
-        dataToHash.append("000001")
-        dataToHash.append("01")
-        dataToHash.append("01")
-        dataToHash.append(iccPublicKey.getModulusLength())
-        dataToHash.append(iccPublicKey.getExponentLength())
-        if (iccPublicKey.modulus.length <= issuerPublicKey.modulus.length - 84) {
-            dataToHash.append(iccPublicKey.modulus.padEnd(issuerPublicKey.modulus.length - 84, 'B'))
-        } else {
-            iccPublicRemainder = iccPublicKey.modulus.substring(issuerPublicKey.modulus.length - 84)
-            dataToHash.append(iccPublicKey.modulus.take(issuerPublicKey.modulus.length - 84))
-        }
-        Log.d("calculateICCPKCert", "iccPublicRemainder: $iccPublicRemainder")
-        dataToHash.append(iccPublicRemainder)
-        dataToHash.append(iccPublicKey.exponent)
-        dataToHash.append("$odaData${getStaticAuthData()}")
-        val hash = getHash(dataToHash.toString())
-
-        val plainCert = StringBuilder()
-        plainCert.append("6A")
-        plainCert.append("04")
-        plainCert.append("${iccData["5A"]}FFFF")
-        plainCert.append("1249")
-        plainCert.append("000001")
-        plainCert.append("01")
-        plainCert.append("01")
-        plainCert.append(iccPublicKey.getModulusLength())
-        plainCert.append(iccPublicKey.getExponentLength())
-        if (iccPublicKey.modulus.length <= issuerPublicKey.modulus.length - 84) {
-            plainCert.append(iccPublicKey.modulus.padEnd(issuerPublicKey.modulus.length - 84, 'B'))
-        } else {
-            plainCert.append(iccPublicKey.modulus.take(issuerPublicKey.modulus.length - 84))
-        }
-        plainCert.append(hash)
-        plainCert.append("BC")
-        Log.d("calculateICCPKCert", "plainCert: $plainCert")
-
-        return Encryption.doRSA(plainCert.toString(), issuerPrivateExponent, issuerPublicKey.modulus)
-    }
-
-    private fun calculateSDAD(type: ApplicationCryptogram.Type): String? {
-        if (iccPublicKey.modulus == null) return null
-
-        val applicationCryptogram = calculateCryptogram()
-
-        val dataToHash = StringBuilder()
-        dataToHash.append("05")
-        dataToHash.append("01")
-        val iccDynamicDataLength = 29 + iccDynamicNumber.length / 2 + 1
-        dataToHash.append(iccDynamicDataLength.toHexString()) // 26H = 38D = 01 + 08 + 01 + 08 + 20
-        dataToHash.append((iccDynamicNumber.length / 2).toHexString()) // 01
-        dataToHash.append(iccDynamicNumber) // 08
-        dataToHash.append(getCryptogramInformationData(type)) // 01
-        dataToHash.append(applicationCryptogram) // 08
-        dataToHash.append(getHash(transactionData)) // 20
-        dataToHash.append("B".repeat((iccPublicKey.modulus.length / 2 - iccDynamicDataLength - 25) * 2))
-        dataToHash.append(terminalData["9F37"])
-        val hash = getHash(dataToHash.toString())
-
-        val plainCert = StringBuilder()
-        plainCert.append("6A")
-        plainCert.append("05")
-        plainCert.append("01")
-        plainCert.append(iccDynamicDataLength.toHexString()) // 26H = 38D = 01 + 08 + 01 + 08 + 20
-        plainCert.append((iccDynamicNumber.length / 2).toHexString()) // 01
-        plainCert.append(iccDynamicNumber) // 08
-        plainCert.append(getCryptogramInformationData(type)) // 01
-        plainCert.append(applicationCryptogram) // 08
-        plainCert.append(getHash(transactionData)) // 20
-        plainCert.append("B".repeat((iccPublicKey.modulus.length / 2 - iccDynamicDataLength - 25) * 2))
-        plainCert.append(hash)
-        plainCert.append("BC")
-        Log.d("calculateSDAD", "plainCert: $plainCert")
-
-        return Encryption.doRSA(plainCert.toString(), iccPrivateExponent, iccPublicKey.modulus)
-    }
-
-    private fun getHash(plaintext: String): String {
-        val md = MessageDigest.getInstance("SHA-1")
-        val message = plaintext.hexToByteArray()
-        val cipher = md.digest(message).toHexString().uppercase()
-        Log.d("getHash", "plaintext: $plaintext -> cipher: $cipher")
-        return cipher
     }
 
     override fun onPPSEReply(cAPDU: String): String {
@@ -385,7 +219,7 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
                     mapOf(
                         "70" to mapOf(
                             "57" to iccData["57"],
-                            "5A" to iccData["5A"],
+                            "5A" to (iccData["5A"] ?: iccData["57"]?.substringBefore('D')),
                             "5F24" to iccData["5F24"],
                             "5F25" to iccData["5F25"],
                             "5F28" to iccData["5F28"],
@@ -451,7 +285,7 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
 
     override fun onGenerateACReply(cAPDU: String): String {
         Log.d("MastercardDelegate", "onGenerateACReply - cAPDU: $cAPDU")
-        processTerminalData(cAPDU)
+        processTerminalDataFromGenAC(cAPDU)
         transactionData += TlvUtil.encodeTLV(
             mapOf(
                 "9F10" to iccData["9F10"],

@@ -87,17 +87,6 @@ class VisaDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(
         }
     }
 
-    private fun processTerminalData(cAPDU: String) {
-        val data = cAPDU.substring(14).dropLast(2)
-        val pdolMap = iccData["9F38"]?.let { TlvUtil.readDOL(it) } ?: throw Exception("INVALID_ICC_DATA [9F38]")
-        var cursor = 0
-        pdolMap.forEach {
-            terminalData[it.key] = data.substring(cursor, cursor + it.value.toInt(16) * 2)
-            cursor += it.value.toInt(16) * 2
-        }
-        Log.d("VisaSimulator", "processTerminalData - terminalData: $terminalData")
-    }
-
     override fun onPPSEReply(cAPDU: String): String {
         Log.d("VisaSimulator", "onPPSEReply - cAPDU: $cAPDU")
         val rAPDU = TlvUtil.encodeTLV(
@@ -142,7 +131,7 @@ class VisaDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(
     override fun onExecuteGPOReply(cAPDU: String): String {
         Log.d("VisaSimulator", "onExecuteGPOReply - cAPDU: $cAPDU")
 
-        processTerminalData(cAPDU)
+        processTerminalDataFromGPO(cAPDU)
 
         val rAPDU = TlvUtil.encodeTLV(
             mapOf(

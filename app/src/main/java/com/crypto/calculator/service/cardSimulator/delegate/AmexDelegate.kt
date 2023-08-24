@@ -164,7 +164,7 @@ class AmexDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(
 
     override fun onGenerateACReply(cAPDU: String): String {
         Log.d("AmexDelegate", "onGenerateACReply - cAPDU: $cAPDU")
-        processTerminalData(cAPDU)
+        processTerminalDataFromGenAC(cAPDU)
 
         val sb = StringBuilder()
         sb.append(ApplicationCryptogram.getCryptogramInformationData(ApplicationCryptogram.Type.ARQC))

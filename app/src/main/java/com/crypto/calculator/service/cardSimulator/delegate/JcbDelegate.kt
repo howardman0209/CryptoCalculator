@@ -73,17 +73,6 @@ class JcbDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(i
         }
     }
 
-    private fun processTerminalData(cAPDU: String) {
-        val data = cAPDU.substring(10).dropLast(2)
-        val pdolMap = iccData["8C"]?.let { TlvUtil.readDOL(it) } ?: throw Exception("INVALID_ICC_DATA [9F38]")
-        var cursor = 0
-        pdolMap.forEach {
-            terminalData[it.key] = data.substring(cursor, cursor + it.value.toInt(16) * 2)
-            cursor += it.value.toInt(16) * 2
-        }
-        Log.d("JcbDelegate", "processTerminalData - terminalData: $terminalData")
-    }
-
     override fun onPPSEReply(cAPDU: String): String {
         Log.d("JcbDelegate", "onPPSEReply - cAPDU: $cAPDU")
         val rAPDU = TlvUtil.encodeTLV(
@@ -163,7 +152,7 @@ class JcbDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(i
 
     override fun onGenerateACReply(cAPDU: String): String {
         Log.d("JcbDelegate", "onGenerateACReply - cAPDU: $cAPDU")
-        processTerminalData(cAPDU)
+        processTerminalDataFromGenAC(cAPDU)
 
         val sb = StringBuilder()
         sb.append(ApplicationCryptogram.getCryptogramInformationData(ApplicationCryptogram.Type.ARQC))

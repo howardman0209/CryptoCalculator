@@ -15,7 +15,7 @@ object JsonUtil {
 
     private fun flattenJsonObject(prefix: String, jsonObject: JsonObject): List<String> {
         val result = mutableListOf<String>()
-        for ((key, value) in jsonObject.entrySet()) {
+        jsonObject.entrySet().forEach { (key, value) ->
             val newPrefix = if (prefix.isEmpty()) key else "$prefix.$key"
             when (value) {
                 is JsonObject -> result.addAll(flattenJsonObject(newPrefix, value))
@@ -42,14 +42,13 @@ object JsonUtil {
     fun unflattenJson(flattenedList: List<String>): String {
         try {
             val root = mutableMapOf<String, Any>()
-            for (item in flattenedList) {
+            flattenedList.forEach { item ->
                 val split = item.split(":", limit = 2)
                 val key = split[0]
                 val value = split[1]
                 val keyParts = key.split('.')
                 var currentMap: MutableMap<String, Any> = root
-                for (i in 0 until keyParts.size - 1) {
-                    val keyPart = keyParts[i]
+                keyParts.dropLast(1).forEach { keyPart ->
                     currentMap = if (keyPart.contains("#")) {
                         val arrayKey = keyPart.split('#')
                         val listIndex = arrayKey.last().toInt()

@@ -31,14 +31,13 @@ fun ArrayList<*>.flatten(prefix: String): List<String> {
 fun List<String>.unflatten(): Map<String, Any> {
     val root = mutableMapOf<String, Any>()
     try {
-        for (item in this) {
+        this.forEach { item ->
             val split = item.split(":", limit = 2)
             val key = split[0]
             val value = split[1]
             val keyParts = key.split('.')
             var currentMap: MutableMap<String, Any> = root
-            for (i in 0 until keyParts.size - 1) {
-                val keyPart = keyParts[i]
+            keyParts.dropLast(1).forEach { keyPart ->
                 currentMap = if (keyPart.contains("#")) {
                     val arrayKey = keyPart.split('#')
                     val listIndex = arrayKey.last().toInt()

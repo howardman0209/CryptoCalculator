@@ -20,6 +20,7 @@ import com.crypto.calculator.model.getGroupList
 import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.util.LogPanelUtil
+import com.crypto.calculator.util.LongLogUtil
 import com.crypto.calculator.util.PreferencesUtil
 
 class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
@@ -113,7 +114,7 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
 
             R.id.action_test -> {
                 val test = ""
-                Log.d("@@", "test: $test")
+                LongLogUtil.debug("@@", "test: $test")
                 LogPanelUtil.printLog("test: $test")
             }
 

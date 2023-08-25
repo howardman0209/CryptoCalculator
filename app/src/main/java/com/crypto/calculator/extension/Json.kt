@@ -53,10 +53,10 @@ fun JsonArray.findByKey(key: String): List<JsonElement> {
 fun JsonObject.toMap(): Map<String, Any> {
     val map = mutableMapOf<String, Any>()
     this.entrySet().forEach {
-        var value: Any = it.value
-        when (it.value) {
-            is JsonArray -> value = it.value.asJsonArray.toList()
-            is JsonObject -> value = it.value.asJsonObject.toMap()
+        val value: Any = when (it.value) {
+            is JsonArray -> it.value.asJsonArray.toList()
+            is JsonObject -> it.value.asJsonObject.toMap()
+            else -> it.value.asString
         }
         map[it.key] = value
     }
@@ -66,10 +66,10 @@ fun JsonObject.toMap(): Map<String, Any> {
 fun JsonArray.toList(): List<Any> {
     val list = mutableListOf<Any>()
     this.forEach {
-        var value: Any = it
-        when (value) {
-            is JsonArray -> value = it.asJsonArray.toList()
-            is JsonObject -> value = it.asJsonObject.toMap()
+        val value: Any = when (it) {
+            is JsonArray -> it.asJsonArray.toList()
+            is JsonObject -> it.asJsonObject.toMap()
+            else -> it.asString
         }
         list.add(value)
     }

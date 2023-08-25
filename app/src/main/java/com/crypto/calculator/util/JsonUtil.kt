@@ -4,15 +4,12 @@ import android.util.Log
 import com.crypto.calculator.extension.sorted
 import com.google.gson.Gson
 import com.google.gson.JsonArray
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 
 object JsonUtil {
-    /// Do NOT sort the list otherwise cannot unflatten back to Json !!!
     fun flattenJson(json: String): List<String> {
         Log.d("flattenJson", "json: $json")
         val jsonObject = Gson().fromJson(json, JsonObject::class.java)
-        /// Do NOT sort the list otherwise cannot unflatten back to Json !!!
         return flattenJsonObject("", jsonObject.sorted())
     }
 
@@ -23,7 +20,7 @@ object JsonUtil {
             when (value) {
                 is JsonObject -> result.addAll(flattenJsonObject(newPrefix, value))
                 is JsonArray -> result.addAll(flattenJsonArray(newPrefix, value))
-                else -> result.add("$newPrefix:$value")
+                else -> result.add("$newPrefix:${value.asString}")
             }
         }
         return result
@@ -36,7 +33,7 @@ object JsonUtil {
             when (jsonElement) {
                 is JsonObject -> result.addAll(flattenJsonObject(newPrefix, jsonElement))
                 is JsonArray -> result.addAll(flattenJsonArray(newPrefix, jsonElement))
-                else -> result.add("$newPrefix:$jsonElement")
+                else -> result.add("$newPrefix:${jsonElement.asString}")
             }
         }
         return result
@@ -50,7 +47,6 @@ object JsonUtil {
                 val key = split[0]
                 val value = split[1]
                 val keyParts = key.split('.')
-//            Log.d("unflattenJson", "keyParts: $keyParts")
                 var currentMap: MutableMap<String, Any> = root
                 for (i in 0 until keyParts.size - 1) {
                     val keyPart = keyParts[i]
@@ -70,11 +66,9 @@ object JsonUtil {
                     val arrayKey = keyParts.last().split('#')
                     val listIndex = arrayKey.last().toInt()
                     val list = currentMap.getOrPut(arrayKey.first()) { mutableListOf<Any>() } as MutableList<Any>
-//                Log.d("unflattenJson", "value: $value")
-
-                    list.add(listIndex, Gson().fromJson(value, JsonElement::class.java))
+                    list.add(listIndex, value)
                 } else {
-                    currentMap[keyParts.last()] = Gson().fromJson(value, JsonElement::class.java)
+                    currentMap[keyParts.last()] = value
                 }
             }
             return Gson().toJson(root.toSortedMap())

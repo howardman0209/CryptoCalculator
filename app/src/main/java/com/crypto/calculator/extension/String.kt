@@ -10,6 +10,7 @@ import com.crypto.calculator.model.BitwiseOperation
 import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.util.*
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.MultiFormatWriter
 import com.google.zxing.common.BitMatrix
@@ -259,4 +260,8 @@ fun String.removePadding(paddingMethod: PaddingMethod): String {
 
 inline fun <reified T> String.toDataClass(): T {
     return Gson().fromJson(this, T::class.java)
+}
+
+fun String.toSerializedMap(): Map<String, Any> {
+    return this.toDataClass<JsonObject>().toMap()
 }

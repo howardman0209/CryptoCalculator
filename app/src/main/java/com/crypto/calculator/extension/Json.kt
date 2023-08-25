@@ -77,5 +77,5 @@ fun JsonArray.toList(): List<Any> {
 }
 
 fun JsonObject.sorted(): JsonObject {
-    return Gson().toJson(this.toMap().toSortedMap()).toDataClass()
+    return Gson().toJson(this.toMap()).toDataClass()
 }

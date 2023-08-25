@@ -28,7 +28,9 @@ import com.akexorcist.localizationactivity.ui.LocalizationActivity
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.DialogContentEditConfigJsonBinding
 import com.crypto.calculator.databinding.DialogContentSingleInputBinding
+import com.crypto.calculator.extension.flatten
 import com.crypto.calculator.extension.requireManageFilePermission
+import com.crypto.calculator.extension.toSerializedMap
 import com.crypto.calculator.model.PermissionRequest
 import com.crypto.calculator.model.PermissionRequestHandler
 import com.crypto.calculator.model.PermissionResult
@@ -355,8 +357,8 @@ abstract class BaseActivity : LocalizationActivity() {
     ) {
         val dialogBinding: DialogContentEditConfigJsonBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_content_edit_config_json, null, false)
 
-        val jsonStr = Gson().toJson(config)
-        val list = JsonUtil.flattenJson(jsonStr).toMutableList()
+        val map = config.toSerializedMap()
+        val list = map.flatten().toMutableList()
         /// Do NOT sort the list otherwise cannot unflatten back to Json !!!
 
         val adapter = ConfigItemsAdapter { position, adapter ->

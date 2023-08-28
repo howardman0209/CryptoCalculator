@@ -11,13 +11,14 @@ import androidx.lifecycle.viewModelScope
 import com.crypto.calculator.cardReader.AndroidCardReader
 import com.crypto.calculator.cardReader.BasicCardReader
 import com.crypto.calculator.extension.findByKey
+import com.crypto.calculator.extension.hexToBinary
 import com.crypto.calculator.extension.toDataClass
+import com.crypto.calculator.extension.toHexString
 import com.crypto.calculator.model.DataFormat
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.ui.base.BaseViewModel
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
 import com.crypto.calculator.util.InputFilterUtil
-import com.crypto.calculator.util.LogPanelUtil
 import com.crypto.calculator.util.TlvUtil
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -44,6 +45,7 @@ class EmvViewModel : BaseViewModel() {
     var cardReader: BasicCardReader? = null
     private val gsonBeautifier: Gson = GsonBuilder().setPrettyPrinting().create()
     val currentTransactionData: HashMap<String, String> = hashMapOf()
+    private var currentCAPDU: String = ""
 
     fun setInputData1Filter(maxLength: Int? = null, inputFormat: DataFormat = DataFormat.HEXADECIMAL) {
         inputData1Filter.value = emptyList()
@@ -109,12 +111,44 @@ class EmvViewModel : BaseViewModel() {
     }
 
     private fun saveRequiredTransactionData(jsonString: String, tag: String) {
+        val jsonObject = jsonString.toDataClass<JsonObject>()
+
         if (jsonString.contains(tag, ignoreCase = true)) {
-            val jsonObject = jsonString.toDataClass<JsonObject>()
             if (!currentTransactionData.containsKey(tag)) {
                 jsonObject.findByKey(tag).also {
                     if (it.isNotEmpty()) {
                         currentTransactionData[tag] = it.first().asString
+                        Log.d("saveRequiredTransactionData", "currentTransactionData: $currentTransactionData")
+                        return
+                    }
+                }
+            }
+        }
+
+        when (tag) {
+            "82", "94" -> {
+                jsonObject.findByKey("80").also {
+                    if (it.isNotEmpty()) {
+                        val tlv = it.first().asString
+                        when (tag) {
+                            "82" -> currentTransactionData["82"] = tlv.take(4)
+                            "94" -> currentTransactionData["94"] = tlv.substring(4)
+                        }
+                        Log.d("saveRequiredTransactionData", "currentTransactionData: $currentTransactionData")
+                    }
+                }
+            }
+
+            "9F10", "9F26", "9F27", "9F36" -> {
+                jsonObject.findByKey("80").also {
+                    if (it.isNotEmpty()) {
+                        val tlv = it.first().asString
+                        when (tag) {
+                            "9F27" -> currentTransactionData["9F27"] = tlv.take(2)
+                            "9F36" -> currentTransactionData["9F36"] = tlv.substring(2, 6)
+                            "9F26" -> currentTransactionData["9F26"] = tlv.substring(6, 22)
+                            "9F10" -> currentTransactionData["9F10"] = tlv.substring(22)
+                        }
                         Log.d("saveRequiredTransactionData", "currentTransactionData: $currentTransactionData")
                     }
                 }
@@ -161,6 +195,7 @@ class EmvViewModel : BaseViewModel() {
                 logBuilder.append("Select Proximity Payment System Environment (PPSE)")
                 logBuilder.append("\ncAPDU: ")
                 logBuilder.append(apdu)
+                currentCAPDU = apdu
             }
 
             apdu.startsWith("00A40400") -> {
@@ -170,6 +205,7 @@ class EmvViewModel : BaseViewModel() {
                 val size = apdu.substringAfter("00A40400").take(2).toInt(16) * 2
                 val aid = apdu.substringAfter("00A40400").substring(2, 2 + size)
                 logBuilder.append("\nAID: $aid")
+                currentCAPDU = apdu
             }
 
             apdu.startsWith("80A80000") -> {
@@ -177,6 +213,7 @@ class EmvViewModel : BaseViewModel() {
                 logBuilder.append("\ncAPDU: ")
                 logBuilder.append(apdu)
                 logBuilder.append(processPDOLFromGPO(apdu))
+                currentCAPDU = apdu
             }
 
             apdu.startsWith("00B2") -> {
@@ -184,9 +221,32 @@ class EmvViewModel : BaseViewModel() {
                 logBuilder.append("\ncAPDU: ")
                 logBuilder.append(apdu)
                 val recordNumber = apdu.substringAfter("00B2").substring(0, 2).toInt(16)
-                val sfi = ""
                 logBuilder.append("\nRecord number: $recordNumber, ")
-                logBuilder.append("Short File Identifier (SFI): $sfi")
+                currentTransactionData["94"]?.also { afl ->
+                    val locators = afl.chunked(8)
+                    val cla = "00"
+                    val ins = "B2"
+                    val le = "00"
+                    locators.forEach {
+                        val sfi = it.take(2)
+                        val p2 = ("${sfi.hexToBinary().take(5)}000".toInt(2) + "0100".toInt(2)).toHexString()
+                        val firstRecord = it.substring(2, 4).toInt(16)
+                        val lastRecord = it.substring(4, 6).toInt(16)
+                        var odaLabel = it.substring(7).toInt(16)
+                        for (i in firstRecord..lastRecord) {
+                            val p1 = String.format("%02d", i)
+                            val cmd = "$cla$ins$p1$p2$le"
+                            if (cmd == apdu) {
+                                logBuilder.append("Short File Identifier (SFI): $sfi")
+                                if (odaLabel > 0) {
+                                    logBuilder.append(", ODA data: true")
+                                    odaLabel--
+                                }
+                            }
+                        }
+                    }
+                }
+                currentCAPDU = apdu
             }
 
             apdu.startsWith("80AE") -> {
@@ -194,26 +254,54 @@ class EmvViewModel : BaseViewModel() {
                 logBuilder.append("\ncAPDU: ")
                 logBuilder.append(apdu)
                 logBuilder.append(processCDOLFromGenAC(apdu))
+                currentCAPDU = apdu
             }
 
             apdu == "0084000000" -> {
                 logBuilder.append("Get Challenge")
                 logBuilder.append("\ncAPDU: ")
                 logBuilder.append(apdu)
+                currentCAPDU = apdu
             }
 
             else -> {
                 logBuilder.append("\nrAPDU: ")
                 logBuilder.append("$apdu\n")
                 if (apdu.endsWith(APDU_RESPONSE_CODE_OK)) {
-                    LogPanelUtil.safeExecute(false) { gsonBeautifier.toJson(TlvUtil.decodeTLV(apdu)) }.also { jsonString ->
-                        if (jsonString.isNotEmpty()) {
-                            saveRequiredTransactionData(jsonString, "9F38")
-                            saveRequiredTransactionData(jsonString, "8C")
+                    try {
+                        gsonBeautifier.toJson(TlvUtil.decodeTLV(apdu)).also { jsonString ->
                             logBuilder.append(jsonString)
-                        } else {
-                            logBuilder.append("Not in ASN.1")
+                            when {
+                                currentCAPDU.startsWith("80A80000") -> {
+                                    saveRequiredTransactionData(jsonString, "82")
+                                    saveRequiredTransactionData(jsonString, "94")
+                                    if (apdu.startsWith("80")) {
+                                        logBuilder.append("\n[82]: ${currentTransactionData["82"]}")
+                                        logBuilder.append("\n[94]: ${currentTransactionData["94"]}")
+                                    }
+                                }
+
+                                currentCAPDU.startsWith("80AE") -> {
+                                    saveRequiredTransactionData(jsonString, "9F10")
+                                    saveRequiredTransactionData(jsonString, "9F26")
+                                    saveRequiredTransactionData(jsonString, "9F27")
+                                    saveRequiredTransactionData(jsonString, "9F36")
+                                    if (apdu.startsWith("80")) {
+                                        logBuilder.append("\n[9F10]: ${currentTransactionData["9F10"]}")
+                                        logBuilder.append("\n[9F26]: ${currentTransactionData["9F26"]}")
+                                        logBuilder.append("\n[9F27]: ${currentTransactionData["9F27"]}")
+                                        logBuilder.append("\n[9F36]: ${currentTransactionData["9F36"]}")
+                                    }
+                                }
+
+                                else -> {
+                                    saveRequiredTransactionData(jsonString, "9F38")
+                                    saveRequiredTransactionData(jsonString, "8C")
+                                }
+                            }
                         }
+                    } catch (ex: Exception) {
+                        logBuilder.append("Not in ASN.1")
                     }
                 } else {
                     logBuilder.append("Command not supported")

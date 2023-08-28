@@ -460,16 +460,18 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                         val capkList = PreferencesUtil.getCapkData(requireContext().applicationContext)
                         capkList.data?.find { it.index == capkIdx }
                     }
-                    capk ?: throw Exception("Invalid ICC data [8F]")
-                    capk.exponent.also { logBuilder.append("CAPK exponent: $it\n") }
-                    capk.modulus.also { logBuilder.append("CAPK modulus: $it\n") }
+                    capk?.also {
+                        it.exponent.also { logBuilder.append("CAPK exponent: $it\n") }
+                        it.modulus.also { logBuilder.append("CAPK modulus: $it\n") }
+                        val issuerPKCert = data["90"]?.also { logBuilder.append("Issuer Public Key Certificate [90]: $it\n") } ?: ""
+                        data["92"]?.also { if (it.isNotEmpty()) logBuilder.append("Issuer Public Key Remainder [92]: $it\n") }
 
-                    val issuerPKCert = data["90"]?.also { logBuilder.append("Issuer Public Key Certificate [90]: $it\n") } ?: ""
-                    data["92"]?.also { if (it.isNotEmpty()) logBuilder.append("Issuer Public Key Remainder [92]: $it\n") }
-
-                    val recoveredData = Encryption.doRSA(issuerPKCert, capk.exponent, capk.modulus)
-                    logBuilder.append("Recovered Data: \n")
-                    logBuilder.append(viewModel.inspectIssuerPKPlainCert(recoveredData))
+                        val recoveredData = Encryption.doRSA(issuerPKCert, capk.exponent, capk.modulus)
+                        logBuilder.append("Recovered Data: \n")
+                        logBuilder.append(viewModel.inspectIssuerPKPlainCert(recoveredData))
+                    } ?: run {
+                        logBuilder.append("Invalid ICC data [8F]\n")
+                    }
 
                     val issuerPK = LogPanelUtil.safeExecute(onFail = { logBuilder.append("Error: ${it.message ?: it.toString()}\n") },
                         task = { ODAUtil.retrieveIssuerPK(requireContext().applicationContext, data) })

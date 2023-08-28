@@ -320,8 +320,18 @@ class EmvViewModel : BaseViewModel() {
 
     fun inspectIssuerPKPlainCert(cert: String): String {
         val logBuilder = StringBuilder()
-        logBuilder.append("${cert.substring(0, 2)} [Data Header]\n")
-        logBuilder.append("${cert.substring(2, 4)} [Data Format]\n")
+        logBuilder.append("[Data Header]: ${cert.substring(0, 2)}\n")
+        logBuilder.append("[Data Format]: ${cert.substring(2, 4)}\n")
+        logBuilder.append("[Issuer Identifier]: ${cert.substring(4, 12)}\n")
+        logBuilder.append("[Certificate Expiration Date]: ${cert.substring(12, 16)}\n")
+        logBuilder.append("[Certificate Serial Number]: ${cert.substring(16, 22)}\n")
+        logBuilder.append("[Hash Algorithm Indicator]: ${cert.substring(22, 24)}\n")
+        logBuilder.append("[Issuer Public Key Algorithm Indicator]: ${cert.substring(24, 26)}\n")
+        logBuilder.append("[Issuer Public Key Length]: ${cert.substring(26, 28)}\n")
+        logBuilder.append("[Issuer Public Key Exponent Length]: ${cert.substring(28, 30)}\n")
+        logBuilder.append("[Issuer Public Key]: ${cert.substring(30, cert.length - 42)}\n")
+        logBuilder.append("[Hash Result]: ${cert.substring(cert.length - 42)}\n")
+        logBuilder.append("[Data Trailer]: ${cert.substring(cert.length - 2)}\n")
         return logBuilder.toString()
     }
 }

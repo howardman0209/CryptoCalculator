@@ -1,5 +1,6 @@
 package com.crypto.calculator.ui.base
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -29,6 +30,7 @@ import com.crypto.calculator.R
 import com.crypto.calculator.databinding.DialogContentEditConfigJsonBinding
 import com.crypto.calculator.databinding.DialogContentSingleInputBinding
 import com.crypto.calculator.extension.flatten
+import com.crypto.calculator.extension.hideKeyboard
 import com.crypto.calculator.extension.requireManageFilePermission
 import com.crypto.calculator.extension.toSerializedMap
 import com.crypto.calculator.model.PermissionRequest
@@ -288,6 +290,10 @@ abstract class BaseActivity : LocalizationActivity() {
         }
     }
 
+    fun Activity.hideKeyboard() {
+        hideKeyboard(currentFocus ?: View(this))
+    }
+
     fun singleInputDialog(context: Context, title: String?, fieldName: String, fieldValue: String? = null, onConfirmCallBack: (editText: String) -> Unit) {
         val dialogBinding: DialogContentSingleInputBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_content_single_input, null, false)
         dialogBinding.tiInputBox1.hint = fieldName
@@ -300,9 +306,11 @@ abstract class BaseActivity : LocalizationActivity() {
             .setPositiveButton(R.string.button_confirm) { _, _ ->
                 onConfirmCallBack(dialogBinding.tiInputBox1.editText?.text.toString())
                 Log.d(TAG, "confirm")
+                context.hideKeyboard(dialogBinding.root)
             }
             .setNegativeButton(R.string.button_cancel) { _, _ ->
                 Log.d(TAG, "cancel")
+                context.hideKeyboard(dialogBinding.root)
             }
             .show()
     }

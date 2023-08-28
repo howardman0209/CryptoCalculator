@@ -17,6 +17,7 @@ import com.crypto.calculator.extension.requireDefaultPaymentServicePermission
 import com.crypto.calculator.extension.toDataClass
 import com.crypto.calculator.model.AcDOL
 import com.crypto.calculator.model.DataFormat
+import com.crypto.calculator.model.OdaDOL
 import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.Tool
@@ -31,6 +32,7 @@ import com.crypto.calculator.util.AssetsUtil
 import com.crypto.calculator.util.EMVUtils
 import com.crypto.calculator.util.Encryption
 import com.crypto.calculator.util.LogPanelUtil
+import com.crypto.calculator.util.ODAUtil
 import com.crypto.calculator.util.PreferencesUtil
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.assetsPathCardVisa
@@ -92,6 +94,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             Tool.CARD_SIMULATOR -> cardSimulator()
             Tool.EMV_KERNEL -> emvKernel()
             Tool.ARQC -> arqcCalculator()
+            Tool.ODA -> odaCalculator()
             else -> {}
         }
     }
@@ -298,7 +301,10 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
         var data = hashMapOf<String, String>()
         var tagList = ""
-        binding.arqcContainer.visibility = View.VISIBLE
+
+        binding.tilCondition1.visibility = View.VISIBLE
+        binding.operationBtn3.visibility = View.VISIBLE
+
         binding.tilCondition1.hint = "Card Type"
         val cardTypeList = listOf(
             PaymentMethod.VISA,
@@ -332,7 +338,6 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
         binding.operationBtn3.visibility = View.VISIBLE
         binding.operationBtn3.text = getString(R.string.label_data_object_list)
-        binding.operationBtn3.isEnabled = true
         binding.operationBtn3.setOnClickListener {
             editConfigJson(requireContext(), it, AcDOL(data), true,
                 neutralBtn = getString(R.string.button_reset),
@@ -388,6 +393,106 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         }
     }
 
+    private fun odaCalculator() {
+        fun initData(tagList: String = "8F90929F329F469F479F489F4A"): HashMap<String, String> {
+            val sb = StringBuilder()
+            sb.append(tagList)
+            val data = hashMapOf<String, String>()
+            TlvUtil.readTagList(sb.toString()).forEach {
+                data[it] = ""
+            }
+            return data
+        }
+
+        var data = hashMapOf<String, String>()
+        var selected: Int? = null
+        val operationList = listOf("Retrieve Issuer Public Key", "Retrieve ICC Public Key", "Verify Signed Dynamic Authentication Data")
+        binding.tilCondition2.visibility = View.VISIBLE
+        binding.tilCondition2.hint = "Operation"
+        binding.autoTvCondition2.setAdapter(
+            DropDownMenuAdapter(
+                requireContext(),
+                R.layout.view_drop_down_menu_item,
+                operationList,
+            )
+        )
+        binding.autoTvCondition2.setOnItemClickListener { _, _, i, _ ->
+            selected = i
+            val tagList = when (i) {
+                0 -> "8F90929F32"
+                1 -> "8F90929F329F469F479F489F4A"
+                2 -> ""
+                else -> ""
+            }
+            data = initData(tagList)
+        }
+
+        binding.operationBtn4.visibility = View.VISIBLE
+        binding.operationBtn4.text = getString(R.string.label_data_object_list)
+        binding.operationBtn4.setOnClickListener {
+            editConfigJson(requireContext(), it, OdaDOL(data), true,
+                neutralBtn = getString(R.string.button_reset),
+                onNeutralBtnClick = {
+                    val tagList = when (selected) {
+                        0 -> "8F90929F32"
+                        1 -> "8F90929F329F469F479F489F4A"
+                        2 -> ""
+                        else -> ""
+                    }
+                    data = initData(tagList)
+                }
+            ) { editedDOL ->
+                Log.d("arqcCalculator", "editedDOL: $editedDOL")
+                data = editedDOL.data
+            }
+        }
+
+        binding.operationBtn1.visibility = View.VISIBLE
+        binding.operationBtn1.text = getString(R.string.label_operation_compute)
+        binding.operationBtn1.isEnabled = true
+        binding.operationBtn1.setOnClickListener {
+            val logBuilder = StringBuilder()
+            when (selected) {
+                0 -> {
+                    logBuilder.append("ODA calculator - ${operationList[0]}:\n")
+                    val capk = data["8F"]?.let { capkIdx ->
+                        logBuilder.append("CAPK index [8F]: $capkIdx\n")
+                        val capkList = PreferencesUtil.getCapkData(requireContext().applicationContext)
+                        capkList.data?.find { it.index == capkIdx }
+                    }
+                    capk ?: throw Exception("Invalid ICC data [8F]")
+                    capk.exponent.also { logBuilder.append("CAPK exponent: $it\n") }
+                    capk.modulus.also { logBuilder.append("CAPK modulus: $it\n") }
+
+                    val issuerPKCert = data["90"]?.also { logBuilder.append("Issuer Public Key Certificate [90]: $it\n") } ?: ""
+                    data["92"]?.also { if (it.isNotEmpty()) logBuilder.append("Issuer Public Key Remainder [92]: $it\n") }
+
+                    val recoveredData = Encryption.doRSA(issuerPKCert, capk.exponent, capk.modulus)
+                    logBuilder.append("Recovered Data: \n")
+                    logBuilder.append(viewModel.inspectIssuerPKPlainCert(recoveredData))
+
+                    val issuerPK = LogPanelUtil.safeExecute(onFail = { logBuilder.append("Error: ${it.message ?: it.toString()}\n") },
+                        task = { ODAUtil.retrieveIssuerPK(requireContext().applicationContext, data) })
+                    Log.d("odaCalculator", "result: $issuerPK")
+                    logBuilder.append("Result: Issuer Public Key\n")
+                    issuerPK?.exponent?.also { logBuilder.append("exponent: $it\n") }
+                    issuerPK?.modulus?.also { logBuilder.append("modulus: $it\n") }
+                    LogPanelUtil.printLog(logBuilder.toString())
+                }
+
+                1 -> {
+
+                }
+
+                2 -> {
+
+                }
+
+                else -> {}
+            }
+        }
+    }
+
     private fun resetLayout() {
         viewModel.finishCardReader()
         binding.tvPrompt.visibility = View.GONE
@@ -405,6 +510,9 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.operationBtn3.visibility = View.GONE
         binding.operationBtn3.setOnClickListener(null)
         binding.operationBtn3.isEnabled = false
+        binding.operationBtn4.visibility = View.GONE
+        binding.operationBtn4.setOnClickListener(null)
+        binding.operationBtn4.isEnabled = false
 
         binding.cardContainer.visibility = View.GONE
 
@@ -427,9 +535,13 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         EMVKernel.apdu.removeObservers(viewLifecycleOwner)
         viewModel.cardReader?.status?.removeObservers(viewLifecycleOwner)
 
-        binding.arqcContainer.visibility = View.GONE
+        binding.tilCondition1.visibility = View.GONE
         binding.autoTvCondition1.onItemClickListener = null
         binding.autoTvCondition1.text.clear()
+
+        binding.tilCondition2.visibility = View.GONE
+        binding.autoTvCondition2.onItemClickListener = null
+        binding.autoTvCondition2.text.clear()
 
         viewModel.currentTransactionData.clear()
     }

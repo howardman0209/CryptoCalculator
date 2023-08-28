@@ -137,46 +137,64 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/arqcContainer"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCondition1"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:focusableInTouchMode="true"
-                android:gravity="end"
-                android:orientation="vertical"
-                android:visibility="gone"
+                android:layout_margin="@dimen/space_default"
+                android:enabled="@{!viewModel.inputData1.empty}"
+                tools:hint="condition1"
                 tools:visibility="visible">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilCondition1"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:layout_width="wrap_content"
+                <AutoCompleteTextView
+                    android:id="@+id/autoTvCondition1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/space_default"
-                    android:enabled="@{!viewModel.inputData1.empty}"
-                    tools:hint="condition1"
-                    tools:visibility="visible">
+                    android:inputType="none"
+                    tools:ignore="LabelFor" />
 
-                    <AutoCompleteTextView
-                        android:id="@+id/autoTvCondition1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="none"
-                        tools:ignore="LabelFor" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCondition2"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/space_default"
+                tools:hint="condition1"
+                tools:visibility="visible">
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/operationBtn3"
-                    style="@style/Widget.Crypto.Calculator.Button.TextButton.Secondary"
-                    android:layout_width="wrap_content"
+                <AutoCompleteTextView
+                    android:id="@+id/autoTvCondition2"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="@dimen/space_default"
-                    android:enabled="@{!viewModel.inputData1.empty &amp;&amp; !autoTvCondition1.text.toString().empty}"
-                    android:visibility="gone"
-                    tools:text="button 3"
-                    tools:visibility="visible" />
-            </LinearLayout>
+                    android:inputType="none"
+                    tools:ignore="LabelFor" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/operationBtn3"
+                style="@style/Widget.Crypto.Calculator.Button.TextButton.Secondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_default"
+                android:enabled="@{!viewModel.inputData1.empty &amp;&amp; !autoTvCondition1.text.toString().empty}"
+                android:visibility="gone"
+                tools:text="button 3"
+                tools:visibility="visible" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/operationBtn4"
+                style="@style/Widget.Crypto.Calculator.Button.TextButton.Secondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_default"
+                android:enabled="@{!autoTvCondition2.text.toString().empty}"
+                android:visibility="gone"
+                tools:text="button 4"
+                tools:visibility="visible" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -207,7 +225,6 @@
                     android:visibility="gone"
                     tools:text="button 2"
                     tools:visibility="visible" />
-
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

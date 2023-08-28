@@ -286,6 +286,12 @@ class EmvViewModel : BaseViewModel() {
                                     saveRequiredTransactionData(jsonString, "9F26")
                                     saveRequiredTransactionData(jsonString, "9F27")
                                     saveRequiredTransactionData(jsonString, "9F36")
+                                    saveRequiredTransactionData(jsonString, "9F4B")
+
+                                    currentTransactionData["9F4B"]?.also { sdad ->
+                                        Log.d("getInspectLog", "Signed Dynamic Application Data: $sdad")
+                                    }
+
                                     if (apdu.startsWith("80")) {
                                         logBuilder.append("\n[9F10]: ${currentTransactionData["9F10"]}")
                                         logBuilder.append("\n[9F26]: ${currentTransactionData["9F26"]}")
@@ -309,6 +315,13 @@ class EmvViewModel : BaseViewModel() {
                 logBuilder.append("\n")
             }
         }
+        return logBuilder.toString()
+    }
+
+    fun inspectIssuerPKPlainCert(cert: String): String {
+        val logBuilder = StringBuilder()
+        logBuilder.append("${cert.substring(0, 2)} [Data Header]\n")
+        logBuilder.append("${cert.substring(2, 4)} [Data Format]\n")
         return logBuilder.toString()
     }
 }

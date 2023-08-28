@@ -11,6 +11,7 @@ import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
 import androidx.fragment.app.Fragment
 import com.crypto.calculator.R
+import com.crypto.calculator.extension.hideKeyboard
 
 abstract class BaseFragment : Fragment() {
     protected lateinit var baseActivity: BaseActivity
@@ -95,6 +96,10 @@ abstract class BaseFragment : Fragment() {
             }
             commit()
         }
+    }
+
+    fun Fragment.hideKeyboard() {
+        view?.let { activity?.hideKeyboard(it) }
     }
 
     fun copyTextToClipboard(context: Context, copyText: String?, label: String? = null) {

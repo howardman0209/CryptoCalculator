@@ -2,6 +2,7 @@ package com.crypto.calculator.extension
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import android.content.res.ColorStateList
@@ -9,6 +10,8 @@ import android.graphics.drawable.Drawable
 import android.location.Location
 import android.util.Log
 import android.util.TypedValue
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.annotation.AttrRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
@@ -57,4 +60,9 @@ fun Context.getLocation(callback: (Location?) -> Unit) {
             callback.invoke(location)
         }
     }
+}
+
+fun Context.hideKeyboard(view: View) {
+    val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }

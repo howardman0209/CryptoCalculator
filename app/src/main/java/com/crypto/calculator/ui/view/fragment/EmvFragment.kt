@@ -461,14 +461,14 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                         capkList.data?.find { it.index == capkIdx }
                     }
                     capk?.also {
-                        it.exponent.also { logBuilder.append("CAPK exponent: $it\n") }
-                        it.modulus.also { logBuilder.append("CAPK modulus: $it\n") }
-                        val issuerPKCert = data["90"]?.also { logBuilder.append("Issuer Public Key Certificate [90]: $it\n") } ?: ""
-                        data["92"]?.also { if (it.isNotEmpty()) logBuilder.append("Issuer Public Key Remainder [92]: $it\n") }
+                        it.exponent.also { e -> logBuilder.append("CAPK exponent: $e\n") }
+                        it.modulus.also { modulus -> logBuilder.append("CAPK modulus: $modulus\n") }
+                        val issuerPKCert = data["90"]?.also { cert -> logBuilder.append("Issuer Public Key Certificate [90]: $cert\n") } ?: ""
+                        data["92"]?.also { remainder -> if (remainder.isNotEmpty()) logBuilder.append("Issuer Public Key Remainder [92]: $remainder\n") }
 
                         val recoveredData = Encryption.doRSA(issuerPKCert, capk.exponent, capk.modulus)
                         logBuilder.append("Recovered Data: \n")
-                        logBuilder.append(viewModel.inspectIssuerPKPlainCert(recoveredData))
+                        logBuilder.append(viewModel.inspectIssuerPKPlainCert(recoveredData, data))
                     } ?: run {
                         logBuilder.append("Invalid ICC data [8F]\n")
                     }
@@ -476,9 +476,11 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                     val issuerPK = LogPanelUtil.safeExecute(onFail = { logBuilder.append("Error: ${it.message ?: it.toString()}\n") },
                         task = { ODAUtil.retrieveIssuerPK(requireContext().applicationContext, data) })
                     Log.d("odaCalculator", "result: $issuerPK")
-                    logBuilder.append("Result: Issuer Public Key\n")
-                    issuerPK?.exponent?.also { logBuilder.append("exponent: $it\n") }
-                    issuerPK?.modulus?.also { logBuilder.append("modulus: $it\n") }
+                    issuerPK?.also {
+                        logBuilder.append("Result: Issuer Public Key\n")
+                        it.exponent?.also { e -> logBuilder.append("exponent: $e\n") }
+                        it.modulus?.also { modulus -> logBuilder.append("modulus: $modulus\n") }
+                    }
                     LogPanelUtil.printLog(logBuilder.toString())
                 }
 

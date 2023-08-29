@@ -19,6 +19,7 @@ import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.ui.base.BaseViewModel
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
 import com.crypto.calculator.util.InputFilterUtil
+import com.crypto.calculator.util.ODAUtil
 import com.crypto.calculator.util.TlvUtil
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -318,20 +319,22 @@ class EmvViewModel : BaseViewModel() {
         return logBuilder.toString()
     }
 
-    fun inspectIssuerPKPlainCert(cert: String): String {
+    fun inspectIssuerPKPlainCert(cert: String, data: HashMap<String, String>): String {
         val logBuilder = StringBuilder()
-        logBuilder.append("[Data Header]: ${cert.substring(0, 2)}\n")
-        logBuilder.append("[Data Format]: ${cert.substring(2, 4)}\n")
-        logBuilder.append("[Issuer Identifier]: ${cert.substring(4, 12)}\n")
-        logBuilder.append("[Certificate Expiration Date]: ${cert.substring(12, 16)}\n")
-        logBuilder.append("[Certificate Serial Number]: ${cert.substring(16, 22)}\n")
-        logBuilder.append("[Hash Algorithm Indicator]: ${cert.substring(22, 24)}\n")
-        logBuilder.append("[Issuer Public Key Algorithm Indicator]: ${cert.substring(24, 26)}\n")
-        logBuilder.append("[Issuer Public Key Length]: ${cert.substring(26, 28)}\n")
-        logBuilder.append("[Issuer Public Key Exponent Length]: ${cert.substring(28, 30)}\n")
-        logBuilder.append("[Issuer Public Key]: ${cert.substring(30, cert.length - 42)}\n")
-        logBuilder.append("[Hash Result]: ${cert.substring(cert.length - 42)}\n")
-        logBuilder.append("[Data Trailer]: ${cert.substring(cert.length - 2)}\n")
+        cert.substring(0, 2).also { logBuilder.append("${if (it == "6A") "✓" else "✗"} [Data Header]: $it\n") }
+        cert.substring(2, 4).also { logBuilder.append("${if (it == "02") "✓" else "✗"} [Data Format]: $it\n") }
+        cert.substring(4, 12).also { logBuilder.append("- [Issuer Identifier]: $it\n") }
+        cert.substring(12, 16).also { logBuilder.append("- [Certificate Expiration Date]: $it\n") }
+        cert.substring(16, 22).also { logBuilder.append("- [Certificate Serial Number]: $it\n") }
+        cert.substring(22, 24).also { logBuilder.append("- [Hash Algorithm Indicator]: $it\n") }
+        cert.substring(24, 26).also { logBuilder.append("- [Issuer Public Key Algorithm Indicator]: $it\n") }
+        cert.substring(26, 28).also { logBuilder.append("- [Issuer Public Key Length]: $it\n") }
+        cert.substring(28, 30).also { logBuilder.append("${if (it == (data["9F32"]?.length?.div(2))?.toHexString()) "✓" else "✗"} [Issuer Public Key Exponent Length]: $it\n") }
+        cert.substring(30, cert.length - 42).also { logBuilder.append("- [Issuer Public Key]: $it\n") }
+        cert.substring(cert.length - 42, cert.length - 2).also {
+            logBuilder.append("${if (it == ODAUtil.getHash("${cert.substring(2, cert.length - 42)}${data["92"] ?: ""}${data["9F32"] ?: ""}")) "✓" else "✗"} [Hash Result]: $it\n")
+        }
+        cert.substring(cert.length - 2).also { logBuilder.append("${if (it == "BC") "✓" else "✗"} [Data Trailer]: $it\n") }
         return logBuilder.toString()
     }
 }

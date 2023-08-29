@@ -10,7 +10,7 @@ import com.crypto.calculator.model.getHexTag
 import java.security.MessageDigest
 
 object ODAUtil {
-    private fun getHash(plaintext: String): String {
+    fun getHash(plaintext: String): String {
         val md = MessageDigest.getInstance("SHA-1")
         val message = plaintext.hexToByteArray()
         val cipher = md.digest(message).toHexString().uppercase()
@@ -42,6 +42,9 @@ object ODAUtil {
         Log.d("ODAUtil", "decryptedIssuerPKCert: $decryptedIssuerPKCert")
         verifyIssuerPKCert(decryptedIssuerPKCert, data).also {
             Log.d("ODAUtil", "verifyIssuerPKCert SUCCESS: $it")
+            if(!it){
+               throw Exception("Issuer Public Key Cert verification fail")
+            }
         }
 
         val length = decryptedIssuerPKCert.substring(26, 28).toInt(16) * 2

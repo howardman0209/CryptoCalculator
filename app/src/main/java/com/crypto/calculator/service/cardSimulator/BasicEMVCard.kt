@@ -38,6 +38,7 @@ abstract class BasicEMVCard(private val iccData: HashMap<String, String>) {
 
     open fun processTerminalDataFromGPO(cAPDU: String) {
         val data = cAPDU.substring(14).dropLast(2)
+        transactionData += data
         val pdolMap = iccData["9F38"]?.let { TlvUtil.readDOL(it) } ?: throw Exception("INVALID_ICC_DATA [9F38]")
         var cursor = 0
         pdolMap.forEach {
@@ -49,7 +50,7 @@ abstract class BasicEMVCard(private val iccData: HashMap<String, String>) {
 
     open fun processTerminalDataFromGenAC(cAPDU: String) {
         val data = cAPDU.substring(10).dropLast(2)
-        transactionData = data
+        transactionData += data
         val cdolMap = iccData["8C"]?.let { TlvUtil.readDOL(it) } ?: throw Exception("INVALID_ICC_DATA [8C]")
         var cursor = 0
         cdolMap.forEach {

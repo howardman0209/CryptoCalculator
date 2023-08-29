@@ -5,8 +5,6 @@ import android.util.Log
 import com.crypto.calculator.extension.hexToByteArray
 import com.crypto.calculator.extension.toHexString
 import com.crypto.calculator.model.EMVPublicKey
-import com.crypto.calculator.model.EMVTags
-import com.crypto.calculator.model.getHexTag
 import java.security.MessageDigest
 
 object ODAUtil {
@@ -16,12 +14,6 @@ object ODAUtil {
         val cipher = md.digest(message).toHexString().uppercase()
         Log.d("ODAUtil", "plaintext: $plaintext -> cipher: $cipher")
         return cipher
-    }
-
-    fun getStaticAuthData(odaData: String = "", aip: String?): String {
-        val staticAuthData = "$odaData${aip ?: ""}"
-        Log.d("ODAUtil", "staticAuthData: $staticAuthData")
-        return staticAuthData
     }
 
     //    required data [8F, 90, 92, 9F32]
@@ -90,8 +82,18 @@ object ODAUtil {
         Log.d("ODAUtil", "hash: $hash")
         val iccPKRemainder = data["9F48"] ?: ""
         val iccPKExponent = data["9F47"] ?: ""
-        val staticAuthData = getStaticAuthData(staticData, data["82"])
-        val inputData = "${cert.substring(2, cert.length - 42)}${iccPKRemainder}${iccPKExponent}$staticAuthData"
+        val inputData = "${cert.substring(2, cert.length - 42)}${iccPKRemainder}${iccPKExponent}$staticData"
         return getHash(inputData) == hash
+    }
+
+    fun verifySDAD(cert: String, dynamicData: String?): Boolean {
+        if (!Regex("^6A(05|95).*", setOf(RegexOption.IGNORE_CASE)).matches(cert)) return false
+        if (!cert.endsWith("BC", ignoreCase = true)) return false
+        val hash = cert.substring(cert.length - 42, cert.length - 2)
+        Log.d("verifySDAD", "hash: $hash")
+        return dynamicData?.let {
+            val inputData = "${cert.substring(2, cert.length - 42)}$it"
+            getHash(inputData) == hash
+        } ?: false
     }
 }

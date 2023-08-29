@@ -334,7 +334,7 @@ class EmvViewModel : BaseViewModel() {
         cert.substring(cert.length - 42, cert.length - 2).also {
             logBuilder.append("${if (it == ODAUtil.getHash("${cert.substring(2, cert.length - 42)}${data["92"] ?: ""}${data["9F32"] ?: ""}")) "✓" else "✗"} [Hash Result]: $it\n")
         }
-        cert.substring(cert.length - 2).also { logBuilder.append("${if (it == "BC") "✓" else "✗"} [Data Trailer]: $it\n") }
+        cert.substring(cert.length - 2).also { logBuilder.append("${if (it == "BC") "✓" else "✗"} [Data Trailer]: $it") }
         return logBuilder.toString()
     }
 
@@ -351,9 +351,35 @@ class EmvViewModel : BaseViewModel() {
         cert.substring(40, 42).also { logBuilder.append("${if (it == (data["9F47"]?.length?.div(2))?.toHexString()) "✓" else "✗"} [ICC Public Key Exponent Length]: $it\n") }
         cert.substring(42, cert.length - 42).also { logBuilder.append("- [ICC Public Key]: $it\n") }
         cert.substring(cert.length - 42, cert.length - 2).also {
-            logBuilder.append("${if (it == ODAUtil.getHash("${cert.substring(2, cert.length - 42)}${data["9F48"] ?: ""}${data["9F47"] ?: ""}${ODAUtil.getStaticAuthData(data["staticData"] ?: "", data["82"])}")) "✓" else "✗"} [Hash Result]: $it\n")
+            logBuilder.append("${if (it == ODAUtil.getHash("${cert.substring(2, cert.length - 42)}${data["9F48"] ?: ""}${data["9F47"] ?: ""}${data["staticData"] ?: ""}")) "✓" else "✗"} [Hash Result]: $it\n")
         }
-        cert.substring(cert.length - 2).also { logBuilder.append("${if (it == "BC") "✓" else "✗"} [Data Trailer]: $it\n") }
+        cert.substring(cert.length - 2).also { logBuilder.append("${if (it == "BC") "✓" else "✗"} [Data Trailer]: $it") }
+        return logBuilder.toString()
+    }
+
+    fun inspectSignedDynamicApplicationData(sdad: String, data: HashMap<String, String>): String {
+        val logBuilder = StringBuilder()
+        val format = sdad.substring(2, 4)
+        sdad.substring(0, 2).also { logBuilder.append("${if (it == "6A") "✓" else "✗"} [Data Header]: $it\n") }
+        sdad.substring(2, 4).also { logBuilder.append("${if (it == "05" || it == "95") "✓" else "✗"} [Data Format]: $it\n") }
+        sdad.substring(4, 6).also { logBuilder.append("- [Hash Algorithm Indicator]: $it\n") }
+        sdad.substring(6, 8).also { logBuilder.append("- [ICC Dynamic Data length]: $it\n") }
+        val dynamicDataLength = sdad.substring(6, 8).toInt(16) * 2
+        val dynamicData = sdad.substring(8, 8 + dynamicDataLength)
+        sdad.substring(8, 8 + dynamicDataLength).also { logBuilder.append("- [ICC Dynamic Data]: $it\n") }
+        if (format == "05") {
+            dynamicData.substring(0, 2).also { logBuilder.append("--- [ICC Dynamic Number Length]: $it\n") }
+            val dynamicNumberLength = dynamicData.substring(0, 2).toInt(16) * 2
+            dynamicData.substring(2, 2 + dynamicNumberLength).also { logBuilder.append("--- [ICC Dynamic Number]: $it\n") }
+            dynamicData.substring(2 + dynamicNumberLength, 4 + dynamicNumberLength).also { logBuilder.append("--- [9F27]: $it\n") }
+            dynamicData.substring(4 + dynamicNumberLength, 20 + dynamicNumberLength).also { logBuilder.append("--- [9F26]: $it\n") }
+            dynamicData.substring(20 + dynamicNumberLength).also { logBuilder.append("--- [Transaction Data Hash Code]: $it\n") }
+        }
+        sdad.substring(8 + dynamicDataLength, sdad.length - 42).also { logBuilder.append("- [Pad Pattern]: $it\n") }
+        sdad.substring(sdad.length - 42, sdad.length - 2).also {
+            logBuilder.append("${if (it == ODAUtil.getHash("${sdad.substring(2, sdad.length - 42)}${data["dynamicData"] ?: ""}")) "✓" else "✗"} [Hash Result]: $it\n")
+        }
+        sdad.substring(sdad.length - 2).also { logBuilder.append("${if (it == "BC") "✓" else "✗"} [Data Trailer]: $it") }
         return logBuilder.toString()
     }
 }

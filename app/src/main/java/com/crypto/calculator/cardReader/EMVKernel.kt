@@ -230,9 +230,11 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
     override fun generateAC(isoDep: IsoDep) {
         val cla = "80"
         val ins = "AE"
+        val isTerminalSupportCDA = getTerminalTag(EMVTags.TERMINAL_CAPABILITIES.getHexTag())?.takeLast(1)?.hexToBinary()?.get(0) == '1'
+        Log.d("generateAC", "isTerminalSupportCDA: $isTerminalSupportCDA")
         val isCardSupportCDA = getICCTag(EMVTags.APPLICATION_INTERCHANGE_PROFILE.getHexTag())?.hexToBinary()?.get(7) == '1'
         // 00:(AAC), 40:(TC) (offline transaction), 80:(ARQC)
-        val p1 = if (isCardSupportCDA) ("80".toInt(16) + "10000".toInt(2)).toHexString() else "80"
+        val p1 = if (isTerminalSupportCDA && isCardSupportCDA) ("80".toInt(16) + "10000".toInt(2)).toHexString() else "80"
         val p2 = "00"
 
         getICCTag(EMVTags.CDOL.getHexTag())?.also { cdol ->

@@ -7,7 +7,9 @@ import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
 import android.nfc.cardemulation.CardEmulation
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.crypto.calculator.handler.Event
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.service.cardSimulator.delegate.AmexDelegate
 import com.crypto.calculator.service.cardSimulator.delegate.DiscoverDelegate
@@ -28,7 +30,10 @@ import kotlinx.coroutines.launch
 
 class CreditCardService : BasicEMVService() {
     companion object {
-        val apdu: MutableLiveData<String?> = MutableLiveData()
+        val _apdu = MutableLiveData<Event<String>>()
+        val apdu: LiveData<Event<String>>
+            get() = _apdu
+
         fun requestDefaultPaymentServiceIntent(context: Context): Intent {
             val intent = Intent().apply {
                 action = CardEmulation.ACTION_CHANGE_DEFAULT
@@ -91,14 +96,14 @@ class CreditCardService : BasicEMVService() {
     override fun responseConstructor(cAPDU: String?): String {
         val rAPDU = super.responseConstructor(cAPDU)
         CoroutineScope(Dispatchers.Main).launch {
-            cAPDU?.let { apdu.value = it }
-            apdu.postValue(rAPDU)
+            cAPDU?.also { _apdu.value = Event(it) }
+            _apdu.value = Event(rAPDU)
         }
         return rAPDU
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        apdu.value = null
+        _apdu.value = Event("")
     }
 }

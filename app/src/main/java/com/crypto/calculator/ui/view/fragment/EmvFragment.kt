@@ -111,16 +111,18 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                 binding.ivPaymentMethod.setImageResource(it.getColorIconResId())
             }
 
-            CreditCardService.apdu.observe(viewLifecycleOwner) { apdu ->
-                Log.d("cardSimulator", "apdu: $apdu")
-                apdu?.let {
-                    if (!binding.opt1CheckBox.isChecked) {
-                        LogPanelUtil.printLog(it)
+            CreditCardService.apdu.observe(viewLifecycleOwner) { event ->
+                event.getContentIfNotHandled()?.also { apdu ->
+                    Log.d("cardSimulator", "apdu: $apdu")
+                    if (apdu.isNotEmpty()) {
+                        if (!binding.opt1CheckBox.isChecked) {
+                            LogPanelUtil.printLog(apdu)
+                        } else {
+                            LogPanelUtil.printLog(viewModel.getInspectLog(apdu))
+                        }
                     } else {
-                        LogPanelUtil.printLog(viewModel.getInspectLog(it))
+                        viewModel.currentTransactionData.clear()
                     }
-                } ?: run {
-                    viewModel.currentTransactionData.clear()
                 }
             }
 
@@ -246,15 +248,13 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             viewModel.cardReader?.disconnect()
         }
 
-        EMVKernel.apdu.observe(viewLifecycleOwner) { apdu ->
-            Log.d("emvKernel", "apdu: $apdu")
-            if (!binding.opt1CheckBox.isChecked) {
-                apdu?.let { LogPanelUtil.printLog(it) }
-            } else {
-                apdu?.let {
-                    viewModel.getInspectLog(it)
-                }?.apply {
-                    LogPanelUtil.printLog(this)
+        EMVKernel.apdu.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let { apdu ->
+                Log.d("emvKernel", "apdu: $apdu")
+                if (!binding.opt1CheckBox.isChecked) {
+                    LogPanelUtil.printLog(apdu)
+                } else {
+                    LogPanelUtil.printLog(viewModel.getInspectLog(apdu))
                 }
             }
         }

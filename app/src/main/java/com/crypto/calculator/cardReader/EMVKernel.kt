@@ -3,10 +3,12 @@ package com.crypto.calculator.cardReader
 import android.content.Context
 import android.nfc.tech.IsoDep
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.crypto.calculator.extension.hexToBinary
 import com.crypto.calculator.extension.hexToByteArray
 import com.crypto.calculator.extension.toHexString
+import com.crypto.calculator.handler.Event
 import com.crypto.calculator.model.EMVPublicKey
 import com.crypto.calculator.model.EMVTags
 import com.crypto.calculator.model.PaymentMethod
@@ -29,7 +31,9 @@ import java.security.MessageDigest
 
 class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel(nfcDelegate) {
     companion object {
-        val apdu: MutableLiveData<String?> = MutableLiveData()
+        val _apdu = MutableLiveData<Event<String>>()
+        val apdu: LiveData<Event<String>>
+            get() = _apdu
     }
 
     override fun onCommunication(isoDep: IsoDep) {
@@ -58,8 +62,8 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
         val cAPDU = cmd.uppercase()
         val rAPDU = super.communicator(isoDep, cmd)
         CoroutineScope(Dispatchers.Main).launch {
-            apdu.value = cAPDU
-            apdu.postValue(rAPDU)
+            _apdu.value = Event(cAPDU)
+            _apdu.value = Event(rAPDU)
         }
         return rAPDU
     }

@@ -132,7 +132,7 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
         this.status.postValue(status)
         when (status) {
             BasicCardReader.Companion.CardReaderStatus.SUCCESS -> {
-                EMVKernel.apdu.postValue(null)
+//                EMVKernel._apdu.postValue(null)
             }
 
             else -> {}

@@ -29,8 +29,10 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        LogPanelUtil.logMessage.observe(viewLifecycleOwner) {
-            printLog(it)
+        LogPanelUtil.navigateToDetails.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { message -> // Only proceed if the event has never been handled
+                printLog(message)
+            }
         }
 
         viewModel.warpText.observe(viewLifecycleOwner) {
@@ -113,6 +115,7 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
         super.onPause()
         Log.d("OutputFragment", "onPause")
     }
+
     override fun onDestroy() {
         super.onDestroy()
         Log.d("OutputFragment", "onDestroy")

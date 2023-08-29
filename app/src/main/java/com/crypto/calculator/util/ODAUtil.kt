@@ -18,14 +18,8 @@ object ODAUtil {
         return cipher
     }
 
-    private fun getStaticAuthData(odaData: String = "", data: HashMap<String, String>): String {
-        var dol = ""
-        data[EMVTags.STATIC_DATA_AUTHENTICATION_TAG_LIST.getHexTag()]?.let { tagList ->
-            TlvUtil.readTagList(tagList).forEach { tag ->
-                dol += data[tag] ?: ""
-            }
-        }
-        val staticAuthData = "$odaData$dol"
+    fun getStaticAuthData(odaData: String = "", aip: String?): String {
+        val staticAuthData = "$odaData${aip ?: ""}"
         Log.d("ODAUtil", "staticAuthData: $staticAuthData")
         return staticAuthData
     }
@@ -42,8 +36,8 @@ object ODAUtil {
         Log.d("ODAUtil", "decryptedIssuerPKCert: $decryptedIssuerPKCert")
         verifyIssuerPKCert(decryptedIssuerPKCert, data).also {
             Log.d("ODAUtil", "verifyIssuerPKCert SUCCESS: $it")
-            if(!it){
-               throw Exception("Issuer Public Key Cert verification fail")
+            if (!it) {
+                throw Exception("Issuer Public Key Cert verification fail")
             }
         }
 
@@ -66,16 +60,19 @@ object ODAUtil {
         return getHash(inputData) == hash
     }
 
-    //    required data [8F, 90, 92, 9F32, 9F46, 9F47, 9F48, 9F4A]
-    fun retrieveIccPK(context: Context, odaData: String, data: HashMap<String, String>): EMVPublicKey? {
-        val issuerPK = retrieveIssuerPK(context, data)
+    //    required data [8F, 90, 92, 9F32, 9F46, 9F47, 9F48, 9F4A (82)]
+    fun retrieveIccPK(staticData: String, data: HashMap<String, String>, issuerPK: EMVPublicKey?): EMVPublicKey? {
+        issuerPK ?: throw Exception("Invalid input data [Issuer Public Key]")
         val iccPKCert = data["9F46"] ?: return null
-        issuerPK?.exponent ?: return null
+        issuerPK.exponent ?: return null
         issuerPK.modulus ?: return null
         val decryptedIccPKCert = Encryption.doRSA(iccPKCert, issuerPK.exponent, issuerPK.modulus)
         Log.d("ODAUtil", "decryptedIccPKCert: $decryptedIccPKCert")
-        verifyIccPKCert(decryptedIccPKCert, odaData, data).also {
-            Log.d("ODAUtil", "verifyIssuerPKCert SUCCESS: $it")
+        verifyIccPKCert(decryptedIccPKCert, staticData, data).also {
+            Log.d("ODAUtil", "verifyIccPKCert SUCCESS: $it")
+            if (!it) {
+                throw Exception("ICC Public Key Cert verification fail")
+            }
         }
 
         val length = decryptedIccPKCert.substring(38, 40).toInt(16) * 2
@@ -86,15 +83,14 @@ object ODAUtil {
         return if (iccPKModulus.length == length) EMVPublicKey(iccPKExponent, iccPKModulus) else null
     }
 
-    fun verifyIccPKCert(cert: String, odaData: String, data: HashMap<String, String>): Boolean {
+    fun verifyIccPKCert(cert: String, staticData: String, data: HashMap<String, String>): Boolean {
         if (!cert.startsWith("6A04", ignoreCase = true)) return false
         if (!cert.endsWith("BC", ignoreCase = true)) return false
         val hash = cert.substring(cert.length - 42, cert.length - 2)
         Log.d("ODAUtil", "hash: $hash")
         val iccPKRemainder = data["9F48"] ?: ""
         val iccPKExponent = data["9F47"] ?: ""
-        val staticAuthData = getStaticAuthData(odaData, data)
-        Log.d("ODAUtil", "staticAuthData: $staticAuthData")
+        val staticAuthData = getStaticAuthData(staticData, data["82"])
         val inputData = "${cert.substring(2, cert.length - 42)}${iccPKRemainder}${iccPKExponent}$staticAuthData"
         return getHash(inputData) == hash
     }

@@ -337,4 +337,23 @@ class EmvViewModel : BaseViewModel() {
         cert.substring(cert.length - 2).also { logBuilder.append("${if (it == "BC") "✓" else "✗"} [Data Trailer]: $it\n") }
         return logBuilder.toString()
     }
+
+    fun inspectIccPKPlainCert(cert: String, data: HashMap<String, String>): String {
+        val logBuilder = StringBuilder()
+        cert.substring(0, 2).also { logBuilder.append("${if (it == "6A") "✓" else "✗"} [Data Header]: $it\n") }
+        cert.substring(2, 4).also { logBuilder.append("${if (it == "04") "✓" else "✗"} [Data Format]: $it\n") }
+        cert.substring(4, 24).also { logBuilder.append("- [Issuer Identifier]: $it\n") }
+        cert.substring(24, 28).also { logBuilder.append("- [Certificate Expiration Date]: $it\n") }
+        cert.substring(28, 34).also { logBuilder.append("- [Certificate Serial Number]: $it\n") }
+        cert.substring(34, 36).also { logBuilder.append("- [Hash Algorithm Indicator]: $it\n") }
+        cert.substring(36, 38).also { logBuilder.append("- [ICC Public Key Algorithm Indicator]: $it\n") }
+        cert.substring(38, 40).also { logBuilder.append("- [ICC Public Key Length]: $it\n") }
+        cert.substring(40, 42).also { logBuilder.append("${if (it == (data["9F47"]?.length?.div(2))?.toHexString()) "✓" else "✗"} [ICC Public Key Exponent Length]: $it\n") }
+        cert.substring(42, cert.length - 42).also { logBuilder.append("- [ICC Public Key]: $it\n") }
+        cert.substring(cert.length - 42, cert.length - 2).also {
+            logBuilder.append("${if (it == ODAUtil.getHash("${cert.substring(2, cert.length - 42)}${data["9F48"] ?: ""}${data["9F47"] ?: ""}${ODAUtil.getStaticAuthData(data["staticData"] ?: "", data["82"])}")) "✓" else "✗"} [Hash Result]: $it\n")
+        }
+        cert.substring(cert.length - 2).also { logBuilder.append("${if (it == "BC") "✓" else "✗"} [Data Trailer]: $it\n") }
+        return logBuilder.toString()
+    }
 }

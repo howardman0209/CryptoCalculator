@@ -17,6 +17,7 @@ import com.crypto.calculator.extension.requireDefaultPaymentServicePermission
 import com.crypto.calculator.extension.toDataClass
 import com.crypto.calculator.model.AcDOL
 import com.crypto.calculator.model.DataFormat
+import com.crypto.calculator.model.EMVPublicKey
 import com.crypto.calculator.model.OdaDOL
 import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.model.PaymentMethod
@@ -394,12 +395,26 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     }
 
     private fun odaCalculator() {
-        fun initData(tagList: String = "8F90929F329F469F479F489F4A"): HashMap<String, String> {
+        fun initData(selected: Int?): HashMap<String, String> {
             val sb = StringBuilder()
-            sb.append(tagList)
+            when (selected) {
+                0 -> sb.append("8F90929F32")
+                1 -> sb.append("9F469F479F4882")
+                2 -> {}
+                else -> {}
+            }
             val data = hashMapOf<String, String>()
             TlvUtil.readTagList(sb.toString()).forEach {
                 data[it] = ""
+            }
+            when (selected) {
+                1 -> {
+                    data["issuerPublicKeyExponent"] = ""
+                    data["issuerPublicKeyModulus"] = ""
+                    data["staticData"] = ""
+                }
+
+                else -> {}
             }
             return data
         }
@@ -418,13 +433,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         )
         binding.autoTvCondition2.setOnItemClickListener { _, _, i, _ ->
             selected = i
-            val tagList = when (i) {
-                0 -> "8F90929F32"
-                1 -> "8F90929F329F469F479F489F4A"
-                2 -> ""
-                else -> ""
-            }
-            data = initData(tagList)
+            data = initData(selected)
         }
 
         binding.operationBtn4.visibility = View.VISIBLE
@@ -433,13 +442,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             editConfigJson(requireContext(), it, OdaDOL(data), true,
                 neutralBtn = getString(R.string.button_reset),
                 onNeutralBtnClick = {
-                    val tagList = when (selected) {
-                        0 -> "8F90929F32"
-                        1 -> "8F90929F329F469F479F489F4A"
-                        2 -> ""
-                        else -> ""
-                    }
-                    data = initData(tagList)
+                    data = initData(selected)
                 }
             ) { editedDOL ->
                 Log.d("arqcCalculator", "editedDOL: $editedDOL")
@@ -466,9 +469,10 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                         val issuerPKCert = data["90"]?.also { cert -> logBuilder.append("Issuer Public Key Certificate [90]: $cert\n") } ?: ""
                         data["92"]?.also { remainder -> if (remainder.isNotEmpty()) logBuilder.append("Issuer Public Key Remainder [92]: $remainder\n") }
 
-                        val recoveredData = Encryption.doRSA(issuerPKCert, capk.exponent, capk.modulus)
-                        logBuilder.append("Recovered Data: \n")
-                        logBuilder.append(viewModel.inspectIssuerPKPlainCert(recoveredData, data))
+                        val recoveredData = LogPanelUtil.safeExecute { Encryption.doRSA(issuerPKCert, capk.exponent, capk.modulus) }
+                        logBuilder.append("Recovered Data: $recoveredData\n")
+                        val inspectLog = LogPanelUtil.safeExecute { viewModel.inspectIssuerPKPlainCert(recoveredData, data) }
+                        logBuilder.append(inspectLog)
                     } ?: run {
                         logBuilder.append("Invalid ICC data [8F]\n")
                     }
@@ -485,7 +489,33 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                 }
 
                 1 -> {
+                    logBuilder.append("ODA calculator - ${operationList[1]}:\n")
+                    val issuerPK = EMVPublicKey(
+                        exponent = data["issuerPublicKeyExponent"],
+                        modulus = data["issuerPublicKeyModulus"]
+                    )
+                    Log.d("odaCalculator", "issuerPK: $issuerPK")
+                    val staticData = data["staticData"] ?: ""
+                    Log.d("odaCalculator", "staticData: $staticData")
 
+                    issuerPK.exponent.also { e -> logBuilder.append("Issuer Public Key exponent: $e\n") }
+                    issuerPK.modulus.also { modulus -> logBuilder.append("Issuer Public Key modulus: $modulus\n") }
+                    val iccPKCert = data["9F46"]?.also { cert -> logBuilder.append("ICC Public Key Certificate [9F46]: $cert\n") } ?: ""
+                    data["9F48"]?.also { remainder -> if (remainder.isNotEmpty()) logBuilder.append("ICC Public Key Remainder [9F48]: $remainder\n") }
+                    val recoveredData = LogPanelUtil.safeExecute { Encryption.doRSA(iccPKCert, issuerPK.exponent!!, issuerPK.modulus!!) }
+                    logBuilder.append("Recovered Data: $recoveredData\n")
+                    val inspectLog = LogPanelUtil.safeExecute { viewModel.inspectIccPKPlainCert(recoveredData, data) }
+                    logBuilder.append(inspectLog)
+
+                    val iccPK = LogPanelUtil.safeExecute(onFail = { logBuilder.append("Error: ${it.message ?: it.toString()}\n") },
+                        task = { ODAUtil.retrieveIccPK(staticData, data, issuerPK) })
+                    Log.d("odaCalculator", "iccPK: $iccPK")
+                    iccPK?.also {
+                        logBuilder.append("Result: ICC Public Key\n")
+                        it.exponent?.also { e -> logBuilder.append("exponent: $e\n") }
+                        it.modulus?.also { modulus -> logBuilder.append("modulus: $modulus\n") }
+                    }
+                    LogPanelUtil.printLog(logBuilder.toString())
                 }
 
                 2 -> {

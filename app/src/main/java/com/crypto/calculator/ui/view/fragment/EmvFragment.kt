@@ -127,6 +127,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                     CreditCardService.Companion.CardSimulatorStatus.PROCESSING -> {}
 
                     else -> {
+                        Log.d("CardSimulatorStatus observe", "transactionData: ${viewModel.currentTransactionData}")
                         viewModel.currentTransactionData.clear()
                     }
                 }

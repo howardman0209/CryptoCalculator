@@ -128,7 +128,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
                     else -> {
                         Log.d("CardSimulatorStatus observe", "transactionData: ${viewModel.currentTransactionData}")
-                        viewModel.currentTransactionData.clear()
+                        viewModel.resetTransactionData()
                     }
                 }
             }
@@ -278,7 +278,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                     BasicCardReader.Companion.CardReaderStatus.FAIL,
                     BasicCardReader.Companion.CardReaderStatus.ABORT,
                     BasicCardReader.Companion.CardReaderStatus.SUCCESS -> {
-                        viewModel.currentTransactionData.clear()
+                        viewModel.resetTransactionData()
                         viewModel.cardReader?.disconnect()
                         binding.operationBtn1.isEnabled = true
                         binding.operationBtn2.isEnabled = false
@@ -621,7 +621,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.autoTvCondition2.onItemClickListener = null
         binding.autoTvCondition2.text.clear()
 
-        viewModel.currentTransactionData.clear()
+        viewModel.resetTransactionData()
     }
 
     override fun onResume() {

@@ -311,6 +311,7 @@ class EmvViewModel : BaseViewModel() {
                                             logBuilder.append("\n[9F26]: $cryptogram")
                                         } catch (ex: Exception) {
                                             Log.d("getInspectLog", "Exception: $ex")
+                                            logBuilder.append("\n[9F26]: ${ex.message}")
                                         }
                                     }
 
@@ -342,6 +343,11 @@ class EmvViewModel : BaseViewModel() {
             }
         }
         return logBuilder.toString()
+    }
+
+    fun resetTransactionData() {
+        currentTransactionData.clear()
+        odaData = ""
     }
 
     fun inspectIssuerPKPlainCert(cert: String, data: HashMap<String, String>): String {

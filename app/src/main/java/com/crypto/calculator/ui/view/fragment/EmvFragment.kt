@@ -36,6 +36,7 @@ import com.crypto.calculator.util.LogPanelUtil
 import com.crypto.calculator.util.ODAUtil
 import com.crypto.calculator.util.PreferencesUtil
 import com.crypto.calculator.util.TlvUtil
+import com.crypto.calculator.util.assetsPathCardMaster
 import com.crypto.calculator.util.assetsPathCardVisa
 import com.crypto.calculator.util.bindInputFilters
 import com.crypto.calculator.util.prefCardProfile
@@ -181,6 +182,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             binding.ivCard.setOnLongClickListener {
                 when (PreferencesUtil.getCardPreference(requireContext().applicationContext)) {
                     PaymentMethod.VISA -> selectVisaCardProfile()
+                    PaymentMethod.MASTER -> selectMasterCardProfile()
                     else -> {}
                 }
                 true
@@ -204,6 +206,21 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             }
             val cardProfile = AssetsUtil.readFile<CardProfile>(requireContext().applicationContext, cardProfilePath)
             PreferencesUtil.saveCardProfile(requireContext().applicationContext, cardProfile, PaymentMethod.VISA)
+        }
+    }
+
+    private fun selectMasterCardProfile() {
+        arrayItemDialog(
+            context = requireContext(),
+            items = arrayOf("Without PIN", "With PIN"),
+            title = getString(R.string.label_select_card),
+        ) { selected ->
+            val cardProfilePath = when (selected) {
+                0 -> "${assetsPathCardMaster}.json"
+                else -> "${assetsPathCardMaster}_pin.json"
+            }
+            val cardProfile = AssetsUtil.readFile<CardProfile>(requireContext().applicationContext, cardProfilePath)
+            PreferencesUtil.saveCardProfile(requireContext().applicationContext, cardProfile, PaymentMethod.MASTER)
         }
     }
 

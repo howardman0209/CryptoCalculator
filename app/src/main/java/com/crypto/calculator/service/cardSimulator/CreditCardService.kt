@@ -72,7 +72,7 @@ class CreditCardService : BasicEMVService() {
         fun getDefaultCardAssetsPath(cardType: PaymentMethod): String {
             val path = when (cardType) {
                 PaymentMethod.VISA -> "${assetsPathCardVisa}_cvn10.json"
-                PaymentMethod.MASTER -> assetsPathCardMaster
+                PaymentMethod.MASTER -> "${assetsPathCardMaster}.json"
                 PaymentMethod.UNIONPAY -> assetsPathCardUnionPay
                 PaymentMethod.JCB -> assetsPathCardJcb
                 PaymentMethod.DISCOVER -> assetsPathCardDiscover

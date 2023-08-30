@@ -79,7 +79,7 @@ object PreferencesUtil {
         val jsonStr = localPref.getString("${cardScheme}-$prefCardProfile", null)
         val defaultPath = when (cardScheme) {
             PaymentMethod.VISA -> "${assetsPathCardVisa}_cvn10.json"
-            PaymentMethod.MASTER -> assetsPathCardMaster
+            PaymentMethod.MASTER -> "${assetsPathCardMaster}.json"
             PaymentMethod.UNIONPAY -> assetsPathCardUnionPay
             PaymentMethod.JCB -> assetsPathCardJcb
             PaymentMethod.DISCOVER -> assetsPathCardDiscover

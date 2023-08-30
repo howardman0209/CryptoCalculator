@@ -360,8 +360,19 @@ class EmvViewModel : BaseViewModel() {
         cert.substring(22, 24).also { logBuilder.append("- [Hash Algorithm Indicator]: $it\n") }
         cert.substring(24, 26).also { logBuilder.append("- [Issuer Public Key Algorithm Indicator]: $it\n") }
         cert.substring(26, 28).also { logBuilder.append("- [Issuer Public Key Length]: $it\n") }
-        cert.substring(28, 30).also { logBuilder.append("${if (it == (data["9F32"]?.length?.div(2))?.toHexString()) "✓" else "✗"} [Issuer Public Key Exponent Length]: $it\n") }
-        cert.substring(30, cert.length - 42).also { logBuilder.append("- [Issuer Public Key]: $it\n") }
+        val issuerPKRemainder = data["92"] ?: ""
+        val issuerPKLength = cert.substring(26, 28).toInt(16) * 2 - issuerPKRemainder.length
+        cert.substring(28, 30).also {
+            logBuilder.append("${if (it == (data["9F32"]?.length?.div(2))?.toHexString()) "✓" else "✗"} [Issuer Public Key Exponent Length]: $it\n")
+        }
+        cert.substring(30, 30 + issuerPKLength).also { logBuilder.append("- [Issuer Public Key]: $it\n") }
+        cert.substring(30 + issuerPKLength, cert.length - 42).also {
+            if (it.isNotEmpty()) {
+                logBuilder.append("- [Pad Pattern]: $it\n")
+            } else {
+                logBuilder.append("- [Issuer Public Key Remainder]: $issuerPKRemainder\n")
+            }
+        }
         cert.substring(cert.length - 42, cert.length - 2).also {
             logBuilder.append("${if (it == ODAUtil.getHash("${cert.substring(2, cert.length - 42)}${data["92"] ?: ""}${data["9F32"] ?: ""}")) "✓" else "✗"} [Hash Result]: $it\n")
         }
@@ -379,8 +390,19 @@ class EmvViewModel : BaseViewModel() {
         cert.substring(34, 36).also { logBuilder.append("- [Hash Algorithm Indicator]: $it\n") }
         cert.substring(36, 38).also { logBuilder.append("- [ICC Public Key Algorithm Indicator]: $it\n") }
         cert.substring(38, 40).also { logBuilder.append("- [ICC Public Key Length]: $it\n") }
-        cert.substring(40, 42).also { logBuilder.append("${if (it == (data["9F47"]?.length?.div(2))?.toHexString()) "✓" else "✗"} [ICC Public Key Exponent Length]: $it\n") }
-        cert.substring(42, cert.length - 42).also { logBuilder.append("- [ICC Public Key]: $it\n") }
+        val iccPKRemainder = data["9F48"] ?: ""
+        val iccPKLength = cert.substring(38, 40).toInt(16) * 2 - iccPKRemainder.length
+        cert.substring(40, 42).also {
+            logBuilder.append("${if (it == (data["9F47"]?.length?.div(2))?.toHexString()) "✓" else "✗"} [ICC Public Key Exponent Length]: $it\n")
+        }
+        cert.substring(42, 42 + iccPKLength).also { logBuilder.append("- [ICC Public Key]: $it\n") }
+        cert.substring(42 + iccPKLength, cert.length - 42).also {
+            if (it.isNotEmpty()) {
+                logBuilder.append("- [Pad Pattern]: $it\n")
+            } else {
+                logBuilder.append("- [ICC Public Key Remainder]: $iccPKRemainder\n")
+            }
+        }
         cert.substring(cert.length - 42, cert.length - 2).also {
             logBuilder.append("${if (it == ODAUtil.getHash("${cert.substring(2, cert.length - 42)}${data["9F48"] ?: ""}${data["9F47"] ?: ""}${data["staticData"] ?: ""}")) "✓" else "✗"} [Hash Result]: $it\n")
         }

@@ -3,6 +3,7 @@ package com.crypto.calculator.ui.view.fragment
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.core.view.marginBottom
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -46,6 +47,30 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
             }
         }
 
+        binding.searchBtn.setOnClickListener {
+            Log.d("searchBtn", "OnClick")
+            showSearchView()
+        }
+
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                Log.d("onQueryTextSubmit", "query: $query")
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                Log.d("onQueryTextChange", "newText: $newText")
+                return false
+            }
+        })
+
+        binding.searchView.setOnCloseListener {
+            Log.d("searchView", "setOnCloseListener")
+            viewModel.isSearching.set(false)
+//            binding.searchView.visibility = View.GONE
+            false
+        }
+
         binding.saveBtn.setOnClickListener {
             Log.d("saveBtn", "OnClick")
             (requireActivity() as BaseActivity).requireManageFilePermission(it) {
@@ -68,6 +93,12 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
             Log.d("copyBtn", "OnClick")
             copyTextToClipboard(requireContext(), binding.logPanel.text.toString())
         }
+    }
+
+    private fun showSearchView() {
+        viewModel.isSearching.set(true)
+        binding.searchView.isIconified = false
+//        binding.searchView.visibility = View.VISIBLE
     }
 
     private fun startPrintTest() {

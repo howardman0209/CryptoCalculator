@@ -18,14 +18,39 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/linearLayout"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/toolsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="end"
             android:orientation="horizontal"
             app:layout_constraintTop_toTopOf="parent"
-            app:liftOnScroll="true">
+            app:liftOnScroll="true"
+            tools:visibility="visible">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchView"
+                showIf="@{viewModel.isSearching()}"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@color/so_white_variant"
+                android:translationZ="100dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/searchBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_half"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="@dimen/space_half"
+                android:src="@drawable/ic_baseline_search"
+                android:tint="@color/secondary"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/wrapBtn"
@@ -35,7 +60,9 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:padding="@dimen/space_half"
                 android:src="@drawable/ic_baseline_wrap_text"
-                android:tint="@color/secondary" />
+                android:tint="@color/secondary"
+                app:layout_constraintEnd_toStartOf="@+id/saveBtn"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/saveBtn"
@@ -45,7 +72,9 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:padding="@dimen/space_half"
                 android:src="@drawable/ic_baseline_save"
-                android:tint="@color/secondary" />
+                android:tint="@color/secondary"
+                app:layout_constraintEnd_toStartOf="@+id/copyBtn"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/copyBtn"
@@ -55,7 +84,9 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:padding="@dimen/space_half"
                 android:src="@drawable/ic_baseline_content_copy"
-                android:tint="@color/secondary" />
+                android:tint="@color/secondary"
+                app:layout_constraintEnd_toStartOf="@+id/clearBtn"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/clearBtn"
@@ -65,9 +96,11 @@
                 android:background="?selectableItemBackgroundBorderless"
                 android:padding="@dimen/space_half"
                 android:src="@drawable/ic_baseline_delete_forever"
-                android:tint="@color/secondary" />
+                android:tint="@color/secondary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
@@ -76,7 +109,7 @@
             android:background="@android:color/background_dark"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+            app:layout_constraintTop_toBottomOf="@+id/toolsContainer">
 
             <ScrollView
                 android:id="@+id/verticalScrollView"

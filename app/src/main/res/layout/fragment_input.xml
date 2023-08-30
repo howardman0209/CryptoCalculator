@@ -85,6 +85,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/space_default"
+                android:minWidth="150dp"
                 android:visibility="gone"
                 tools:hint="condition1"
                 tools:visibility="visible">
@@ -104,6 +105,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/space_default"
+                android:minWidth="150dp"
                 android:visibility="gone"
                 tools:hint="condition2"
                 tools:visibility="visible">

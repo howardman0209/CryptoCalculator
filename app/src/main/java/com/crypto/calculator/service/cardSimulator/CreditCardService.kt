@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
 import android.nfc.cardemulation.CardEmulation
+import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -30,9 +31,17 @@ import kotlinx.coroutines.launch
 
 class CreditCardService : BasicEMVService() {
     companion object {
-        val _apdu = MutableLiveData<Event<String>>()
+        private val _apdu = MutableLiveData<Event<String>>()
         val apdu: LiveData<Event<String>>
             get() = _apdu
+
+        val status: MutableLiveData<CardSimulatorStatus> = MutableLiveData()
+
+        enum class CardSimulatorStatus {
+            START,
+            PROCESSING,
+            END
+        }
 
         fun requestDefaultPaymentServiceIntent(context: Context): Intent {
             val intent = Intent().apply {
@@ -75,6 +84,7 @@ class CreditCardService : BasicEMVService() {
     }
 
     override fun onCreate() {
+        status.value = CardSimulatorStatus.START
         super.onCreate()
         Log.d("CreditCardSimulator", "CardPreference: ${PreferencesUtil.getCardPreference(applicationContext)}")
         emvFlowDelegate = cardFactory(PreferencesUtil.getCardPreference(applicationContext))
@@ -93,6 +103,11 @@ class CreditCardService : BasicEMVService() {
         }
     }
 
+    override fun processCommandApdu(p0: ByteArray?, p1: Bundle?): ByteArray {
+        status.value = CardSimulatorStatus.PROCESSING
+        return super.processCommandApdu(p0, p1)
+    }
+
     override fun responseConstructor(cAPDU: String?): String {
         val rAPDU = super.responseConstructor(cAPDU)
         CoroutineScope(Dispatchers.Main).launch {
@@ -104,6 +119,6 @@ class CreditCardService : BasicEMVService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        _apdu.value = Event("")
+        status.value = CardSimulatorStatus.END
     }
 }

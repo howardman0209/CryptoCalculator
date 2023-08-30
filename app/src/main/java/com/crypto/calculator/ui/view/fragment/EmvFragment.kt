@@ -114,13 +114,21 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             CreditCardService.apdu.observe(viewLifecycleOwner) { event ->
                 event.getContentIfNotHandled()?.also { apdu ->
                     Log.d("cardSimulator", "apdu: $apdu")
-                    if (apdu.isNotEmpty()) {
-                        if (!binding.opt1CheckBox.isChecked) {
-                            LogPanelUtil.printLog(apdu)
-                        } else {
-                            LogPanelUtil.printLog(viewModel.getInspectLog(apdu))
-                        }
+                    if (!binding.opt1CheckBox.isChecked) {
+                        LogPanelUtil.printLog(apdu)
                     } else {
+                        LogPanelUtil.printLog(viewModel.getInspectLog(apdu))
+                    }
+                }
+            }
+
+            CreditCardService.status.observe(viewLifecycleOwner) {
+                when (it) {
+                    CreditCardService.Companion.CardSimulatorStatus.PROCESSING -> {
+
+                    }
+
+                    else -> {
                         viewModel.currentTransactionData.clear()
                     }
                 }
@@ -152,6 +160,11 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                     Log.d("ivPaymentMethod", "cardPreference: $card")
                     PreferencesUtil.saveCardPreference(requireContext().applicationContext, card)
                 }
+            }
+
+            binding.ivPaymentMethod.setOnLongClickListener {
+                Log.d("@@", "currentTransactionData: ${viewModel.currentTransactionData}")
+                true
             }
 
             binding.ivCard.setOnClickListener {

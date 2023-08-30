@@ -117,16 +117,14 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                     if (!binding.opt1CheckBox.isChecked) {
                         LogPanelUtil.printLog(apdu)
                     } else {
-                        LogPanelUtil.printLog(viewModel.getInspectLog(apdu))
+                        LogPanelUtil.printLog(viewModel.getInspectLog(requireContext().applicationContext, apdu))
                     }
                 }
             }
 
             CreditCardService.status.observe(viewLifecycleOwner) {
                 when (it) {
-                    CreditCardService.Companion.CardSimulatorStatus.PROCESSING -> {
-
-                    }
+                    CreditCardService.Companion.CardSimulatorStatus.PROCESSING -> {}
 
                     else -> {
                         viewModel.currentTransactionData.clear()
@@ -160,11 +158,6 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                     Log.d("ivPaymentMethod", "cardPreference: $card")
                     PreferencesUtil.saveCardPreference(requireContext().applicationContext, card)
                 }
-            }
-
-            binding.ivPaymentMethod.setOnLongClickListener {
-                Log.d("@@", "currentTransactionData: ${viewModel.currentTransactionData}")
-                true
             }
 
             binding.ivCard.setOnClickListener {
@@ -267,7 +260,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                 if (!binding.opt1CheckBox.isChecked) {
                     LogPanelUtil.printLog(apdu)
                 } else {
-                    LogPanelUtil.printLog(viewModel.getInspectLog(apdu))
+                    LogPanelUtil.printLog(viewModel.getInspectLog(requireContext().applicationContext, apdu))
                 }
             }
         }

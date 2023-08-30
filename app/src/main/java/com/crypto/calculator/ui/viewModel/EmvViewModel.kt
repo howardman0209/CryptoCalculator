@@ -47,6 +47,8 @@ class EmvViewModel : BaseViewModel() {
     private val gsonBeautifier: Gson = GsonBuilder().setPrettyPrinting().create()
     val currentTransactionData: HashMap<String, String> = hashMapOf()
     private var currentCAPDU: String = ""
+    private var nextIsODAData: Boolean = false
+    private var odaData: String = ""
 
     fun setInputData1Filter(maxLength: Int? = null, inputFormat: DataFormat = DataFormat.HEXADECIMAL) {
         inputData1Filter.value = emptyList()
@@ -111,48 +113,63 @@ class EmvViewModel : BaseViewModel() {
         }
     }
 
-    private fun saveRequiredTransactionData(jsonString: String, tag: String) {
+    private fun saveRequiredTransactionData(jsonString: String, tagList: String) {
         val jsonObject = jsonString.toDataClass<JsonObject>()
 
-        if (jsonString.contains(tag, ignoreCase = true)) {
-            if (!currentTransactionData.containsKey(tag)) {
-                jsonObject.findByKey(tag).also {
-                    if (it.isNotEmpty()) {
-                        currentTransactionData[tag] = it.first().asString
-                        Log.d("saveRequiredTransactionData", "currentTransactionData: $currentTransactionData")
-                        return
+        TlvUtil.readTagList(tagList).forEach { tag ->
+            if (jsonString.contains(tag, ignoreCase = true)) {
+                if (!currentTransactionData.containsKey(tag)) {
+                    jsonObject.findByKey(tag).also {
+                        if (it.isNotEmpty()) {
+                            currentTransactionData[tag] = it.first().asString
+                            Log.d("saveRequiredTransactionData", "currentTransactionData: $currentTransactionData")
+                            return@forEach
+                        }
+                    }
+                }
+            }
+
+            /**
+             * Special handling for rAPDU in [Response Message Template Format 1] (tag: 80)
+             */
+            when (tag) {
+                "82", "94" -> {
+                    jsonObject.findByKey("80").also {
+                        if (it.isNotEmpty()) {
+                            val tlv = it.first().asString
+                            when (tag) {
+                                "82" -> currentTransactionData["82"] = tlv.take(4)
+                                "94" -> currentTransactionData["94"] = tlv.substring(4)
+                            }
+                            Log.d("saveRequiredTransactionData", "currentTransactionData: $currentTransactionData")
+                        }
+                    }
+                }
+
+                "9F10", "9F26", "9F27", "9F36" -> {
+                    jsonObject.findByKey("80").also {
+                        if (it.isNotEmpty()) {
+                            val tlv = it.first().asString
+                            when (tag) {
+                                "9F27" -> currentTransactionData["9F27"] = tlv.take(2)
+                                "9F36" -> currentTransactionData["9F36"] = tlv.substring(2, 6)
+                                "9F26" -> currentTransactionData["9F26"] = tlv.substring(6, 22)
+                                "9F10" -> currentTransactionData["9F10"] = tlv.substring(22)
+                            }
+                            Log.d("saveRequiredTransactionData", "currentTransactionData: $currentTransactionData")
+                        }
                     }
                 }
             }
         }
+    }
 
-        when (tag) {
-            "82", "94" -> {
-                jsonObject.findByKey("80").also {
-                    if (it.isNotEmpty()) {
-                        val tlv = it.first().asString
-                        when (tag) {
-                            "82" -> currentTransactionData["82"] = tlv.take(4)
-                            "94" -> currentTransactionData["94"] = tlv.substring(4)
-                        }
-                        Log.d("saveRequiredTransactionData", "currentTransactionData: $currentTransactionData")
-                    }
-                }
-            }
-
-            "9F10", "9F26", "9F27", "9F36" -> {
-                jsonObject.findByKey("80").also {
-                    if (it.isNotEmpty()) {
-                        val tlv = it.first().asString
-                        when (tag) {
-                            "9F27" -> currentTransactionData["9F27"] = tlv.take(2)
-                            "9F36" -> currentTransactionData["9F36"] = tlv.substring(2, 6)
-                            "9F26" -> currentTransactionData["9F26"] = tlv.substring(6, 22)
-                            "9F10" -> currentTransactionData["9F10"] = tlv.substring(22)
-                        }
-                        Log.d("saveRequiredTransactionData", "currentTransactionData: $currentTransactionData")
-                    }
-                }
+    private fun saveODAData(jsonString: String) {
+        val jsonObject = jsonString.toDataClass<JsonObject>()
+        jsonObject.findByKey("70").also {
+            if (it.isNotEmpty()) {
+                odaData += TlvUtil.encodeTLV(it.first().asJsonObject)
+                Log.d("saveODAData", "odaData: $odaData")
             }
         }
     }
@@ -189,7 +206,7 @@ class EmvViewModel : BaseViewModel() {
         return stringBuilder.toString()
     }
 
-    fun getInspectLog(apdu: String): String {
+    fun getInspectLog(context: Context, apdu: String): String {
         val logBuilder = StringBuilder()
         when {
             apdu == "00A404000E325041592E5359532E444446303100" -> {
@@ -241,6 +258,7 @@ class EmvViewModel : BaseViewModel() {
                                 logBuilder.append("Short File Identifier (SFI): $sfi")
                                 if (odaLabel > 0) {
                                     logBuilder.append(", ODA data: true")
+                                    nextIsODAData = true
                                     odaLabel--
                                 }
                             }
@@ -274,8 +292,7 @@ class EmvViewModel : BaseViewModel() {
                             logBuilder.append(jsonString)
                             when {
                                 currentCAPDU.startsWith("80A80000") -> {
-                                    saveRequiredTransactionData(jsonString, "82")
-                                    saveRequiredTransactionData(jsonString, "94")
+                                    saveRequiredTransactionData(jsonString, "8294")
                                     if (apdu.startsWith("80")) {
                                         logBuilder.append("\n[82]: ${currentTransactionData["82"]}")
                                         logBuilder.append("\n[94]: ${currentTransactionData["94"]}")
@@ -283,14 +300,18 @@ class EmvViewModel : BaseViewModel() {
                                 }
 
                                 currentCAPDU.startsWith("80AE") -> {
-                                    saveRequiredTransactionData(jsonString, "9F10")
-                                    saveRequiredTransactionData(jsonString, "9F26")
-                                    saveRequiredTransactionData(jsonString, "9F27")
-                                    saveRequiredTransactionData(jsonString, "9F36")
-                                    saveRequiredTransactionData(jsonString, "9F4B")
+                                    saveRequiredTransactionData(jsonString, "9F109F269F279F369F4B")
 
                                     currentTransactionData["9F4B"]?.also { sdad ->
-                                        Log.d("getInspectLog", "Signed Dynamic Application Data: $sdad")
+                                        try {
+                                            val issuerPK = ODAUtil.retrieveIssuerPK(context, currentTransactionData)
+                                            val iccPK = ODAUtil.retrieveIccPK(ODAUtil.getStaticAuthData(odaData, currentTransactionData), currentTransactionData, issuerPK)
+                                            val cryptogram = ODAUtil.getCryptogramFromSDAD(sdad, iccPK)
+                                            Log.d("getInspectLog", "Cryptogram [9F26]: $cryptogram")
+                                            logBuilder.append("\n[9F26]: $cryptogram")
+                                        } catch (ex: Exception) {
+                                            Log.d("getInspectLog", "Exception: $ex")
+                                        }
                                     }
 
                                     if (apdu.startsWith("80")) {
@@ -302,8 +323,12 @@ class EmvViewModel : BaseViewModel() {
                                 }
 
                                 else -> {
-                                    saveRequiredTransactionData(jsonString, "9F38")
-                                    saveRequiredTransactionData(jsonString, "8C")
+                                    saveRequiredTransactionData(jsonString, "8C8F90929F329F389F469F479F489F4A")
+
+                                    if (nextIsODAData) {
+                                        saveODAData(jsonString)
+                                        nextIsODAData = false
+                                    }
                                 }
                             }
                         }

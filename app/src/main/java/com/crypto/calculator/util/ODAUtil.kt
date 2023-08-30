@@ -16,6 +16,16 @@ object ODAUtil {
         return cipher
     }
 
+    fun getStaticAuthData(staticData: String, dataMap: HashMap<String, String>): String {
+        val data = StringBuilder()
+        dataMap["9F4A"]?.let { tagList ->
+            TlvUtil.readTagList(tagList).forEach { tag ->
+                data.append(dataMap[tag] ?: "")
+            }
+        }
+        return "$staticData$data"
+    }
+
     //    required data [8F, 90, 92, 9F32]
     fun retrieveIssuerPK(context: Context, data: HashMap<String, String>): EMVPublicKey? {
         val capkIdx = data["8F"]
@@ -95,5 +105,23 @@ object ODAUtil {
             val inputData = "${cert.substring(2, cert.length - 42)}$it"
             getHash(inputData) == hash
         } ?: false
+    }
+
+    fun getCryptogramFromSDAD(sdad: String, iccPK: EMVPublicKey?): String? {
+        iccPK?.exponent ?: return null
+        iccPK.modulus ?: return null
+        val decryptedSDAD = Encryption.doRSA(sdad, iccPK.exponent, iccPK.modulus)
+        val length = decryptedSDAD.substring(6, 8).toInt(16) * 2
+        val iccDynamicData = decryptedSDAD.substring(8, 8 + length)
+        val iccDynamicNumberLength = iccDynamicData.substring(0, 2).toInt(16) * 2
+        val iccDynamicNumber = iccDynamicData.substring(2, 2 + iccDynamicNumberLength)
+        Log.d("getCryptogramFromSDAD", "iccDynamicNumber: $iccDynamicNumber")
+        val cid = iccDynamicData.substring(2 + iccDynamicNumberLength, 4 + iccDynamicNumberLength)
+        Log.d("getCryptogramFromSDAD", "cid: $cid")
+        val ac = iccDynamicData.substring(4 + iccDynamicNumberLength, 20 + iccDynamicNumberLength)
+        val txnDataHashCode = iccDynamicData.substring(iccDynamicData.length - 40, iccDynamicData.length)
+        Log.d("getCryptogramFromSDAD", "txnDataHashCode: $txnDataHashCode")
+        // add cryptogram to tlv
+        return ac
     }
 }

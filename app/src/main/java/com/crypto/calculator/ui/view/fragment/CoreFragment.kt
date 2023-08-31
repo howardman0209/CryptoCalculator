@@ -1,5 +1,6 @@
 package com.crypto.calculator.ui.view.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,6 +19,8 @@ import com.crypto.calculator.model.NavigationMenuData
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.model.getGroupList
 import com.crypto.calculator.ui.base.MVVMFragment
+import com.crypto.calculator.ui.view.activity.MainActivity
+import com.crypto.calculator.ui.view.activity.SettingActivity
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.util.LogPanelUtil
 import com.crypto.calculator.util.LongLogUtil
@@ -107,9 +110,10 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
         Log.d("onOptionsItemSelected", "item: $item")
         when (item.itemId) {
             R.id.action_settings -> {
-                singleInputDialog(requireContext(), "Enter your message", "Message") {
-                    LogPanelUtil.printLog(it)
-                }
+//                singleInputDialog(requireContext(), "Enter your message", "Message") {
+//                    LogPanelUtil.printLog(it)
+//                }
+                startActivity(Intent(requireContext().applicationContext, SettingActivity::class.java))
             }
 
             R.id.action_test -> {

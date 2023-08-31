@@ -19,6 +19,7 @@ import com.crypto.calculator.ui.base.MVVMFragment
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.ui.viewModel.OutputViewModel
 import com.crypto.calculator.util.LogPanelUtil
+import com.crypto.calculator.util.PreferencesUtil
 import com.crypto.calculator.util.ShareFileUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -114,6 +115,12 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
             Log.d("copyBtn", "OnClick")
             copyTextToClipboard(requireContext(), binding.logPanel.text.toString())
         }
+
+        binding.logPanel.textSize = PreferencesUtil.getLogFontSize(requireContext().applicationContext)
+    }
+
+    private fun updateLayout() {
+        binding.logPanel.textSize = PreferencesUtil.getLogFontSize(requireContext().applicationContext)
     }
 
     private fun showSearchView() {
@@ -205,6 +212,7 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
     override fun onResume() {
         super.onResume()
         Log.d("OutputFragment", "onResume")
+        updateLayout()
     }
 
     override fun onPause() {

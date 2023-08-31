@@ -763,6 +763,16 @@
     <string name="label_inspect_mode" translatable="false">Inspect mode</string>
     <string name="label_data_object_list" translatable="false">Data object list</string>
 
+    <!--Settings-->
+    <string name="label_setting_log_font_size" translatable="false">Log font setting</string>
+    <string name="label_setting_capk" translatable="false">CAPK</string>
+
+    <!--Font Setting-->
+    <string name="label_font_size" translatable="false">Font Size</string>
+    <string name="label_log_font_size_min" translatable="false">10sp</string>
+    <string name="label_log_font_size_max" translatable="false">20sp</string>
+    <string name="var_font_size" translatable="false">%ssp</string>
+
     <string name="label_app_version_no" translatable="false">v0.1</string>
     <string name="hce_service_description" translatable="false">Crypto Calculator HCE</string>
 </resources>

@@ -69,6 +69,11 @@
             android:screenOrientation="portrait" />
 
         <activity
+            android:name=".ui.view.activity.SettingActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name=".ui.view.activity.TemplateActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />

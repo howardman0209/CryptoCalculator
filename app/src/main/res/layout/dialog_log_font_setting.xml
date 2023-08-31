@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/space_default">
+
+        <TextView
+            android:id="@+id/tvFontSize"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_font_size"
+            android:textAppearance="?textAppearanceSubtitle1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/sliderFontSize"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stepSize="2"
+            android:valueFrom="10"
+            android:valueTo="20"
+            app:labelStyle="@style/Widget.Crypto.Calculator.Tooltip"
+            app:layout_constraintTop_toBottomOf="@id/tvFontSize" />
+
+        <TextView
+            android:id="@+id/tvFontSizeMin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_log_font_size_min"
+            android:textAppearance="?textAppearanceBody1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sliderFontSize" />
+
+        <TextView
+            android:id="@+id/tvFontSizeMax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_log_font_size_max"
+            android:textAppearance="?textAppearanceBody1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sliderFontSize" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -58,6 +58,7 @@ const val prefCardPreference = "CardPreference"
 const val prefCardProfile = "CardProfile"
 const val prefEmvConfig = "prefEmvConfig"
 const val prefCapkData = "prefCapkData"
+const val prefLogFontSize = "prefLogFontSize"
 
 const val CVM_SIGNATURE_BINARY_CODE = "011110"
 const val CVM_NO_CVM_BINARY_CODE = "011111"

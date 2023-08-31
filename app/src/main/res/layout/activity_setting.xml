@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="view"
+            type="com.crypto.calculator.ui.view.activity.SettingActivity" />
+
+        <variable
+            name="viewModel"
+            type="com.crypto.calculator.ui.viewModel.SettingViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/topAppBar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/transparent"
+                android:elevation="0dp"
+                app:navigationIcon="@drawable/ic_baseline_navigate_before"
+                app:title="@string/label_setting" />
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <TextView
+                android:id="@+id/settingFont"
+                style="@style/Widget.Crypto.Calculator.List.SingleLineItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_setting_log_font_size"
+                app:drawableStartCompat="@drawable/ic_baseline_terminal" />
+
+            <TextView
+                android:id="@+id/settingCAPK"
+                style="@style/Widget.Crypto.Calculator.List.SingleLineItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_setting_capk"
+                app:drawableStartCompat="@drawable/ic_baseline_key" />
+
+        </LinearLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

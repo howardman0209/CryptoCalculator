@@ -116,4 +116,14 @@ object PreferencesUtil {
             Gson().fromJson(jsonStr, CapkList::class.java)
         } ?: AssetsUtil.readFile(context, assetsPathTestCapk)
     }
+
+    fun saveLogFontSize(context: Context, fontSize: Float) {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        localPref?.edit()?.putFloat(prefLogFontSize, fontSize)?.apply()
+    }
+
+    fun getLogFontSize(context: Context): Float {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        return localPref.getFloat(prefLogFontSize, 10F)
+    }
 }

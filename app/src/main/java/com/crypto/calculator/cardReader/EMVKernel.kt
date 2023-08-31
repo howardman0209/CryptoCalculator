@@ -31,7 +31,7 @@ import java.security.MessageDigest
 
 class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel(nfcDelegate) {
     companion object {
-        val _apdu = MutableLiveData<Event<String>>()
+        private val _apdu = MutableLiveData<Event<String>>()
         val apdu: LiveData<Event<String>>
             get() = _apdu
     }
@@ -85,7 +85,7 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
             if (appList.size > 1) {
                 Log.d("ppse", "multiple AID read from card")
                 // CTL -> auto select app with higher Application Priority Indicator
-                appList.minBy { TlvUtil.decodeTLV(it)[EMVTags.APPLICATION_PRIORITY_INDICATOR.getHexTag()].toString().toInt(16) } ?: appList.first()
+                appList.minBy { TlvUtil.decodeTLV(it)[EMVTags.APPLICATION_PRIORITY_INDICATOR.getHexTag()].toString().toInt(16) }
             } else {
                 Log.d("ppse", "single AID read from card")
                 appList.first()

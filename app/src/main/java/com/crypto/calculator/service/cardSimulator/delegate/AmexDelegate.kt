@@ -49,7 +49,7 @@ class AmexDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(
 
         fun getAcPaddingMethod(cvn: Int? = 1): PaddingMethod {
             return when (cvn) {
-                1 -> PaddingMethod.ISO9797_1_M1
+                1 -> PaddingMethod.ISO9797_M1
                 else -> {
                     // TODO: calculate other CVN
                     throw Exception("UNHANDLED CRYPTOGRAM VERSION")
@@ -207,7 +207,7 @@ class AmexDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(
 
     override fun getCryptogramCalculationPadding(cvn: Int): PaddingMethod {
         return when (cvn) {
-            1 -> PaddingMethod.ISO9797_1_M1
+            1 -> PaddingMethod.ISO9797_M1
             else -> {
                 // TODO: calculate other CVN
                 throw Exception("UNHANDLED CRYPTOGRAM VERSION")

@@ -49,7 +49,7 @@ class UnionPayDelegate(private val iccData: HashMap<String, String>) : BasicEMVC
 
         fun getAcPaddingMethod(cvn: Int? = 1): PaddingMethod {
             return when (cvn) {
-                1 -> PaddingMethod.ISO9797_1_M2
+                1 -> PaddingMethod.ISO9797_M2
                 else -> {
                     // TODO: calculate other CVN
                     throw Exception("UNHANDLED CRYPTOGRAM VERSION")
@@ -187,7 +187,7 @@ class UnionPayDelegate(private val iccData: HashMap<String, String>) : BasicEMVC
 
     override fun getCryptogramCalculationPadding(cvn: Int): PaddingMethod {
         return when (cvn) {
-            1 -> PaddingMethod.ISO9797_1_M2
+            1 -> PaddingMethod.ISO9797_M2
             else -> {
                 // TODO: calculate other CVN
                 throw Exception("UNHANDLED CRYPTOGRAM VERSION")

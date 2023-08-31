@@ -138,8 +138,8 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
         binding.tilCondition2.visibility = View.VISIBLE
         binding.tilCondition2.hint = "Padding"
         val paddingList = listOf(
-            PaddingMethod.ISO9797_1_M1,
-            PaddingMethod.ISO9797_1_M2,
+            PaddingMethod.ISO9797_M1,
+            PaddingMethod.ISO9797_M2,
         )
         binding.autoTvCondition2.setAdapter(
             DropDownMenuAdapter(
@@ -340,8 +340,8 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
         binding.tilCondition1.visibility = View.VISIBLE
         binding.tilCondition1.hint = "Padding"
         val paddingList = listOf(
-            PaddingMethod.ISO9797_1_M1,
-            PaddingMethod.ISO9797_1_M2,
+            PaddingMethod.ISO9797_M1,
+            PaddingMethod.ISO9797_M2,
         )
         binding.autoTvCondition1.setAdapter(
             DropDownMenuAdapter(

@@ -29,7 +29,7 @@
                 android:id="@+id/tvPrompt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingVertical="@dimen/space_default"
+                android:paddingTop="@dimen/space_default"
                 android:text="@{viewModel.promptMessage}"
                 android:textAlignment="center"
                 android:textAppearance="?textAppearanceHeadline3"
@@ -72,7 +72,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/space_default"
+                android:layout_marginHorizontal="@dimen/space_default"
+                android:layout_marginTop="@dimen/space_default"
                 android:hint="@{viewModel.inputData1Max != null? @string/input_hint_with_max(viewModel.inputData1Label,viewModel.inputData1.length,viewModel.inputData1Max) : @string/input_hint(viewModel.inputData1Label,viewModel.inputData1.length)}"
                 android:visibility="gone"
                 tools:hint="Data1"
@@ -91,7 +92,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/space_default"
+                android:layout_marginHorizontal="@dimen/space_default"
+                android:layout_marginTop="@dimen/space_default"
                 android:hint="@{viewModel.inputData2Max != null? @string/input_hint_with_max(viewModel.inputData2Label, viewModel.inputData2.length,viewModel.inputData2Max) : @string/input_hint(viewModel.inputData2Label,viewModel.inputData2.length)}"
                 android:visibility="gone"
                 tools:hint="Data2"
@@ -202,7 +204,7 @@
                 android:layout_gravity="end"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:padding="@dimen/space_default">
+                android:paddingHorizontal="@dimen/space_default">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/operationBtn1"

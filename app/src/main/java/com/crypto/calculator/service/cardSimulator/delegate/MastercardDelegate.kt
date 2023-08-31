@@ -51,7 +51,7 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
 
         fun getAcPaddingMethod(cvn: Int? = 10): PaddingMethod {
             return when (cvn) {
-                10 -> PaddingMethod.ISO9797_1_M2
+                10 -> PaddingMethod.ISO9797_M2
                 else -> {
                     // TODO: calculate other CVN
                     throw Exception("UNHANDLED CRYPTOGRAM VERSION")
@@ -138,7 +138,7 @@ class MastercardDelegate(private val iccData: HashMap<String, String>) : BasicEM
 
     override fun getCryptogramCalculationPadding(cvn: Int): PaddingMethod {
         return when (cvn) {
-            10 -> PaddingMethod.ISO9797_1_M2
+            10 -> PaddingMethod.ISO9797_M2
             else -> {
                 // TODO: calculate other CVN
                 throw Exception("UNHANDLED CRYPTOGRAM VERSION")

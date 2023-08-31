@@ -570,7 +570,7 @@ object EMVUtils {
             PaymentMethod.DISCOVER -> DiscoverDelegate.getAcPaddingMethod(cvn)
 
             PaymentMethod.AMEX -> AmexDelegate.getAcPaddingMethod(cvn)
-            else -> PaddingMethod.ISO9797_1_M1
+            else -> PaddingMethod.ISO9797_M1
         }
     }
 

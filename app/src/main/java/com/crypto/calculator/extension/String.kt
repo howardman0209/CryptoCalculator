@@ -235,14 +235,14 @@ fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(t
 
 fun String.applyPadding(paddingMethod: PaddingMethod): String {
     return when (paddingMethod) {
-        PaddingMethod.ISO9797_1_M1 -> {
+        PaddingMethod.ISO9797_M1 -> {
             val padLen = ceil(this.length.div(16.0)).toInt().times(16).let {
                 if (it > 16) it else 16
             }
             this.padEnd(padLen, '0')
         }
 
-        PaddingMethod.ISO9797_1_M2 -> {
+        PaddingMethod.ISO9797_M2 -> {
             val padLen = ceil("${this}80".length.div(16.0)).toInt().times(16).let {
                 if (it > 16) it else 16
             }
@@ -253,7 +253,7 @@ fun String.applyPadding(paddingMethod: PaddingMethod): String {
 
 fun String.removePadding(paddingMethod: PaddingMethod): String {
     return when (paddingMethod) {
-        PaddingMethod.ISO9797_1_M2 -> this.substringBeforeLast("80")
+        PaddingMethod.ISO9797_M2 -> this.substringBeforeLast("80")
         else -> this
     }
 }

@@ -397,7 +397,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             Log.d("arqcCalculator", "key: $key")
             val dol = LogPanelUtil.safeExecute { EMVUtils.getAcDOLByPaymentMethod(cardType, cvn, data) }
             Log.d("arqcCalculator", "dol: $dol")
-            val paddingMethod = LogPanelUtil.safeExecute(onFail = {}, task = { EMVUtils.getAcDOLPaddingByPaymentMethod(cardType, cvn) }) ?: PaddingMethod.ISO9797_1_M1
+            val paddingMethod = LogPanelUtil.safeExecute(onFail = {}, task = { EMVUtils.getAcDOLPaddingByPaymentMethod(cardType, cvn) }) ?: PaddingMethod.ISO9797_M1
             Log.d("arqcCalculator", "paddingMethod: $paddingMethod")
             val arqc = LogPanelUtil.safeExecute { Encryption.calculateMAC(key, dol.applyPadding(paddingMethod)).uppercase() }
             Log.d("arqcCalculator", "arqc: $arqc")

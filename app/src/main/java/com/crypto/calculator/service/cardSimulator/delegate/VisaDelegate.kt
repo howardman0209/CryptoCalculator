@@ -68,8 +68,8 @@ class VisaDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(
 
         fun getAcPaddingMethod(cvn: Int? = 10): PaddingMethod {
             return when (cvn) {
-                10, 17 -> PaddingMethod.ISO9797_1_M1
-                else -> PaddingMethod.ISO9797_1_M2
+                10, 17 -> PaddingMethod.ISO9797_M1
+                else -> PaddingMethod.ISO9797_M2
             }
         }
 
@@ -217,8 +217,8 @@ class VisaDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(
 
     override fun getCryptogramCalculationPadding(cvn: Int): PaddingMethod {
         return when (cvn) {
-            10, 17 -> PaddingMethod.ISO9797_1_M1
-            else -> PaddingMethod.ISO9797_1_M2
+            10, 17 -> PaddingMethod.ISO9797_M1
+            else -> PaddingMethod.ISO9797_M2
         }
     }
 

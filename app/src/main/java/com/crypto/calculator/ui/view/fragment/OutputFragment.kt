@@ -1,6 +1,10 @@
 package com.crypto.calculator.ui.view.fragment
 
+import android.graphics.Color
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Log
 import android.view.View
 import androidx.appcompat.widget.SearchView
@@ -19,6 +23,7 @@ import com.crypto.calculator.util.ShareFileUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
     private lateinit var coreViewModel: CoreViewModel
@@ -55,11 +60,17 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 Log.d("onQueryTextSubmit", "query: $query")
+                if (!query.isNullOrEmpty()) {
+                    scrollToTarget(query)
+                }
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 Log.d("onQueryTextChange", "newText: $newText")
+                if (!newText.isNullOrEmpty()) {
+                    scrollToTarget(newText)
+                }
                 return false
             }
         })
@@ -67,8 +78,14 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
         binding.searchView.setOnCloseListener {
             Log.d("searchView", "setOnCloseListener")
             viewModel.isSearching.set(false)
-//            binding.searchView.visibility = View.GONE
+            viewModel.searchStartIndex = 0
+            resetLogColor()
             false
+        }
+
+        binding.nextBtn.setOnClickListener {
+            Log.d("nextBtn", "OnClick")
+            scrollToTarget(binding.searchView.query.toString(), viewModel.searchStartIndex)
         }
 
         binding.saveBtn.setOnClickListener {
@@ -84,9 +101,13 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
             }
         }
 
+//        val words = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" // for testing
+//        var index = 0 // for testing
         binding.clearBtn.setOnClickListener {
             Log.d("clearBtn", "OnClick")
             binding.logPanel.text = ""
+//            printLog("${"-".repeat(100)}${words[index]}") // for testing
+//            if (index < words.length - 1) index++ else index = 0 // for testing
         }
 
         binding.copyBtn.setOnClickListener {
@@ -98,15 +119,13 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
     private fun showSearchView() {
         viewModel.isSearching.set(true)
         binding.searchView.isIconified = false
-//        binding.searchView.visibility = View.VISIBLE
     }
 
     private fun startPrintTest() {
         lifecycleScope.launch(Dispatchers.Main) {
             while (true) {
                 delay(1000)
-                printLog("Hello World")
-                scrollToBottom()
+                printLog("")
             }
         }
     }
@@ -135,6 +154,52 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
                 Log.d("ScrollView", "do nothing")
             }
         }
+    }
+
+    private fun scrollToTarget(target: String, searchStartIndex: Int = 0) {
+        Log.d("scrollToTarget", "target: $target, searchStartIndex: $searchStartIndex")
+        binding.logPanel.clearFocus() // avoid select text to change the focus, ensure focus at the last line
+        val fullText = binding.logPanel.text.toString()
+        if (fullText.substring(searchStartIndex).contains(target, ignoreCase = true)) {
+            val startIndex = fullText.indexOf(target, searchStartIndex, ignoreCase = true)
+            val offset = binding.logPanel.layout.getLineForOffset(startIndex)
+            Log.d("scrollToTarget", "offset: $offset")
+            val yTarget = binding.logPanel.layout.getLineTop(offset)
+            val xTarget = binding.logPanel.layout.getPrimaryHorizontal(startIndex)
+            Log.d("scrollToTarget", "xTarget: $xTarget")
+
+            binding.verticalScrollView.smoothScrollTo(0, yTarget) // scroll vertically
+            binding.verticalScrollView.post {
+                binding.horizontalScrollView.smoothScrollTo(xTarget.toInt(), yTarget) // scroll horizontally
+            }
+
+            //set search target color
+            val endIndex = startIndex + target.length
+            viewModel.searchStartIndex = endIndex
+            Log.d("scrollToTarget", "searchStartIndex: ${viewModel.searchStartIndex}")
+            if (startIndex != -1) { // coloredText is found in fullText
+                val spannableString = SpannableString(fullText)
+                spannableString.setSpan(
+                    ForegroundColorSpan(Color.RED),
+                    startIndex,
+                    endIndex,
+                    Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+
+                binding.logPanel.text = spannableString
+            }
+        } else if (fullText.contains(target, ignoreCase = true)) {
+            Log.d("scrollToTarget", "search result looped")
+            scrollToTarget(target)
+        } else {
+            Log.d("scrollToTarget", "No record")
+            viewModel.searchStartIndex = 0
+            resetLogColor()
+        }
+    }
+
+    private fun resetLogColor() {
+        binding.logPanel.text = binding.logPanel.text.toString() //reset text color
     }
 
     override fun onResume() {

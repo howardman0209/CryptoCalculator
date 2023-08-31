@@ -7,4 +7,5 @@ import com.crypto.calculator.ui.base.BaseViewModel
 class OutputViewModel : BaseViewModel() {
     val warpText = MutableLiveData(false)
     var isSearching = ObservableField(false)
+    var searchStartIndex = 0
 }

@@ -31,17 +31,20 @@
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/searchView"
                 showIf="@{viewModel.isSearching()}"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:background="@color/so_white_variant"
                 android:translationZ="100dp"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/nextBtn"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:visibility="visible" />
+                tools:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/searchBtn"
+                showIf="@{!viewModel.isSearching()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/space_half"
@@ -54,6 +57,7 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/wrapBtn"
+                showIf="@{!viewModel.isSearching()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/space_half"
@@ -66,6 +70,7 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/saveBtn"
+                showIf="@{!viewModel.isSearching()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/space_half"
@@ -78,6 +83,7 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/copyBtn"
+                showIf="@{!viewModel.isSearching()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/space_half"
@@ -90,6 +96,7 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/clearBtn"
+                showIf="@{!viewModel.isSearching()}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="@dimen/space_half"
@@ -99,6 +106,20 @@
                 android:tint="@color/secondary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/nextBtn"
+                showIf="@{viewModel.isSearching()}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/space_half"
+                android:background="?selectableItemBackgroundBorderless"
+                android:padding="@dimen/space_half"
+                android:src="@drawable/ic_baseline_navigate_next"
+                android:tint="@color/secondary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="gone" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -4,6 +4,7 @@ import android.content.Context
 import com.crypto.calculator.extension.toDataClass
 import com.crypto.calculator.model.CapkList
 import com.crypto.calculator.model.EmvConfig
+import com.crypto.calculator.model.IssuerMasterKeyList
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.service.model.CardProfile
@@ -125,5 +126,19 @@ object PreferencesUtil {
     fun getLogFontSize(context: Context): Float {
         val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
         return localPref.getFloat(prefLogFontSize, 10F)
+    }
+
+    fun saveIMKMap(context: Context, imkList: IssuerMasterKeyList) {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        val jsonStr = Gson().toJson(imkList)
+        localPref?.edit()?.putString(prefImkList, jsonStr)?.apply()
+    }
+
+    fun getIMKMap(context: Context): IssuerMasterKeyList {
+        val localPref = context.getSharedPreferences(localPrefFileName, Context.MODE_PRIVATE)
+        val jsonStr = localPref.getString(prefImkList, null)
+        return jsonStr?.let {
+            Gson().fromJson(jsonStr, IssuerMasterKeyList::class.java)
+        } ?: AssetsUtil.readFile(context, assetsPathIssuerMasterKey)
     }
 }

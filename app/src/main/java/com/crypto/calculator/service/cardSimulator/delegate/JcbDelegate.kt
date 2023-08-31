@@ -1,5 +1,6 @@
 package com.crypto.calculator.service.cardSimulator.delegate
 
+import android.content.Context
 import android.util.Log
 import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.service.cardSimulator.BasicEMVCard
@@ -10,9 +11,9 @@ import com.crypto.calculator.util.EMVUtils
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
 
-class JcbDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(iccData), BasicEMVService.EMVFlowDelegate {
+class JcbDelegate(val context: Context, private val iccData: HashMap<String, String>) : BasicEMVCard(context, iccData), BasicEMVService.EMVFlowDelegate {
     companion object {
-        fun getInstance(iccData: HashMap<String, String>) = JcbDelegate(iccData)
+        fun getInstance(context: Context, iccData: HashMap<String, String>) = JcbDelegate(context, iccData)
         const val CVN01_TAGS = "9F029F039F1A955F2A9A9C9F37829F369F10"
 
         fun readCVNFromIAD(iad: String): Int {
@@ -56,10 +57,10 @@ class JcbDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(i
             }
         }
 
-        fun getACCalculationKey(cvn: Int? = 1, pan: String? = null, psn: String? = null, atc: String? = null, un: String? = null): String {
+        fun getACCalculationKey(context: Context, cvn: Int? = 1, pan: String? = null, psn: String? = null, atc: String? = null, un: String? = null): String {
             pan ?: throw Exception("INVALID_ICC_DATA [57]")
             psn ?: throw Exception("INVALID_ICC_DATA [5F34]")
-            val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
+            val iccMK = EMVUtils.deriveICCMasterKey(context, pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
             atc ?: throw Exception("INVALID_ICC_DATA [9F36]")
 //            un ?: throw Exception("INVALID_TERMINAL_DATA [9F37]")
 //            val sk = EMVUtils.deriveACSessionKey(pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
@@ -215,7 +216,7 @@ class JcbDelegate(private val iccData: HashMap<String, String>) : BasicEMVCard(i
     }
 
     override fun getCryptogramCalculationKey(cvn: Int, pan: String, psn: String, atc: String, un: String?): String {
-        val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
+        val iccMK = EMVUtils.deriveICCMasterKey(context, pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
         return when (cvn) {
             1 -> iccMK
             else -> {

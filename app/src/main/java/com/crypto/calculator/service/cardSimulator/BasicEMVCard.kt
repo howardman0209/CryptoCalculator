@@ -1,5 +1,6 @@
 package com.crypto.calculator.service.cardSimulator
 
+import android.content.Context
 import android.util.Log
 import com.crypto.calculator.extension.applyPadding
 import com.crypto.calculator.extension.hexToByteArray
@@ -13,7 +14,7 @@ import com.crypto.calculator.util.Encryption
 import com.crypto.calculator.util.TlvUtil
 import java.security.MessageDigest
 
-abstract class BasicEMVCard(private val iccData: HashMap<String, String>) {
+abstract class BasicEMVCard(context: Context, private val iccData: HashMap<String, String>) {
     val terminalData: HashMap<String, String> = hashMapOf()
     private var odaData = ""
     var transactionData = ""

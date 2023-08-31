@@ -1,5 +1,6 @@
 package com.crypto.calculator.util
 
+import android.content.Context
 import android.util.Log
 import com.crypto.calculator.extension.adjustDESParity
 import com.crypto.calculator.extension.hexBitwise
@@ -453,8 +454,8 @@ object EMVUtils {
             t2Data
     }
 
-    fun deriveICCMasterKey(pan: String, psn: String): String? {
-        return getIssuerMasterKeyByPan(pan)?.let { imk ->
+    fun deriveICCMasterKey(context: Context, pan: String, psn: String): String? {
+        return getIssuerMasterKeyByPan(context, pan)?.let { imk ->
             val y = "$pan$psn".takeLast(16)
             val zl = Encryption.doTDESEncryptECB(y, imk)
             val zr = Encryption.doTDESEncryptECB(y.hexBitwise(operation = BitwiseOperation.NOT), imk)
@@ -463,8 +464,8 @@ object EMVUtils {
         }
     }
 
-    fun deriveACSessionKey(pan: String, psn: String, atc: String, un: String? = null): String? {
-        return deriveICCMasterKey(pan, psn)?.let { iccMK ->
+    fun deriveACSessionKey(context: Context, pan: String, psn: String, atc: String, un: String? = null): String? {
+        return deriveICCMasterKey(context, pan, psn)?.let { iccMK ->
             val paymentMethod = getPaymentMethodByPan(pan)
             // TODO: handle AMEX
             val f1 = when (paymentMethod) {
@@ -492,32 +493,13 @@ object EMVUtils {
         }
     }
 
-    private fun getIssuerMasterKeyByPan(pan: String): String? {
-        return when (getPaymentMethodByPan(pan)) {
-            PaymentMethod.VISA -> "2315208C9110AD402315208C9110AD40"
-            PaymentMethod.MASTER -> "9E15204313F7318ACB79B90BD986AD29"
-            PaymentMethod.UNIONPAY -> "476F6C6470616320496E6974204D444B"
-            PaymentMethod.JCB -> "DA61514AF464AD7FC21AB0FD92681AC8"
-            PaymentMethod.DINERS,
-            PaymentMethod.DISCOVER -> "11111111111111112222222222222222"
-
-            PaymentMethod.AMEX -> "10E516B5A8469775548FE3689D75F129"
-            else -> null
-        }
+    private fun getIssuerMasterKeyByPan(context: Context, pan: String): String? {
+        return getIssuerMasterKeyByPaymentMethod(context, getPaymentMethodByPan(pan))
     }
 
-    fun getIssuerMasterKeyByPaymentMethod(paymentMethod: PaymentMethod): String? {
-        return when (paymentMethod) {
-            PaymentMethod.VISA -> "2315208C9110AD402315208C9110AD40"
-            PaymentMethod.MASTER -> "9E15204313F7318ACB79B90BD986AD29"
-            PaymentMethod.UNIONPAY -> "476F6C6470616320496E6974204D444B"
-            PaymentMethod.JCB -> "DA61514AF464AD7FC21AB0FD92681AC8"
-            PaymentMethod.DINERS,
-            PaymentMethod.DISCOVER -> "11111111111111112222222222222222"
-
-            PaymentMethod.AMEX -> "10E516B5A8469775548FE3689D75F129"
-            else -> null
-        }
+    fun getIssuerMasterKeyByPaymentMethod(context: Context, paymentMethod: PaymentMethod): String? {
+        val imkMap = PreferencesUtil.getIMKMap(context)
+        return paymentMethod.let { imkMap.data?.get(paymentMethod) }
     }
 
     fun getCVNByPaymentMethod(paymentMethod: PaymentMethod, iad: String): Int? {
@@ -574,16 +556,16 @@ object EMVUtils {
         }
     }
 
-    fun getACCalculationKey(paymentMethod: PaymentMethod, cvn: Int?, pan: String?, psn: String?, atc: String?, un: String?): String? {
+    fun getACCalculationKey(context: Context, paymentMethod: PaymentMethod, cvn: Int?, pan: String?, psn: String?, atc: String?, un: String?): String? {
         return when (paymentMethod) {
-            PaymentMethod.VISA -> VisaDelegate.getACCalculationKey(cvn, pan, psn, atc, un)
-            PaymentMethod.MASTER -> MastercardDelegate.getACCalculationKey(cvn, pan, psn, atc, un)
-            PaymentMethod.UNIONPAY -> UnionPayDelegate.getACCalculationKey(cvn, pan, psn, atc, un)
-            PaymentMethod.JCB -> JcbDelegate.getACCalculationKey(cvn, pan, psn, atc, un)
+            PaymentMethod.VISA -> VisaDelegate.getACCalculationKey(context, cvn, pan, psn, atc, un)
+            PaymentMethod.MASTER -> MastercardDelegate.getACCalculationKey(context, cvn, pan, psn, atc, un)
+            PaymentMethod.UNIONPAY -> UnionPayDelegate.getACCalculationKey(context, cvn, pan, psn, atc, un)
+            PaymentMethod.JCB -> JcbDelegate.getACCalculationKey(context, cvn, pan, psn, atc, un)
             PaymentMethod.DINERS,
-            PaymentMethod.DISCOVER -> DiscoverDelegate.getACCalculationKey(cvn, pan, psn, atc, un)
+            PaymentMethod.DISCOVER -> DiscoverDelegate.getACCalculationKey(context, cvn, pan, psn, atc, un)
 
-            PaymentMethod.AMEX -> AmexDelegate.getACCalculationKey(cvn, pan, psn, atc, un)
+            PaymentMethod.AMEX -> AmexDelegate.getACCalculationKey(context, cvn, pan, psn, atc, un)
             else -> null
         }
     }

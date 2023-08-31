@@ -56,6 +56,14 @@
                 android:text="@string/label_setting_capk"
                 app:drawableStartCompat="@drawable/ic_baseline_key" />
 
+            <TextView
+                android:id="@+id/settingIMK"
+                style="@style/Widget.Crypto.Calculator.List.SingleLineItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_setting_imk"
+                app:drawableStartCompat="@drawable/ic_baseline_key" />
+
         </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

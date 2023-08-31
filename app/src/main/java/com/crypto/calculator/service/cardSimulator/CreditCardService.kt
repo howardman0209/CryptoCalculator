@@ -93,13 +93,13 @@ class CreditCardService : BasicEMVService() {
     private fun cardFactory(cardScheme: PaymentMethod): EMVFlowDelegate {
         val cardProfile = PreferencesUtil.getCardProfile(applicationContext, cardScheme)
         return when (cardScheme) {
-            PaymentMethod.VISA -> VisaDelegate.getInstance(cardProfile.data)
-            PaymentMethod.MASTER -> MastercardDelegate.getInstance(cardProfile.data)
-            PaymentMethod.UNIONPAY -> UnionPayDelegate.getInstance(cardProfile.data)
-            PaymentMethod.JCB -> JcbDelegate.getInstance(cardProfile.data)
-            PaymentMethod.DISCOVER -> DiscoverDelegate.getInstance(cardProfile.data)
-            PaymentMethod.AMEX -> AmexDelegate.getInstance(cardProfile.data)
-            else -> VisaDelegate.getInstance(cardProfile.data)
+            PaymentMethod.VISA -> VisaDelegate.getInstance(applicationContext, cardProfile.data)
+            PaymentMethod.MASTER -> MastercardDelegate.getInstance(applicationContext, cardProfile.data)
+            PaymentMethod.UNIONPAY -> UnionPayDelegate.getInstance(applicationContext, cardProfile.data)
+            PaymentMethod.JCB -> JcbDelegate.getInstance(applicationContext, cardProfile.data)
+            PaymentMethod.DISCOVER -> DiscoverDelegate.getInstance(applicationContext, cardProfile.data)
+            PaymentMethod.AMEX -> AmexDelegate.getInstance(applicationContext, cardProfile.data)
+            else -> VisaDelegate.getInstance(applicationContext, cardProfile.data)
         }
     }
 

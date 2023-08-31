@@ -173,7 +173,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                     },
                     neutralBtn = getString(R.string.button_reset),
                     onNeutralBtnClick = {
-                        PreferencesUtil.clearPreferenceData(requireContext(), "${cardPreference}-$prefCardProfile")
+                        PreferencesUtil.clearPreferenceData(requireContext().applicationContext, "${cardPreference}-$prefCardProfile")
                     }
                 )
 
@@ -242,7 +242,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             editConfigJson(requireContext(), it, emvConfig, true,
                 neutralBtn = getString(R.string.button_reset),
                 onNeutralBtnClick = {
-                    PreferencesUtil.clearPreferenceData(requireContext(), prefEmvConfig)
+                    PreferencesUtil.clearPreferenceData(requireContext().applicationContext, prefEmvConfig)
                 }
             ) { editedConfig ->
                 PreferencesUtil.saveEmvConfig(requireContext().applicationContext, editedConfig)
@@ -383,17 +383,17 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             Log.d("arqcCalculator", "cardType: $cardType")
             val iad = LogPanelUtil.safeExecute { data["9F10"] ?: "" }
             val cvn = LogPanelUtil.safeExecute(onFail = {}, task = { EMVUtils.getCVNByPaymentMethod(cardType, iad) })
-            val imk = LogPanelUtil.safeExecute { EMVUtils.getIssuerMasterKeyByPaymentMethod(cardType) ?: "Issuer master key not found" }
+            val imk = LogPanelUtil.safeExecute { EMVUtils.getIssuerMasterKeyByPaymentMethod(requireContext().applicationContext, cardType) ?: "Issuer master key not found" }
             val pan = LogPanelUtil.safeExecute { data["57"]?.substringBefore('D') ?: "" }
             val psn = LogPanelUtil.safeExecute { data["5F34"] ?: "" }
 
-            val iccMK = LogPanelUtil.safeExecute { EMVUtils.deriveICCMasterKey(pan, psn) ?: "Derive ICC master key fail" }
+            val iccMK = LogPanelUtil.safeExecute { EMVUtils.deriveICCMasterKey(requireContext().applicationContext, pan, psn) ?: "Derive ICC master key fail" }
             val atc = LogPanelUtil.safeExecute { data["9F36"] ?: "" }
             val un = LogPanelUtil.safeExecute { data["9F37"] ?: "" }
-            val udk = LogPanelUtil.safeExecute { EMVUtils.deriveACSessionKey(pan, psn, atc, un) ?: "Derive AC session key fail" }
+            val udk = LogPanelUtil.safeExecute { EMVUtils.deriveACSessionKey(requireContext().applicationContext, pan, psn, atc, un) ?: "Derive AC session key fail" }
             Log.d("arqcCalculator", "udk: $udk")
 
-            val key = LogPanelUtil.safeExecute { EMVUtils.getACCalculationKey(cardType, cvn, pan, psn, atc, un) ?: "Key Derivation Fail" }
+            val key = LogPanelUtil.safeExecute { EMVUtils.getACCalculationKey(requireContext().applicationContext, cardType, cvn, pan, psn, atc, un) ?: "Key Derivation Fail" }
             Log.d("arqcCalculator", "key: $key")
             val dol = LogPanelUtil.safeExecute { EMVUtils.getAcDOLByPaymentMethod(cardType, cvn, data) }
             Log.d("arqcCalculator", "dol: $dol")

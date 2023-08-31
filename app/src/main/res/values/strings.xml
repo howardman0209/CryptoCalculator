@@ -766,6 +766,7 @@
     <!--Settings-->
     <string name="label_setting_log_font_size" translatable="false">Log font setting</string>
     <string name="label_setting_capk" translatable="false">CAPK</string>
+    <string name="label_setting_imk" translatable="false">Issuer master key</string>
 
     <!--Font Setting-->
     <string name="label_font_size" translatable="false">Font Size</string>

@@ -11,6 +11,7 @@ import com.crypto.calculator.databinding.DialogLogFontSettingBinding
 import com.crypto.calculator.ui.base.MVVMActivity
 import com.crypto.calculator.ui.viewModel.SettingViewModel
 import com.crypto.calculator.util.PreferencesUtil
+import com.crypto.calculator.util.prefImkList
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class SettingActivity : MVVMActivity<SettingViewModel, ActivitySettingBinding>() {
@@ -45,6 +46,22 @@ class SettingActivity : MVVMActivity<SettingViewModel, ActivitySettingBinding>()
                     Log.d("settingFont", "cancel")
                 }
                 .show()
+        }
+
+        binding.settingCAPK.setOnClickListener {
+
+        }
+
+        binding.settingIMK.setOnClickListener {
+            val imkList = PreferencesUtil.getIMKMap(applicationContext)
+            editConfigJson(this, it, imkList, true,
+                neutralBtn = getString(R.string.button_reset),
+                onNeutralBtnClick = {
+                    PreferencesUtil.clearPreferenceData(applicationContext, prefImkList)
+                }
+            ) { editedConfig ->
+                PreferencesUtil.saveIMKMap(applicationContext, editedConfig)
+            }
         }
     }
 

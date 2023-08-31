@@ -424,7 +424,8 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             when (selected) {
                 0 -> sb.append("8F90929F32")
                 1 -> sb.append("9F469F479F48")
-                2 -> sb.append("9F4B")
+                2 -> sb.append("93")
+                3 -> sb.append("9F4B")
                 else -> {}
             }
             val data = hashMapOf<String, String>()
@@ -432,13 +433,13 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                 data[it] = ""
             }
             when (selected) {
-                1 -> {
+                1, 2 -> {
                     data["issuerPublicKeyExponent"] = ""
                     data["issuerPublicKeyModulus"] = ""
                     data["staticData"] = ""
                 }
 
-                2 -> {
+                3 -> {
                     data["iccPublicKeyExponent"] = ""
                     data["iccPublicKeyModulus"] = ""
                     data["dynamicData"] = ""
@@ -451,7 +452,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
         var data = hashMapOf<String, String>()
         var selected: Int? = null
-        val operationList = listOf("Retrieve Issuer Public Key", "Retrieve ICC Public Key", "Verify Signed Dynamic Authentication Data")
+        val operationList = listOf("Retrieve Issuer Public Key", "Retrieve ICC Public Key", "Verify Signed Static Application Data", "Verify Signed Dynamic Application Data")
         binding.tilCondition2.visibility = View.VISIBLE
         binding.tilCondition2.hint = "Operation"
         binding.autoTvCondition2.setAdapter(
@@ -552,6 +553,39 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
                 2 -> {
                     logBuilder.append("ODA calculator - ${operationList[2]}:\n")
+                    val issuerPK = EMVPublicKey(
+                        exponent = data["issuerPublicKeyExponent"],
+                        modulus = data["issuerPublicKeyModulus"]
+                    )
+                    issuerPK.exponent.also { e -> logBuilder.append("Issuer Public Key exponent: $e\n") }
+                    issuerPK.modulus.also { modulus -> logBuilder.append("Issuer Public Key modulus: $modulus\n") }
+                    Log.d("odaCalculator", "issuerPK: $issuerPK")
+
+                    val staticData = data["staticData"] ?: ""
+                    Log.d("odaCalculator", "staticData: $staticData")
+                    logBuilder.append("Static Data: $staticData\n")
+
+                    val ssad = data["93"] ?: ""
+                    logBuilder.append("Signed Static Application Data: $ssad\n")
+                    val recoveredData = LogPanelUtil.safeExecute { Encryption.doRSA(ssad, issuerPK.exponent!!, issuerPK.modulus!!) }
+                    logBuilder.append("Recovered Data: $recoveredData\n")
+                    val inspectLog = LogPanelUtil.safeExecute { viewModel.inspectSignedStaticApplicationData(recoveredData, data) }
+                    logBuilder.append("$inspectLog\n")
+
+                    val result = LogPanelUtil.safeExecute(
+                        onFail = { logBuilder.append("Error: ${it.message ?: it.toString()}\n") },
+                        task = { ODAUtil.verifySSAD(recoveredData, staticData, data) }
+                    )
+                    if (result == true) {
+                        logBuilder.append("✓ Signed Static Application Data Validation Succeed\n")
+                    } else {
+                        logBuilder.append("✗ Signed Static Application Data Validation Failed\n")
+                    }
+                    LogPanelUtil.printLog(logBuilder.toString())
+                }
+
+                3 -> {
+                    logBuilder.append("ODA calculator - ${operationList[3]}:\n")
                     val iccPK = EMVPublicKey(
                         exponent = data["iccPublicKeyExponent"],
                         modulus = data["iccPublicKeyModulus"]

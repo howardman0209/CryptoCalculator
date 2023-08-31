@@ -435,4 +435,18 @@ class EmvViewModel : BaseViewModel() {
         sdad.substring(sdad.length - 2).also { logBuilder.append("${if (it == "BC") "✓" else "✗"} [Data Trailer]: $it") }
         return logBuilder.toString()
     }
+
+    fun inspectSignedStaticApplicationData(ssad: String, data: HashMap<String, String>): String {
+        val logBuilder = StringBuilder()
+        ssad.substring(0, 2).also { logBuilder.append("${if (it == "6A") "✓" else "✗"} [Data Header]: $it\n") }
+        ssad.substring(2, 4).also { logBuilder.append("${if (it == "03") "✓" else "✗"} [Data Format]: $it\n") }
+        ssad.substring(4, 6).also { logBuilder.append("- [Hash Algorithm Indicator]: $it\n") }
+        ssad.substring(6, 10).also { logBuilder.append("- [Data Authentication Code]: $it\n") }
+        ssad.substring(10, ssad.length - 42).also { logBuilder.append("- [Pad Pattern]: $it\n") }
+        ssad.substring(ssad.length - 42, ssad.length - 2).also {
+            logBuilder.append("${if (it == ODAUtil.getHash("${ssad.substring(2, ssad.length - 42)}${data["staticData"] ?: ""}")) "✓" else "✗"} [Hash Result]: $it\n")
+        }
+        ssad.substring(ssad.length - 2).also { logBuilder.append("${if (it == "BC") "✓" else "✗"} [Data Trailer]: $it") }
+        return logBuilder.toString()
+    }
 }

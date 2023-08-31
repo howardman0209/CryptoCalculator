@@ -107,6 +107,17 @@ object ODAUtil {
         } ?: false
     }
 
+    fun verifySSAD(cert: String, staticData: String, data: HashMap<String, String>): Boolean {
+        if (!cert.startsWith("6A03", ignoreCase = true)) return false
+        if (!cert.endsWith("BC", ignoreCase = true)) return false
+        val hash = cert.substring(cert.length - 42, cert.length - 2)
+        Log.d("verifySSAD", "hash: $hash")
+        val staticAuthData = getStaticAuthData(staticData, data)
+        Log.d("verifySSAD", "staticAuthData: $staticAuthData")
+        val inputData = "${cert.substring(2, cert.length - 42)}$staticAuthData"
+        return getHash(inputData) == hash
+    }
+
     fun getCryptogramFromSDAD(sdad: String, iccPK: EMVPublicKey?): String? {
         iccPK?.exponent ?: return null
         iccPK.modulus ?: return null

@@ -3,13 +3,11 @@ package com.crypto.calculator.service.cardSimulator.delegate
 import android.content.Context
 import android.util.Log
 import com.crypto.calculator.model.PaddingMethod
-import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.service.cardSimulator.BasicEMVCard
 import com.crypto.calculator.service.cardSimulator.BasicEMVService
 import com.crypto.calculator.service.model.ApplicationCryptogram
 import com.crypto.calculator.service.model.ApplicationCryptogram.getCryptogramInformationData
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
-import com.crypto.calculator.util.EMVUtils
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
 
@@ -19,75 +17,6 @@ class VisaDelegate(context: Context, private val iccData: HashMap<String, String
         const val CVN10_TAGS = "9F029F039F1A955F2A9A9C9F37829F369F10"
         const val CVN17_TAGS = "9F029F379F369F10"
         const val CVN18_TAGS = "9F029F039F1A955F2A9A9C9F37829F369F10"
-
-        fun readCVNFromIAD(iad: String): Int {
-            try {
-                val cvn = when (iad.substring(6, 8)) {
-                    "03" -> iad.substring(4, 6).toInt(16)
-                    "00" -> iad.substring(2, 4).toInt(16)
-                    else -> throw Exception("UNKNOWN_IAD_FORMAT")
-                }
-                Log.d("VisaSimulator", "readCVNFromIAD - cvn: $cvn")
-                return cvn
-            } catch (ex: Exception) {
-                throw Exception("INVALID_ICC_DATA [9F10]")
-            }
-        }
-
-        fun getAcDOL(data: HashMap<String, String>, cvn: Int? = 10): String {
-            val dolBuilder = StringBuilder()
-            return when (cvn) {
-                10 -> {
-                    TlvUtil.readTagList(CVN10_TAGS).forEach {
-                        if (it != "9F10") {
-                            dolBuilder.append(data[it] ?: "")
-                        } else {
-                            dolBuilder.append(data[it]?.substring(6, 14) ?: "")
-                        }
-                    }
-                    dolBuilder.toString().uppercase()
-                }
-
-                17 -> {
-                    TlvUtil.readTagList(CVN17_TAGS).forEach {
-                        if (it != "9F10") {
-                            dolBuilder.append(data[it] ?: "")
-                        } else {
-                            dolBuilder.append(data[it]?.substring(8, 10) ?: "")
-                        }
-                    }
-                    dolBuilder.toString().uppercase()
-                }
-
-                else -> {
-                    TlvUtil.readTagList(CVN18_TAGS).forEach {
-                        dolBuilder.append(data[it] ?: "")
-                    }
-                    dolBuilder.toString().uppercase()
-                }
-            }
-        }
-
-        fun getAcPaddingMethod(cvn: Int? = 10): PaddingMethod {
-            return when (cvn) {
-                10, 17 -> PaddingMethod.ISO9797_M1
-                else -> PaddingMethod.ISO9797_M2
-            }
-        }
-
-        fun getACCalculationKey(context: Context, cvn: Int? = 10, pan: String? = null, psn: String? = null, atc: String? = null, un: String? = null): String {
-            pan ?: throw Exception("INVALID_ICC_DATA [57]")
-            psn ?: throw Exception("INVALID_ICC_DATA [5F34]")
-            val imk = EMVUtils.getIssuerMasterKeyByPan(context, pan)
-            val iccMK = EMVUtils.deriveICCMasterKey(imk, pan, psn)
-            atc ?: throw Exception("INVALID_ICC_DATA [9F36]")
-            val sk = EMVUtils.deriveACSessionKey(PaymentMethod.VISA, iccMK, atc, un)
-            return when (cvn) {
-                10 -> iccMK
-                17 -> iccMK
-                else -> sk
-            }
-        }
     }
 
     override fun onPPSEReply(cAPDU: String): String {

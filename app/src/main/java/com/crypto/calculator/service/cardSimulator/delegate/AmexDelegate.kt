@@ -7,7 +7,6 @@ import com.crypto.calculator.service.cardSimulator.BasicEMVCard
 import com.crypto.calculator.service.cardSimulator.BasicEMVService
 import com.crypto.calculator.service.model.ApplicationCryptogram
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
-import com.crypto.calculator.util.EMVUtils
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
 
@@ -16,64 +15,6 @@ class AmexDelegate(context: Context, private val iccData: HashMap<String, String
         fun getInstance(context: Context, iccData: HashMap<String, String>) = AmexDelegate(context, iccData)
         const val CVN01_TAGS = "9F029F039F1A955F2A9A9C9F37829F369F10"
         const val CVN02_TAGS = "9F379F369F10"
-
-        fun readCVNFromIAD(iad: String): Int {
-            try {
-                val cvn = iad.substring(4, 6).toInt(16)
-                Log.d("AmexDelegate", "readCVNFromIAD - cvn: $cvn")
-                return cvn
-            } catch (ex: Exception) {
-                throw Exception("INVALID_ICC_DATA [9F10]")
-            }
-        }
-
-        fun getAcDOL(data: HashMap<String, String>, cvn: Int? = 1): String {
-            val dolBuilder = StringBuilder()
-            return when (cvn) {
-                1 -> {
-                    TlvUtil.readTagList(CVN01_TAGS).forEach {
-                        if (it != "9F10") {
-                            dolBuilder.append(data[it] ?: "")
-                        } else {
-                            dolBuilder.append(data[it]?.substring(6) ?: "")
-                        }
-                    }
-                    dolBuilder.toString().uppercase()
-                }
-
-                else -> {
-                    // TODO: calculate other CVN
-                    throw Exception("UNHANDLED CRYPTOGRAM VERSION")
-                }
-            }
-        }
-
-        fun getAcPaddingMethod(cvn: Int? = 1): PaddingMethod {
-            return when (cvn) {
-                1 -> PaddingMethod.ISO9797_M1
-                else -> {
-                    // TODO: calculate other CVN
-                    throw Exception("UNHANDLED CRYPTOGRAM VERSION")
-                }
-            }
-        }
-
-        fun getACCalculationKey(context: Context, cvn: Int? = 1, pan: String? = null, psn: String? = null, atc: String? = null, un: String? = null): String {
-            pan ?: throw Exception("INVALID_ICC_DATA [57]")
-            psn ?: throw Exception("INVALID_ICC_DATA [5F34]")
-            val imk = EMVUtils.getIssuerMasterKeyByPan(context, pan)
-            val iccMK = EMVUtils.deriveICCMasterKey(imk, pan, psn)
-            atc ?: throw Exception("INVALID_ICC_DATA [9F36]")
-//            un ?: throw Exception("INVALID_TERMINAL_DATA [9F37]")
-//            val sk = EMVUtils.deriveACSessionKey(pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
-            return when (cvn) {
-                1 -> iccMK
-                else -> {
-                    // TODO: calculate other CVN
-                    throw Exception("UNHANDLED CRYPTOGRAM VERSION")
-                }
-            }
-        }
     }
 
     override fun onPPSEReply(cAPDU: String): String {

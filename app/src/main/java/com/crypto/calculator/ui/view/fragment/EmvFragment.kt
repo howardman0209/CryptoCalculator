@@ -16,6 +16,7 @@ import com.crypto.calculator.extension.getColorIconResId
 import com.crypto.calculator.extension.requireDefaultPaymentServicePermission
 import com.crypto.calculator.extension.toDataClass
 import com.crypto.calculator.model.AcDOL
+import com.crypto.calculator.model.CryptogramKey
 import com.crypto.calculator.model.DataFormat
 import com.crypto.calculator.model.EMVPublicKey
 import com.crypto.calculator.model.OdaDOL
@@ -393,8 +394,13 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             val udk = LogPanelUtil.safeExecute { EMVUtils.deriveACSessionKey(cardType, iccMK, atc, un) }
             Log.d("arqcCalculator", "udk: $udk")
 
-            val key = LogPanelUtil.safeExecute { EMVUtils.getACCalculationKey(requireContext().applicationContext, cardType, cvn, pan, psn, atc, un) ?: "Key Derivation Fail" }
-            Log.d("arqcCalculator", "key: $key")
+            val acCalculationKey = LogPanelUtil.safeExecute(onFail = null, task = { EMVUtils.getACCalculationKey(cardType, cvn) }) ?: CryptogramKey.ICC_MASTER_KEY
+            Log.d("arqcCalculator", "AC calculation key: $acCalculationKey")
+
+            val key = when (acCalculationKey) {
+                CryptogramKey.SESSION_KEY -> udk
+                CryptogramKey.ICC_MASTER_KEY -> iccMK
+            }
             val dol = LogPanelUtil.safeExecute { EMVUtils.getAcDOLByPaymentMethod(cardType, cvn, data) }
             Log.d("arqcCalculator", "dol: $dol")
             val paddingMethod = LogPanelUtil.safeExecute(onFail = {}, task = { EMVUtils.getAcDOLPaddingByPaymentMethod(cardType, cvn) }) ?: PaddingMethod.ISO9797_M1
@@ -408,8 +414,8 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                         (if (pan.isNotEmpty()) "\nPAN [5A]: $pan " else "") +
                         (if (psn.isNotEmpty()) "\nPSN [5F34]: $psn " else "") +
                         "\nICC master key: $iccMK " +
-                        (if (atc.isNotEmpty() && key == udk) "\nATC [9F36]: $atc " else "") +
-                        (if (un.isNotEmpty() && key == udk && cardType == PaymentMethod.MASTER) "\nUN [9F37]: $un " else "") +
+                        (if (atc.isNotEmpty() && acCalculationKey == CryptogramKey.SESSION_KEY) "\nATC [9F36]: $atc " else "") +
+                        (if (un.isNotEmpty() && acCalculationKey == CryptogramKey.SESSION_KEY && cardType == PaymentMethod.MASTER) "\nUN [9F37]: $un " else "") +
                         (if (key == udk) "\nAC session key: $udk " else "") +
                         "\nDOL: $dol " +
                         "\nPadding method: ${paddingMethod.name} " +

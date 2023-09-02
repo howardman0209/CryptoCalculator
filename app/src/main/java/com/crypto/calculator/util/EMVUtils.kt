@@ -1,21 +1,15 @@
 package com.crypto.calculator.util
 
 import android.content.Context
-import android.util.Log
 import com.crypto.calculator.extension.adjustDESParity
 import com.crypto.calculator.extension.hexBitwise
 import com.crypto.calculator.extension.hexToByteArray
 import com.crypto.calculator.extension.toHexString
 import com.crypto.calculator.model.BitwiseOperation
+import com.crypto.calculator.model.CryptogramKey
 import com.crypto.calculator.model.EntryMode
 import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.model.PaymentMethod
-import com.crypto.calculator.service.cardSimulator.delegate.AmexDelegate
-import com.crypto.calculator.service.cardSimulator.delegate.DiscoverDelegate
-import com.crypto.calculator.service.cardSimulator.delegate.JcbDelegate
-import com.crypto.calculator.service.cardSimulator.delegate.MastercardDelegate
-import com.crypto.calculator.service.cardSimulator.delegate.UnionPayDelegate
-import com.crypto.calculator.service.cardSimulator.delegate.VisaDelegate
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Pattern
@@ -506,18 +500,29 @@ object EMVUtils {
     }
 
     fun getCVNByPaymentMethod(paymentMethod: PaymentMethod, iad: String): Int? {
-        return when (paymentMethod) {
-            PaymentMethod.VISA -> VisaDelegate.readCVNFromIAD(iad)
-            PaymentMethod.MASTER -> MastercardDelegate.readCVNFromIAD(iad)
-            PaymentMethod.UNIONPAY -> UnionPayDelegate.readCVNFromIAD(iad)
-            PaymentMethod.JCB -> JcbDelegate.readCVNFromIAD(iad)
-            PaymentMethod.DINERS,
-            PaymentMethod.DISCOVER -> DiscoverDelegate.readCVNFromIAD(iad)
+        try {
+            return when (paymentMethod) {
+                PaymentMethod.MASTER,
+                PaymentMethod.DINERS,
+                PaymentMethod.DISCOVER -> iad.substring(2, 4).toInt()
 
-            PaymentMethod.AMEX -> AmexDelegate.readCVNFromIAD(iad)
-            else -> null
+                PaymentMethod.UNIONPAY,
+                PaymentMethod.JCB,
+                PaymentMethod.AMEX -> iad.substring(4, 6).toInt(16)
+
+                PaymentMethod.VISA -> {
+                    when (iad.substring(6, 8)) {
+                        "03" -> iad.substring(4, 6).toInt(16)
+                        "00" -> iad.substring(2, 4).toInt(16)
+                        else -> throw Exception("UNKNOWN_IAD_FORMAT")
+                    }
+                }
+
+                else -> null
+            }
+        } catch (ex: Exception) {
+            throw Exception("INVALID_ICC_DATA [9F10]")
         }
-
     }
 
     fun getAcTagListByPaymentMethod(paymentMethod: PaymentMethod, cvn: Int?): String {
@@ -532,44 +537,267 @@ object EMVUtils {
     }
 
     fun getAcDOLByPaymentMethod(paymentMethod: PaymentMethod, cvn: Int?, data: HashMap<String, String>): String {
-        return when (paymentMethod) {
-            PaymentMethod.VISA -> VisaDelegate.getAcDOL(data, cvn)
-            PaymentMethod.MASTER -> MastercardDelegate.getAcDOL(data, cvn)
-            PaymentMethod.UNIONPAY -> UnionPayDelegate.getAcDOL(data, cvn)
-            PaymentMethod.JCB -> JcbDelegate.getAcDOL(data, cvn)
-            PaymentMethod.DINERS,
-            PaymentMethod.DISCOVER -> DiscoverDelegate.getAcDOL(data, cvn)
+        try {
+            val dolBuilder = StringBuilder()
+            val tagList = TlvUtil.readTagList(getAcTagListByPaymentMethod(paymentMethod, cvn))
 
-            PaymentMethod.AMEX -> AmexDelegate.getAcDOL(data, cvn)
-            else -> ""
+            when (paymentMethod) {
+                PaymentMethod.VISA -> {
+                    when (cvn) {
+                        10 -> {
+                            tagList.forEach {
+                                if (it != "9F10") {
+                                    dolBuilder.append(data[it] ?: "")
+                                } else {
+                                    dolBuilder.append(data[it]?.substring(6, 14) ?: "")
+                                }
+                            }
+                        }
+
+                        17 -> {
+                            tagList.forEach {
+                                if (it != "9F10") {
+                                    dolBuilder.append(data[it] ?: "")
+                                } else {
+                                    dolBuilder.append(data[it]?.substring(8, 10) ?: "")
+                                }
+                            }
+                        }
+
+                        else -> {
+                            tagList.forEach {
+                                dolBuilder.append(data[it] ?: "")
+                            }
+                        }
+                    }
+                }
+
+                PaymentMethod.MASTER -> {
+                    when (cvn) {
+                        10 -> {
+                            tagList.forEach {
+                                if (it != "9F10") {
+                                    dolBuilder.append(data[it] ?: "")
+                                } else {
+                                    dolBuilder.append(data[it]?.substring(4, 16) ?: "")
+                                }
+                            }
+                        }
+
+                        else -> {
+                            // TODO: calculate other CVN
+                            throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                        }
+                    }
+                }
+
+                PaymentMethod.UNIONPAY -> {
+                    when (cvn) {
+                        1 -> {
+                            tagList.forEach {
+                                if (it != "9F10") {
+                                    dolBuilder.append(data[it] ?: "")
+                                } else {
+                                    dolBuilder.append(data[it]?.substring(6, 14) ?: "")
+                                }
+                            }
+                        }
+
+                        else -> {
+                            // TODO: calculate other CVN
+                            throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                        }
+                    }
+                }
+
+                PaymentMethod.JCB -> {
+                    when (cvn) {
+                        1 -> {
+                            tagList.forEach {
+                                if (it != "9F10") {
+                                    dolBuilder.append(data[it] ?: "")
+                                } else {
+                                    dolBuilder.append(data[it]?.substring(6) ?: "")
+                                }
+                            }
+                        }
+
+                        else -> {
+                            // TODO: calculate other CVN
+                            throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                        }
+                    }
+                }
+
+                PaymentMethod.DINERS, PaymentMethod.DISCOVER -> {
+                    when (cvn) {
+                        15 -> {
+                            tagList.forEach {
+                                dolBuilder.append(data[it] ?: "")
+                            }
+                        }
+
+                        else -> {
+                            // TODO: calculate other CVN
+                            throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                        }
+                    }
+                }
+
+                PaymentMethod.AMEX -> {
+                    when (cvn) {
+                        1 -> {
+                            tagList.forEach {
+                                if (it != "9F10") {
+                                    dolBuilder.append(data[it] ?: "")
+                                } else {
+                                    dolBuilder.append(data[it]?.substring(6) ?: "")
+                                }
+                            }
+                        }
+
+                        else -> {
+                            // TODO: calculate other CVN
+                            throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                        }
+                    }
+                }
+
+                else -> {}
+            }
+
+            return dolBuilder.toString().uppercase()
+        } catch (ex: Exception) {
+            throw Exception("RETRIEVE_AC_DOL_ERROR")
         }
     }
 
     fun getAcDOLPaddingByPaymentMethod(paymentMethod: PaymentMethod, cvn: Int?): PaddingMethod {
         return when (paymentMethod) {
-            PaymentMethod.VISA -> VisaDelegate.getAcPaddingMethod(cvn)
-            PaymentMethod.MASTER -> MastercardDelegate.getAcPaddingMethod(cvn)
-            PaymentMethod.UNIONPAY -> UnionPayDelegate.getAcPaddingMethod(cvn)
-            PaymentMethod.JCB -> JcbDelegate.getAcPaddingMethod(cvn)
-            PaymentMethod.DINERS,
-            PaymentMethod.DISCOVER -> DiscoverDelegate.getAcPaddingMethod(cvn)
+            PaymentMethod.VISA -> {
+                return when (cvn) {
+                    10, 17 -> PaddingMethod.ISO9797_M1
+                    else -> PaddingMethod.ISO9797_M2
+                }
+            }
 
-            PaymentMethod.AMEX -> AmexDelegate.getAcPaddingMethod(cvn)
+            PaymentMethod.MASTER -> {
+                return when (cvn) {
+                    10 -> PaddingMethod.ISO9797_M2
+                    else -> {
+                        // TODO: calculate other CVN
+                        throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                    }
+                }
+            }
+
+            PaymentMethod.UNIONPAY -> {
+                return when (cvn) {
+                    1 -> PaddingMethod.ISO9797_M2
+                    else -> {
+                        // TODO: calculate other CVN
+                        throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                    }
+                }
+            }
+
+            PaymentMethod.JCB -> {
+                return when (cvn) {
+                    1 -> PaddingMethod.ISO9797_M1
+                    else -> {
+                        // TODO: calculate other CVN
+                        throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                    }
+                }
+            }
+
+            PaymentMethod.DINERS,
+            PaymentMethod.DISCOVER -> {
+                return when (cvn) {
+                    15 -> PaddingMethod.ISO9797_M2
+                    else -> {
+                        // TODO: calculate other CVN
+                        throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                    }
+                }
+            }
+
+            PaymentMethod.AMEX -> {
+                return when (cvn) {
+                    1 -> PaddingMethod.ISO9797_M1
+                    else -> {
+                        // TODO: calculate other CVN
+                        throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                    }
+                }
+            }
+
             else -> PaddingMethod.ISO9797_M1
         }
     }
 
-    fun getACCalculationKey(context: Context, paymentMethod: PaymentMethod, cvn: Int?, pan: String?, psn: String?, atc: String?, un: String?): String? {
+    fun getACCalculationKey(paymentMethod: PaymentMethod, cvn: Int?): CryptogramKey {
         return when (paymentMethod) {
-            PaymentMethod.VISA -> VisaDelegate.getACCalculationKey(context, cvn, pan, psn, atc, un)
-            PaymentMethod.MASTER -> MastercardDelegate.getACCalculationKey(context, cvn, pan, psn, atc, un)
-            PaymentMethod.UNIONPAY -> UnionPayDelegate.getACCalculationKey(context, cvn, pan, psn, atc, un)
-            PaymentMethod.JCB -> JcbDelegate.getACCalculationKey(context, cvn, pan, psn, atc, un)
-            PaymentMethod.DINERS,
-            PaymentMethod.DISCOVER -> DiscoverDelegate.getACCalculationKey(context, cvn, pan, psn, atc, un)
+            PaymentMethod.VISA -> {
+                when (cvn) {
+                    10 -> CryptogramKey.ICC_MASTER_KEY
+                    17 -> CryptogramKey.ICC_MASTER_KEY
+                    else -> CryptogramKey.SESSION_KEY
+                }
+            }
 
-            PaymentMethod.AMEX -> AmexDelegate.getACCalculationKey(context, cvn, pan, psn, atc, un)
-            else -> null
+            PaymentMethod.MASTER -> {
+                when (cvn) {
+                    10 -> CryptogramKey.SESSION_KEY
+                    else -> {
+                        // TODO: calculate other CVN
+                        throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                    }
+                }
+            }
+
+            PaymentMethod.UNIONPAY -> {
+                when (cvn) {
+                    1 -> CryptogramKey.SESSION_KEY
+                    else -> {
+                        // TODO: calculate other CVN
+                        throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                    }
+                }
+            }
+
+            PaymentMethod.JCB -> {
+                when (cvn) {
+                    1 -> CryptogramKey.ICC_MASTER_KEY
+                    else -> {
+                        // TODO: calculate other CVN
+                        throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                    }
+                }
+            }
+
+            PaymentMethod.DINERS,
+            PaymentMethod.DISCOVER -> {
+                when (cvn) {
+                    15 -> CryptogramKey.SESSION_KEY
+                    else -> {
+                        // TODO: calculate other CVN
+                        throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                    }
+                }
+            }
+
+            PaymentMethod.AMEX -> {
+                when (cvn) {
+                    1 -> CryptogramKey.ICC_MASTER_KEY
+                    else -> {
+                        // TODO: calculate other CVN
+                        throw Exception("UNHANDLED CRYPTOGRAM VERSION")
+                    }
+                }
+            }
+
+            else -> CryptogramKey.ICC_MASTER_KEY
         }
     }
 }

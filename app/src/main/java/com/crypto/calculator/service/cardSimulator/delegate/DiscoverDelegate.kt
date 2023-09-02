@@ -3,6 +3,7 @@ package com.crypto.calculator.service.cardSimulator.delegate
 import android.content.Context
 import android.util.Log
 import com.crypto.calculator.model.PaddingMethod
+import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.service.cardSimulator.BasicEMVCard
 import com.crypto.calculator.service.cardSimulator.BasicEMVService
 import com.crypto.calculator.service.model.ApplicationCryptogram
@@ -11,7 +12,7 @@ import com.crypto.calculator.util.EMVUtils
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
 
-class DiscoverDelegate(val context: Context, private val iccData: HashMap<String, String>) : BasicEMVCard(context, iccData), BasicEMVService.EMVFlowDelegate {
+class DiscoverDelegate(context: Context, private val iccData: HashMap<String, String>) : BasicEMVCard(context, iccData), BasicEMVService.EMVFlowDelegate {
     companion object {
         fun getInstance(context: Context, iccData: HashMap<String, String>) = DiscoverDelegate(context, iccData)
         const val CVN15_TAGS = "9F029F1A9F379F369F10"
@@ -58,10 +59,11 @@ class DiscoverDelegate(val context: Context, private val iccData: HashMap<String
         fun getACCalculationKey(context: Context, cvn: Int? = 15, pan: String? = null, psn: String? = null, atc: String? = null, un: String? = null): String {
             pan ?: throw Exception("INVALID_ICC_DATA [57]")
             psn ?: throw Exception("INVALID_ICC_DATA [5F34]")
-//            val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
+            val imk = EMVUtils.getIssuerMasterKeyByPan(context, pan)
+            val iccMK = EMVUtils.deriveICCMasterKey(imk, pan, psn)
             atc ?: throw Exception("INVALID_ICC_DATA [9F36]")
 //            un ?: throw Exception("INVALID_TERMINAL_DATA [9F37]")
-            val sk = EMVUtils.deriveACSessionKey(context, pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
+            val sk = EMVUtils.deriveACSessionKey(PaymentMethod.DISCOVER, iccMK, atc, un)
             return when (cvn) {
                 15 -> sk
                 else -> {
@@ -195,9 +197,8 @@ class DiscoverDelegate(val context: Context, private val iccData: HashMap<String
     }
 
     override fun getCryptogramCalculationKey(cvn: Int, pan: String, psn: String, atc: String, un: String?): String {
-        val sk = EMVUtils.deriveACSessionKey(context, pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
         return when (cvn) {
-            15 -> sk
+            15 -> getACSessionKey()
             else -> {
                 // TODO: calculate other CVN
                 throw Exception("UNHANDLED CRYPTOGRAM VERSION")

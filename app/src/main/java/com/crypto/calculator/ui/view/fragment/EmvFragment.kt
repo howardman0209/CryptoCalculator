@@ -387,10 +387,10 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             val pan = LogPanelUtil.safeExecute { data["57"]?.substringBefore('D') ?: "" }
             val psn = LogPanelUtil.safeExecute { data["5F34"] ?: "" }
 
-            val iccMK = LogPanelUtil.safeExecute { EMVUtils.deriveICCMasterKey(requireContext().applicationContext, pan, psn) ?: "Derive ICC master key fail" }
+            val iccMK = LogPanelUtil.safeExecute { EMVUtils.deriveICCMasterKey(imk, pan, psn) }
             val atc = LogPanelUtil.safeExecute { data["9F36"] ?: "" }
             val un = LogPanelUtil.safeExecute { data["9F37"] ?: "" }
-            val udk = LogPanelUtil.safeExecute { EMVUtils.deriveACSessionKey(requireContext().applicationContext, pan, psn, atc, un) ?: "Derive AC session key fail" }
+            val udk = LogPanelUtil.safeExecute { EMVUtils.deriveACSessionKey(cardType, iccMK, atc, un) }
             Log.d("arqcCalculator", "udk: $udk")
 
             val key = LogPanelUtil.safeExecute { EMVUtils.getACCalculationKey(requireContext().applicationContext, cardType, cvn, pan, psn, atc, un) ?: "Key Derivation Fail" }

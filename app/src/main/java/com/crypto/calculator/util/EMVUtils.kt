@@ -454,19 +454,29 @@ object EMVUtils {
             t2Data
     }
 
-    fun deriveICCMasterKey(context: Context, pan: String, psn: String): String? {
-        return getIssuerMasterKeyByPan(context, pan)?.let { imk ->
+    fun getIssuerMasterKeyByPan(context: Context, pan: String): String {
+        return getIssuerMasterKeyByPaymentMethod(context, getPaymentMethodByPan(pan))
+    }
+
+    fun getIssuerMasterKeyByPaymentMethod(context: Context, paymentMethod: PaymentMethod): String {
+        val imkMap = PreferencesUtil.getIMKMap(context)
+        return imkMap.data?.get(paymentMethod) ?: ""
+    }
+
+    fun deriveICCMasterKey(imk: String, pan: String, psn: String): String {
+        try {
             val y = "$pan$psn".takeLast(16)
             val zl = Encryption.doTDESEncryptECB(y, imk)
             val zr = Encryption.doTDESEncryptECB(y.hexBitwise(operation = BitwiseOperation.NOT), imk)
             val iccMK = "$zl$zr"
-            iccMK.hexToByteArray().adjustDESParity().toHexString().uppercase()
+            return iccMK.hexToByteArray().adjustDESParity().toHexString().uppercase()
+        } catch (ex: Exception) {
+            throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
         }
     }
 
-    fun deriveACSessionKey(context: Context, pan: String, psn: String, atc: String, un: String? = null): String? {
-        return deriveICCMasterKey(context, pan, psn)?.let { iccMK ->
-            val paymentMethod = getPaymentMethodByPan(pan)
+    fun deriveACSessionKey(paymentMethod: PaymentMethod, iccMK: String, atc: String, un: String? = null): String {
+        try {
             // TODO: handle AMEX
             val f1 = when (paymentMethod) {
                 PaymentMethod.VISA,
@@ -489,17 +499,10 @@ object EMVUtils {
             }
 
             val sk = "${Encryption.doTDESEncryptECB(f1, iccMK)}${Encryption.doTDESEncryptECB(f2, iccMK)}"
-            sk.hexToByteArray().adjustDESParity().toHexString().uppercase()
+            return sk.hexToByteArray().adjustDESParity().toHexString().uppercase()
+        } catch (ex: Exception) {
+            throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
         }
-    }
-
-    private fun getIssuerMasterKeyByPan(context: Context, pan: String): String? {
-        return getIssuerMasterKeyByPaymentMethod(context, getPaymentMethodByPan(pan))
-    }
-
-    fun getIssuerMasterKeyByPaymentMethod(context: Context, paymentMethod: PaymentMethod): String? {
-        val imkMap = PreferencesUtil.getIMKMap(context)
-        return paymentMethod.let { imkMap.data?.get(paymentMethod) }
     }
 
     fun getCVNByPaymentMethod(paymentMethod: PaymentMethod, iad: String): Int? {

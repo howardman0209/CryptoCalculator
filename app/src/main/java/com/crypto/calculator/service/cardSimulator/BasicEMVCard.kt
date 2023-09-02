@@ -10,11 +10,12 @@ import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.model.getExponentLength
 import com.crypto.calculator.model.getModulusLength
 import com.crypto.calculator.service.model.ApplicationCryptogram
+import com.crypto.calculator.util.EMVUtils
 import com.crypto.calculator.util.Encryption
 import com.crypto.calculator.util.TlvUtil
 import java.security.MessageDigest
 
-abstract class BasicEMVCard(context: Context, private val iccData: HashMap<String, String>) {
+abstract class BasicEMVCard(val context: Context, private val iccData: HashMap<String, String>) {
     val terminalData: HashMap<String, String> = hashMapOf()
     private var odaData = ""
     var transactionData = ""
@@ -95,6 +96,27 @@ abstract class BasicEMVCard(context: Context, private val iccData: HashMap<Strin
     abstract fun getCryptogramCalculationDOL(data: HashMap<String, String>, cvn: Int): String
     abstract fun getCryptogramCalculationPadding(cvn: Int): PaddingMethod
     abstract fun getCryptogramCalculationKey(cvn: Int, pan: String, psn: String, atc: String, un: String? = null): String
+
+    open fun getIssuerMasterKey(): String {
+        val pan = iccData["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [57]")
+        val cardType = EMVUtils.getPaymentMethodByPan(pan)
+        return EMVUtils.getIssuerMasterKeyByPaymentMethod(context, cardType)
+    }
+
+    open fun getIccMasterKey(): String {
+        val pan = iccData["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [57]")
+        val psn = iccData["5F34"] ?: throw Exception("INVALID_ICC_DATA [5F34]")
+        return EMVUtils.deriveICCMasterKey(getIssuerMasterKey(), pan, psn)
+    }
+
+    open fun getACSessionKey(): String {
+        val pan = iccData["57"]?.substringBefore('D') ?: throw Exception("INVALID_ICC_DATA [57]")
+        val atc = iccData["9F36"] ?: throw Exception("INVALID_ICC_DATA [9F36]")
+        val un = terminalData["9F37"]
+        val cardType = EMVUtils.getPaymentMethodByPan(pan)
+        return EMVUtils.deriveACSessionKey(cardType, getIccMasterKey(), atc, un)
+    }
+
     open fun calculateCryptogram(): String {
         val data = terminalData + iccData
         val iad = data["9F10"] ?: throw Exception("INVALID_ICC_DATA [9F10]")

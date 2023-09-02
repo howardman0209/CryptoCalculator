@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.crypto.calculator.model.EMVPublicKey
 import com.crypto.calculator.model.PaddingMethod
+import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.service.cardSimulator.BasicEMVCard
 import com.crypto.calculator.service.cardSimulator.BasicEMVService
 import com.crypto.calculator.service.model.ApplicationCryptogram
@@ -13,7 +14,7 @@ import com.crypto.calculator.util.EMVUtils
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
 
-class MastercardDelegate(val context: Context, private val iccData: HashMap<String, String>) : BasicEMVCard(context, iccData), BasicEMVService.EMVFlowDelegate {
+class MastercardDelegate(context: Context, private val iccData: HashMap<String, String>) : BasicEMVCard(context, iccData), BasicEMVService.EMVFlowDelegate {
     companion object {
         const val CVN10_TAGS = "9F029F039F1A955F2A9A9C9F37829F369F10"
         fun getInstance(context: Context, iccData: HashMap<String, String>) = MastercardDelegate(context, iccData)
@@ -63,10 +64,11 @@ class MastercardDelegate(val context: Context, private val iccData: HashMap<Stri
         fun getACCalculationKey(context: Context, cvn: Int? = 10, pan: String? = null, psn: String? = null, atc: String? = null, un: String? = null): String {
             pan ?: throw Exception("INVALID_ICC_DATA [57]")
             psn ?: throw Exception("INVALID_ICC_DATA [5F34]")
-//            val iccMK = EMVUtils.deriveICCMasterKey(pan, psn) ?: throw Exception("DERIVE_ICC_MASTER_KEY_ERROR")
+            val imk = EMVUtils.getIssuerMasterKeyByPan(context, pan)
+            val iccMK = EMVUtils.deriveICCMasterKey(imk, pan, psn)
             atc ?: throw Exception("INVALID_ICC_DATA [9F36]")
             un ?: throw Exception("INVALID_TERMINAL_DATA [9F37]")
-            val sk = EMVUtils.deriveACSessionKey(context, pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
+            val sk = EMVUtils.deriveACSessionKey(PaymentMethod.MASTER, iccMK, atc, un)
             return when (cvn) {
                 10 -> sk
                 else -> {
@@ -148,10 +150,8 @@ class MastercardDelegate(val context: Context, private val iccData: HashMap<Stri
     }
 
     override fun getCryptogramCalculationKey(cvn: Int, pan: String, psn: String, atc: String, un: String?): String {
-        un ?: throw Exception("INVALID_TERMINAL_DATA [9F37]")
-        val sk = EMVUtils.deriveACSessionKey(context, pan, psn, atc, un) ?: throw Exception("DERIVE_AC_SESSION_KEY_ERROR")
         return when (cvn) {
-            10 -> sk
+            10 -> getACSessionKey()
             else -> {
                 // TODO: calculate other CVN
                 throw Exception("UNHANDLED CRYPTOGRAM VERSION")

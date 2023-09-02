@@ -24,6 +24,7 @@ import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.util.LogPanelUtil
 import com.crypto.calculator.util.LongLogUtil
 import com.crypto.calculator.util.PreferencesUtil
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
 
@@ -65,6 +66,7 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
 
     fun setCurrentTool(selectedTool: Tool) {
         Log.d("setCurrentTool", "selectedTool: $selectedTool")
+        viewModel.infoMessage = ""
         viewModel.currentTool.postValue(selectedTool)
     }
 
@@ -122,6 +124,20 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
             }
 
             R.id.tool_logcat -> logcatSwitch()
+
+            R.id.tool_info -> {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle(R.string.label_information_board_title_tips)
+                    .setMessage(viewModel.infoMessage)
+                    .setCancelable(false)
+                    .setPositiveButton(R.string.button_confirm) { _, _ ->
+                        Log.d("settingFont", "confirm")
+                    }
+                    .setNegativeButton(R.string.button_cancel) { _, _ ->
+                        Log.d("settingFont", "cancel")
+                    }
+                    .show()
+            }
         }
         return super.onOptionsItemSelected(item)
     }

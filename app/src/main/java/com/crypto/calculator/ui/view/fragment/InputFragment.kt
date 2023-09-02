@@ -202,6 +202,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
     }
 
     private fun tlvParser() {
+        coreViewModel.infoMessage = "This is a tool to convert TLV to JSON."
         binding.tilData1.visibility = View.VISIBLE
         viewModel.inputData1Label.set("Data")
 

@@ -12,6 +12,7 @@
     <string name="other">Other</string>
     <string name="label_loading">Loading…</string>
     <string name="label_logcat" translatable="false">Logcat</string>
+    <string name="label_info" translatable="false">Information</string>
 
     <!--    bottom navigation tab label-->
     <string name="label_bottom_nav_tab1" translatable="false">tab1</string>
@@ -757,6 +758,9 @@
     <string name="label_operation_compute" translatable="false">Compute</string>
     <string name="label_operation_start" translatable="false">Start</string>
     <string name="label_operation_abort" translatable="false">Abort</string>
+
+    <!--CoreFragment-->
+    <string name="label_information_board_title_tips" translatable="false">Tips</string>
 
     <!--EmvFragment-->
     <string name="label_present_card_to_reader" translatable="false">Present card to reader</string>

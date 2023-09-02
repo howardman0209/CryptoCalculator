@@ -13,4 +13,5 @@ class CoreViewModel : BaseViewModel() {
     val gsonBeautifier: Gson = GsonBuilder().setPrettyPrinting().create()
     val currentTool: MutableLiveData<Tool> = MutableLiveData()
     val currentCategory: MutableLiveData<Category> = MutableLiveData()
+    var infoMessage = ""
 }

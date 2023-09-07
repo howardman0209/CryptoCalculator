@@ -48,6 +48,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
     }
 
     private fun selectAID(isoDep: IsoDep) {
+        Log.d("Kernel0", "selectAID")
         getICCTag(EMVTags.APPLICATION_IDENTIFIER_CARD.getHexTag())?.also { aid ->
             val cla = "00"
             val ins = "A4"
@@ -91,6 +92,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
     }
 
     private fun executeGPO(isoDep: IsoDep) {
+        Log.d("Kernel0", "executeGPO")
         val tlv = getICCTag(EMVTags.PDOL.getHexTag())?.let { pdol ->
             val cla = "80"
             val ins = "A8"
@@ -150,6 +152,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
     }
 
     private fun readRecord(isoDep: IsoDep) {
+        Log.d("Kernel0", "readRecord")
         val cla = "00"
         val ins = "B2"
         val le = "00"
@@ -189,6 +192,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
     }
 
     private fun generateAC(isoDep: IsoDep) {
+        Log.d("Kernel0", "generateAC")
         val cla = "80"
         val ins = "AE"
         val isTerminalSupportCDA = getTerminalTag(EMVTags.TERMINAL_CAPABILITIES.getHexTag())?.takeLast(1)?.hexToBinary()?.get(0) == '1'
@@ -269,6 +273,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
     }
 
     private fun performCVM() {
+        Log.d("Kernel0", "CVM")
         // Assume terminal only support signature
         getICCTag(EMVTags.CVM_LIST.getHexTag())?.let { cvmList ->
             cvmKernel2(cvmList)
@@ -449,6 +454,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
     }
 
     private fun performODA() {
+        Log.d("Kernel0", "ODA")
         var isTerminalSupportSDA = false
         var isTerminalSupportDDA = false
         var isTerminalSupportCDA = false

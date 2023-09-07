@@ -47,13 +47,15 @@ abstract class BasicEMVKernel(nfcDelegate: NfcDelegate) : BasicNFCKernel(nfcDele
     fun processTlv(tlv: String) {
         val decodedMap = TlvUtil.parseTLV(tlv)
         Log.d("processTlv", "tag data: $decodedMap")
-        saveICCData(decodedMap)
+        val tmp = decodedMap.mapValues { it.value.first() }
+        Log.d("processTlv", "tags to be save: $tmp")
+        saveICCData(tmp)
     }
 
-    private fun saveICCData(data: Map<String, List<String>>) {
+    fun saveICCData(data: Map<String, String>) {
         data.forEach {
             if (!TlvUtil.isTemplateTag(it.key) && !cardData.containsKey(it.key)) {
-                cardData[it.key] = it.value.first()
+                cardData[it.key] = it.value
             }
         }
     }

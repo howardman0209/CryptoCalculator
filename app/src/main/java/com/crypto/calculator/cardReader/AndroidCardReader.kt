@@ -73,7 +73,9 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
     }
 
     private fun disableReader() {
-        nfcAdapter?.disableReaderMode(activity)
+        if(!activity.isDestroyed){
+            nfcAdapter?.disableReaderMode(activity)
+        }
     }
 
     override fun release() {

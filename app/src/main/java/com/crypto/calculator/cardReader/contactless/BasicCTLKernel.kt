@@ -3,8 +3,9 @@ package com.crypto.calculator.cardReader.contactless
 import android.nfc.tech.IsoDep
 import android.util.Log
 import com.crypto.calculator.cardReader.EMVCore
+import com.crypto.calculator.cardReader.contactless.delegate.EMVCTLProcess
 
-abstract class BasicCTLKernel(private val core: EMVCore) {
+abstract class BasicCTLKernel(private val core: EMVCore): EMVCTLProcess {
     val context = core.context
 
     fun communicator(isoDep: IsoDep, cAPDU: String): String {

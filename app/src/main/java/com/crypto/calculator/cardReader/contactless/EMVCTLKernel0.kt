@@ -47,7 +47,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         performCVM()
     }
 
-    private fun selectAID(isoDep: IsoDep) {
+    override fun selectAID(isoDep: IsoDep) {
         Log.d("Kernel0", "selectAID")
         getICCTag(EMVTags.APPLICATION_IDENTIFIER_CARD.getHexTag())?.also { aid ->
             val cla = "00"
@@ -91,7 +91,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         }
     }
 
-    private fun executeGPO(isoDep: IsoDep) {
+    override fun executeGPO(isoDep: IsoDep) {
         Log.d("Kernel0", "executeGPO")
         val tlv = getICCTag(EMVTags.PDOL.getHexTag())?.let { pdol ->
             val cla = "80"
@@ -151,7 +151,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         }
     }
 
-    private fun readRecord(isoDep: IsoDep) {
+    override fun readRecord(isoDep: IsoDep) {
         Log.d("Kernel0", "readRecord")
         val cla = "00"
         val ins = "B2"
@@ -191,7 +191,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         }
     }
 
-    private fun generateAC(isoDep: IsoDep) {
+    override fun generateAC(isoDep: IsoDep) {
         Log.d("Kernel0", "generateAC")
         val cla = "80"
         val ins = "AE"
@@ -263,7 +263,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         return unpredictableNum
     }
 
-    private fun getChallenge(isoDep: IsoDep): String? {
+    override fun getChallenge(isoDep: IsoDep): String? {
         val tlv = communicator(isoDep, APDU_COMMAND_GET_CHALLENGE)
         val challenge = if (tlv.endsWith(APDU_RESPONSE_CODE_OK)) {
             tlv.dropLast(4)
@@ -272,7 +272,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         return challenge
     }
 
-    private fun performCVM() {
+    override fun performCVM() {
         Log.d("Kernel0", "CVM")
         // Assume terminal only support signature
         getICCTag(EMVTags.CVM_LIST.getHexTag())?.let { cvmList ->
@@ -453,7 +453,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         }
     }
 
-    private fun performODA() {
+    override fun performODA() {
         Log.d("Kernel0", "ODA")
         var isTerminalSupportSDA = false
         var isTerminalSupportDDA = false

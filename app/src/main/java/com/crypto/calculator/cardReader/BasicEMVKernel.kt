@@ -3,6 +3,9 @@ package com.crypto.calculator.cardReader
 import android.nfc.tech.IsoDep
 import android.util.Log
 import com.crypto.calculator.extension.sendAPDU
+import com.crypto.calculator.model.EMVTags
+import com.crypto.calculator.model.getHexTag
+import com.crypto.calculator.util.APDU_COMMAND_2PAY_SYS_DDF01
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
 import com.crypto.calculator.util.TlvUtil
 
@@ -40,6 +43,7 @@ abstract class BasicEMVKernel(nfcDelegate: NfcDelegate) : BasicNFCKernel(nfcDele
         } else {
             Log.e("communicator", "cAPDU ->>: $cAPDU")
             Log.e("communicator", "rAPDU <<-: $rAPDU")
+            throw Exception("Command not supported") // TODO: read sw1, sw2 to throw exception message
         }
         return rAPDU
     }
@@ -94,20 +98,24 @@ abstract class BasicEMVKernel(nfcDelegate: NfcDelegate) : BasicNFCKernel(nfcDele
         odaData = ""
     }
 
-
-    abstract fun ppse(isoDep: IsoDep)
-
-    abstract fun selectAID(isoDep: IsoDep)
-
-    abstract fun executeGPO(isoDep: IsoDep)
-
-    abstract fun readRecord(isoDep: IsoDep)
-
-    abstract fun generateAC(isoDep: IsoDep)
-
-    abstract fun getChallenge(isoDep: IsoDep): String?
-
-    abstract fun performODA()
-
-    abstract fun performCVM()
+    open fun ppse(isoDep: IsoDep) {
+        val tlv = communicator(isoDep, APDU_COMMAND_2PAY_SYS_DDF01)
+        val appTemplates = TlvUtil.findByTag(tlv, tag = EMVTags.APPLICATION_TEMPLATE.getHexTag())
+        Log.d("ppse", "appTemplates: $appTemplates")
+        val finalTlv = appTemplates?.let { appList ->
+            // check if more than 1 aid return
+            if (appList.size > 1) {
+                Log.d("ppse", "multiple AID read from card")
+                // CTL -> auto select app with higher Application Priority Indicator
+                appList.minBy { TlvUtil.decodeTLV(it)[EMVTags.APPLICATION_PRIORITY_INDICATOR.getHexTag()].toString().toInt(16) }
+            } else {
+                Log.d("ppse", "single AID read from card")
+                appList.first()
+            }
+        }
+        Log.d("ppse", "finalTlv: $finalTlv")
+        finalTlv?.let {
+            processTlv(it)
+        }
+    }
 }

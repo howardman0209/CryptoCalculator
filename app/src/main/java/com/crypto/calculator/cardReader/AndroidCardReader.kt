@@ -100,7 +100,7 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
         getCurrentTime(DATE_TIME_PATTERN_EMV_9A)?.let { tmp[EMVTags.TRANSACTION_DATE.getHexTag()] = it }
         getCurrentTime(DATE_TIME_PATTERN_EMV_9F21)?.let { tmp[EMVTags.TRANSACTION_TIME.getHexTag()] = it }
         Log.d("AndroidCR", "startEMV - data: $tmp")
-        EMVKernel(context,
+        EMVCore(context,
             this.apply {
                 onStatusChange(BasicCardReader.Companion.CardReaderStatus.READY)
             }

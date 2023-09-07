@@ -1,19 +1,15 @@
-package com.crypto.calculator.cardReader
+package com.crypto.calculator.cardReader.contactless
 
-import android.content.Context
 import android.nfc.tech.IsoDep
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import com.crypto.calculator.cardReader.EMVCore
 import com.crypto.calculator.extension.hexToBinary
 import com.crypto.calculator.extension.hexToByteArray
 import com.crypto.calculator.extension.toHexString
-import com.crypto.calculator.handler.Event
 import com.crypto.calculator.model.EMVPublicKey
 import com.crypto.calculator.model.EMVTags
 import com.crypto.calculator.model.PaymentMethod
 import com.crypto.calculator.model.getHexTag
-import com.crypto.calculator.util.APDU_COMMAND_2PAY_SYS_DDF01
 import com.crypto.calculator.util.APDU_COMMAND_GET_CHALLENGE
 import com.crypto.calculator.util.APDU_COMMAND_GPO_WITHOUT_PDOL
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
@@ -24,21 +20,15 @@ import com.crypto.calculator.util.Encryption
 import com.crypto.calculator.util.PreferencesUtil
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.UUidUtil
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.security.MessageDigest
 
-class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel(nfcDelegate) {
-    companion object {
-        private val _apdu = MutableLiveData<Event<String>>()
-        val apdu: LiveData<Event<String>>
-            get() = _apdu
-    }
-
-    override fun onCommunication(isoDep: IsoDep) {
-        super.onCommunication(isoDep)
-        ppse(isoDep)
+/**
+ * A General contactless kernel for demo use only
+ */
+class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
+    override fun emvProcess(isoDep: IsoDep) {
+        super.emvProcess(isoDep)
+        Log.d("Kernel0", "--- emvProcess ---")
         selectAID(isoDep)
         kernelSpecialDataHandling()
         executeGPO(isoDep)
@@ -48,56 +38,16 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
             PaymentMethod.DISCOVER,
             PaymentMethod.DINERS,
             PaymentMethod.UNIONPAY -> {
-                Log.d("EMVKernel", "skip generate AC")
+                Log.d("Kernel0", "skip generate AC")
             }
 
             else -> generateAC(isoDep)
         }
         performODA()
         performCVM()
-        nfcDelegate.onCardDataReceived(getICCData() + getTerminalData())
     }
 
-    override fun communicator(isoDep: IsoDep, cmd: String): String {
-        val cAPDU = cmd.uppercase()
-        val rAPDU = super.communicator(isoDep, cmd)
-        CoroutineScope(Dispatchers.Main).launch {
-            _apdu.value = Event(cAPDU)
-            _apdu.value = Event(rAPDU)
-        }
-        return rAPDU
-    }
-
-    override fun ppse(isoDep: IsoDep) {
-        val tlv = communicator(isoDep, APDU_COMMAND_2PAY_SYS_DDF01).let {
-            if (it.endsWith(APDU_RESPONSE_CODE_OK)) {
-                it
-            } else {
-                throw Exception("Card not supported")
-//                communicator(isoDep, APDU_COMMAND_1PAY_SYS_DDF01)
-            }
-        }
-
-        val appTemplates = TlvUtil.findByTag(tlv, tag = EMVTags.APPLICATION_TEMPLATE.getHexTag())
-        Log.d("ppse", "appTemplates: $appTemplates")
-        val finalTlv = appTemplates?.let { appList ->
-            // check if more than 1 aid return
-            if (appList.size > 1) {
-                Log.d("ppse", "multiple AID read from card")
-                // CTL -> auto select app with higher Application Priority Indicator
-                appList.minBy { TlvUtil.decodeTLV(it)[EMVTags.APPLICATION_PRIORITY_INDICATOR.getHexTag()].toString().toInt(16) }
-            } else {
-                Log.d("ppse", "single AID read from card")
-                appList.first()
-            }
-        }
-        Log.d("ppse", "finalTlv: $finalTlv")
-        finalTlv?.let {
-            processTlv(it)
-        }
-    }
-
-    override fun selectAID(isoDep: IsoDep) {
+    private fun selectAID(isoDep: IsoDep) {
         getICCTag(EMVTags.APPLICATION_IDENTIFIER_CARD.getHexTag())?.also { aid ->
             val cla = "00"
             val ins = "A4"
@@ -109,11 +59,15 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
             val apduCommand = "$cla$ins$p1$p2$aidSize$aid$le"
 
             val tlv = communicator(isoDep, apduCommand)
-            processTlv(tlv)
+            processTLV(tlv)
 
             getICCTag(EMVTags.APPLICATION_PROGRAM_IDENTIFIER.getHexTag())?.let {
-                processTlv("${EMVTags.APPLICATION_CURRENCY_CODE.getHexTag()}02${it.substring(2, 6)}")
-                processTlv("${EMVTags.ISSUER_COUNTRY_CODE.getHexTag()}02${it.substring(6)}")
+                saveICCData(
+                    mapOf(
+                        EMVTags.APPLICATION_CURRENCY_CODE.getHexTag() to it.substring(2, 6),
+                        EMVTags.ISSUER_COUNTRY_CODE.getHexTag() to it.substring(6)
+                    )
+                )
             }
         } ?: run {
             throw Exception("AID_NOT_FOUND")
@@ -136,7 +90,7 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
         }
     }
 
-    override fun executeGPO(isoDep: IsoDep) {
+    private fun executeGPO(isoDep: IsoDep) {
         val tlv = getICCTag(EMVTags.PDOL.getHexTag())?.let { pdol ->
             val cla = "80"
             val ins = "A8"
@@ -182,17 +136,20 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
             val tag80Data = TlvUtil.findByTag(tlv, EMVTags.RESPONSE_MESSAGE_TEMPLATE_1.getHexTag())?.first()
             tag80Data?.let {
                 val aip = it.substring(0, 4) // AIP
-                processTlv("${EMVTags.APPLICATION_INTERCHANGE_PROFILE.getHexTag()}02$aip")
                 val afl = it.substring(4)// AFL
-                val aflLength = (afl.length / 2).toHexString()
-                processTlv("${EMVTags.APPLICATION_FILE_LOCATOR.getHexTag()}$aflLength$afl")
+                saveICCData(
+                    mapOf(
+                        EMVTags.APPLICATION_INTERCHANGE_PROFILE.getHexTag() to aip,
+                        EMVTags.APPLICATION_FILE_LOCATOR.getHexTag() to afl
+                    )
+                )
             }
         } else {
-            processTlv(tlv)
+            processTLV(tlv)
         }
     }
 
-    override fun readRecord(isoDep: IsoDep) {
+    private fun readRecord(isoDep: IsoDep) {
         val cla = "00"
         val ins = "B2"
         val le = "00"
@@ -219,7 +176,7 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
                                 saveOdaData(TlvUtil.findByTag(tlv, EMVTags.EMV_PROPRIETARY_TEMPLATE.getHexTag())?.first() ?: "")
                                 odaLabel--
                             }
-                            processTlv(tlv)
+                            processTLV(tlv)
                         }
                     }
                 }
@@ -231,7 +188,7 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
         }
     }
 
-    override fun generateAC(isoDep: IsoDep) {
+    private fun generateAC(isoDep: IsoDep) {
         val cla = "80"
         val ins = "AE"
         val isTerminalSupportCDA = getTerminalTag(EMVTags.TERMINAL_CAPABILITIES.getHexTag())?.takeLast(1)?.hexToBinary()?.get(0) == '1'
@@ -272,17 +229,21 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
                 val tag80Data = TlvUtil.findByTag(tlv, tag = EMVTags.RESPONSE_MESSAGE_TEMPLATE_1.getHexTag())?.first()
                 tag80Data?.let {
                     val cid = it.substring(0, 2)
-                    processTlv("${EMVTags.CRYPTOGRAM_INFORMATION_DATA.getHexTag()}01$cid")
                     val atc = it.substring(2, 6)
-                    processTlv("${EMVTags.APPLICATION_TRANSACTION_COUNTER.getHexTag()}02$atc")
                     val ac = it.substring(6, 22)
-                    processTlv("${EMVTags.APPLICATION_CRYPTOGRAM.getHexTag()}08$ac")
                     val iad = it.substring(22)
-                    val iadLength = (iad.length / 2).toHexString()
-                    processTlv("${EMVTags.ISSUER_APPLICATION_DATA.getHexTag()}$iadLength$iad")
+                    saveICCData(
+                        mapOf(
+                            EMVTags.CRYPTOGRAM_INFORMATION_DATA.getHexTag() to cid,
+                            EMVTags.APPLICATION_TRANSACTION_COUNTER.getHexTag() to atc,
+                            EMVTags.APPLICATION_CRYPTOGRAM.getHexTag() to ac,
+                            EMVTags.ISSUER_APPLICATION_DATA.getHexTag() to iad
+                        )
+                    )
+
                 }
             } else {
-                processTlv(tlv)
+                processTLV(tlv)
             }
         } ?: run {
             throw Exception("CDOL_NOT_FOUND")
@@ -298,7 +259,7 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
         return unpredictableNum
     }
 
-    override fun getChallenge(isoDep: IsoDep): String? {
+    private fun getChallenge(isoDep: IsoDep): String? {
         val tlv = communicator(isoDep, APDU_COMMAND_GET_CHALLENGE)
         val challenge = if (tlv.endsWith(APDU_RESPONSE_CODE_OK)) {
             tlv.dropLast(4)
@@ -307,7 +268,7 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
         return challenge
     }
 
-    override fun performCVM() {
+    private fun performCVM() {
         // Assume terminal only support signature
         getICCTag(EMVTags.CVM_LIST.getHexTag())?.let { cvmList ->
             cvmKernel2(cvmList)
@@ -487,7 +448,7 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
         }
     }
 
-    override fun performODA() {
+    private fun performODA() {
         var isTerminalSupportSDA = false
         var isTerminalSupportDDA = false
         var isTerminalSupportCDA = false
@@ -567,8 +528,12 @@ class EMVKernel(val context: Context, nfcDelegate: NfcDelegate) : BasicEMVKernel
         val ac = iccDynamicData.substring(4 + iccDynamicNumberLength, 20 + iccDynamicNumberLength)
         val txnDataHashCode = iccDynamicData.substring(iccDynamicData.length - 40, iccDynamicData.length)
         Log.d("saveIccDynamicData", "txnDataHashCode: $txnDataHashCode")
-        // add cryptogram to tlv
-        processTlv("${EMVTags.APPLICATION_CRYPTOGRAM.getHexTag()}08$ac")
+        // save cryptogram to icc data
+        saveICCData(
+            mapOf(
+                EMVTags.APPLICATION_CRYPTOGRAM.getHexTag() to ac,
+            )
+        )
     }
 
     private fun verifyIssuerPKCert(cert: String): Boolean {

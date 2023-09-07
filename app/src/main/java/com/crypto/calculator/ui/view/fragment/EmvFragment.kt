@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.R
 import com.crypto.calculator.cardReader.BasicCardReader
-import com.crypto.calculator.cardReader.EMVKernel
+import com.crypto.calculator.cardReader.EMVCore
 import com.crypto.calculator.databinding.FragmentEmvBinding
 import com.crypto.calculator.extension.applyPadding
 import com.crypto.calculator.extension.getColorIconResId
@@ -273,7 +273,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             viewModel.cardReader?.disconnect()
         }
 
-        EMVKernel.apdu.observe(viewLifecycleOwner) { event ->
+        EMVCore.apdu.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { apdu ->
                 Log.d("emvKernel", "apdu: $apdu")
                 if (!binding.opt1CheckBox.isChecked) {
@@ -384,7 +384,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             Log.d("arqcCalculator", "cardType: $cardType")
             val iad = LogPanelUtil.safeExecute { data["9F10"] ?: "" }
             val cvn = LogPanelUtil.safeExecute(onFail = {}, task = { EMVUtils.getCVNByPaymentMethod(cardType, iad) })
-            val imk = LogPanelUtil.safeExecute { EMVUtils.getIssuerMasterKeyByPaymentMethod(requireContext().applicationContext, cardType) ?: "Issuer master key not found" }
+            val imk = LogPanelUtil.safeExecute { EMVUtils.getIssuerMasterKeyByPaymentMethod(requireContext().applicationContext, cardType) }
             val pan = LogPanelUtil.safeExecute { data["57"]?.substringBefore('D') ?: "" }
             val psn = LogPanelUtil.safeExecute { data["5F34"] ?: "" }
 
@@ -667,7 +667,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         viewModel.inputData2Label.set("")
 
         CreditCardService.apdu.removeObservers(viewLifecycleOwner)
-        EMVKernel.apdu.removeObservers(viewLifecycleOwner)
+        EMVCore.apdu.removeObservers(viewLifecycleOwner)
         viewModel.cardReader?.status?.removeObservers(viewLifecycleOwner)
 
         binding.tilCondition1.visibility = View.GONE

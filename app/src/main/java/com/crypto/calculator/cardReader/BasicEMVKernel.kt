@@ -19,19 +19,30 @@ abstract class BasicEMVKernel(nfcDelegate: NfcDelegate) : BasicNFCKernel(nfcDele
         Log.d(classTag, "onStarted")
     }
 
-    override fun onError(e: Exception) {
-        super.onError(e)
-        Log.e(classTag, "onError: $e")
-        clearICCData()
-        clearOdaData()
+    override fun onCommunication(isoDep: IsoDep) {
+        Log.d(classTag, "onCommunication")
+        nfcDelegate.onStatusChange(BasicCardReader.Companion.CardReaderStatus.PROCESSING)
+    }
+
+    override fun postCommunication() {
+        Log.d(classTag, "postCommunication")
+        nfcDelegate.onStatusChange(BasicCardReader.Companion.CardReaderStatus.CARD_READ_OK)
     }
 
     override fun onCompleted() {
         Log.d(classTag, "onCompleted")
+        nfcDelegate.onCardDataReceived(getICCData() + getTerminalData())
         clearICCData()
         clearOdaData()
         clearTerminalData()
-        super.onCompleted()
+        nfcDelegate.onStatusChange(BasicCardReader.Companion.CardReaderStatus.SUCCESS)
+    }
+
+    override fun onError(e: Exception) {
+        Log.e(classTag, "onError: $e")
+        nfcDelegate.onStatusChange(BasicCardReader.Companion.CardReaderStatus.FAIL)
+        clearICCData()
+        clearOdaData()
     }
 
     open fun communicator(isoDep: IsoDep, cmd: String): String {

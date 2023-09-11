@@ -5,7 +5,7 @@ import android.util.Log
 import com.crypto.calculator.cardReader.EMVCore
 import com.crypto.calculator.cardReader.contactless.delegate.EMVCTLProcess
 
-abstract class BasicCTLKernel(private val core: EMVCore): EMVCTLProcess {
+abstract class BasicCTLKernel(private val core: EMVCore) : EMVCTLProcess {
     val context = core.context
 
     fun communicator(isoDep: IsoDep, cAPDU: String): String {
@@ -16,8 +16,12 @@ abstract class BasicCTLKernel(private val core: EMVCore): EMVCTLProcess {
         core.processTlv(rAPDU)
     }
 
-    open fun emvProcess(isoDep: IsoDep) {
-        Log.d("BaseCTLKernel", "emvProcess start")
+    open fun onCommunication(isoDep: IsoDep) {
+        Log.d("BaseCTLKernel", "onCommunication start")
+    }
+
+    open fun postCommunication() {
+        Log.d("BaseCTLKernel", "postCommunication start")
     }
 
     fun saveICCData(data: Map<String, String>) {

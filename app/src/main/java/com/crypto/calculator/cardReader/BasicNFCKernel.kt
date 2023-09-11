@@ -7,24 +7,21 @@ import android.util.Log
 
 abstract class BasicNFCKernel(val nfcDelegate: NfcDelegate) : NfcAdapter.ReaderCallback {
     private val classTag = "BasicNFCKernel"
+
     interface NfcDelegate {
         fun onStatusChange(status: BasicCardReader.Companion.CardReaderStatus)
         fun onCardDataReceived(data: Map<String, String>)
     }
 
-    open fun onStarted() {}
+    abstract fun onStarted()
 
-    open fun onCompleted() {
-        nfcDelegate.onStatusChange(BasicCardReader.Companion.CardReaderStatus.SUCCESS)
-    }
+    abstract fun onCompleted()
 
-    open fun onCommunication(isoDep: IsoDep) {
-        nfcDelegate.onStatusChange(BasicCardReader.Companion.CardReaderStatus.PROCESSING)
-    }
+    abstract fun onCommunication(isoDep: IsoDep)
 
-    open fun onError(e: Exception) {
-        nfcDelegate.onStatusChange(BasicCardReader.Companion.CardReaderStatus.FAIL)
-    }
+    abstract fun postCommunication()
+
+    abstract fun onError(e: Exception)
 
     override fun onTagDiscovered(p0: Tag?) {
         val isoDep = IsoDep.get(p0)
@@ -35,6 +32,7 @@ abstract class BasicNFCKernel(val nfcDelegate: NfcDelegate) : NfcAdapter.ReaderC
             Log.d(classTag, "isoDep: connected - $isoDep")
             onCommunication(isoDep)
             isoDep.close()
+            postCommunication()
             onCompleted()
             Log.d(classTag, "IsoDep: closed")
         } catch (e: Exception) {

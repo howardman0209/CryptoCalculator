@@ -17,6 +17,7 @@ abstract class BasicCardReader(val context: Context) {
             READY,
             PROCESSING,
             FAIL,
+            CARD_READ_OK,
             SUCCESS
         }
     }

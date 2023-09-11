@@ -26,9 +26,9 @@ import java.security.MessageDigest
  * A General contactless kernel for demo use only
  */
 class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
-    override fun emvProcess(isoDep: IsoDep) {
-        super.emvProcess(isoDep)
-        Log.d("Kernel0", "--- emvProcess ---")
+    override fun onCommunication(isoDep: IsoDep) {
+        super.onCommunication(isoDep)
+        Log.d("Kernel0", "--- onCommunication emvProcess ---")
         selectAID(isoDep)
         kernelSpecialDataHandling()
         executeGPO(isoDep)
@@ -43,6 +43,11 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
 
             else -> generateAC(isoDep)
         }
+    }
+
+    override fun postCommunication() {
+        super.postCommunication()
+        Log.d("Kernel0", "--- postCommunication emvProcess ---")
         performODA()
         performCVM()
     }

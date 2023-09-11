@@ -30,7 +30,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         super.onCommunication(isoDep)
         Log.d("Kernel0", "--- onCommunication emvProcess ---")
         selectAID(isoDep)
-        kernelSpecialDataHandling()
+        kernelSpecificConfiguring()
         executeGPO(isoDep)
         readRecord(isoDep)
         when (EMVUtils.getPaymentMethodByAID(getICCTag(EMVTags.APPLICATION_IDENTIFIER_CARD.getHexTag()) ?: "")) {
@@ -80,7 +80,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         }
     }
 
-    private fun kernelSpecialDataHandling() {
+    private fun kernelSpecificConfiguring() {
         getICCTag(EMVTags.APPLICATION_IDENTIFIER_CARD.getHexTag())?.also { aid ->
             when (EMVUtils.getPaymentMethodByAID(aid)) {
                 PaymentMethod.AMEX -> {
@@ -90,7 +90,8 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
                         )
                     )
                 }
-                PaymentMethod.JCB->{
+
+                PaymentMethod.JCB -> {
                     saveTerminalData(
                         hashMapOf(
                             "9F52" to "02",// Terminal Compatibility Indicator for C5

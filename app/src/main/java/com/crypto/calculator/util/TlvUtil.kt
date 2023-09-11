@@ -116,11 +116,11 @@ object TlvUtil {
 
                 if (tlv.substring(cursor) == APDU_RESPONSE_CODE_OK) {
                     Log.d("TLV_DECODER, End", "Decoded TLV: $output")
-                    return output.toSortedMap()
+                    return output
                 }
             }
             Log.d("TLV_DECODER, End", "Decoded TLV: $output")
-            return output.toSortedMap()
+            return output
         } catch (e: Exception) {
             Log.d("TLV_DECODER", "Exception: $e")
             throw Exception("TLV decode error: Invalid TLV")

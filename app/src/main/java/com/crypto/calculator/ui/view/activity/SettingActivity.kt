@@ -8,9 +8,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.R
 import com.crypto.calculator.databinding.ActivitySettingBinding
 import com.crypto.calculator.databinding.DialogLogFontSettingBinding
+import com.crypto.calculator.model.CapkList
 import com.crypto.calculator.ui.base.MVVMActivity
 import com.crypto.calculator.ui.viewModel.SettingViewModel
+import com.crypto.calculator.util.AssetsUtil
 import com.crypto.calculator.util.PreferencesUtil
+import com.crypto.calculator.util.assetsPathLiveCapk
+import com.crypto.calculator.util.assetsPathTestCapk
 import com.crypto.calculator.util.prefImkList
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
@@ -49,7 +53,20 @@ class SettingActivity : MVVMActivity<SettingViewModel, ActivitySettingBinding>()
         }
 
         binding.settingCAPK.setOnClickListener {
-
+            editConfigJson(this, it, PreferencesUtil.getCapkData(applicationContext), true,
+                neutralBtn = getString(R.string.button_reset),
+                onNeutralBtnClick = {
+                    arrayItemDialog(this, items = arrayOf("Live", "Test"), title = "Choose environment", onDismissCallback = { selected ->
+                        val capkList = when (selected) {
+                            0 -> AssetsUtil.readFile<CapkList>(applicationContext, assetsPathLiveCapk)
+                            else -> AssetsUtil.readFile<CapkList>(applicationContext, assetsPathTestCapk)
+                        }
+                        editConfigJson(this, it, capkList, false, onConfirmClick = { edited -> PreferencesUtil.saveCapkData(applicationContext, edited) })
+                    })
+                }
+            ) { editedCapk ->
+                PreferencesUtil.saveCapkData(applicationContext, editedCapk)
+            }
         }
 
         binding.settingIMK.setOnClickListener {
@@ -59,8 +76,8 @@ class SettingActivity : MVVMActivity<SettingViewModel, ActivitySettingBinding>()
                 onNeutralBtnClick = {
                     PreferencesUtil.clearPreferenceData(applicationContext, prefImkList)
                 }
-            ) { editedConfig ->
-                PreferencesUtil.saveIMKMap(applicationContext, editedConfig)
+            ) { editedImk ->
+                PreferencesUtil.saveIMKMap(applicationContext, editedImk)
             }
         }
     }

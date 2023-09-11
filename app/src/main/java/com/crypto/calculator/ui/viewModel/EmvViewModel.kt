@@ -164,14 +164,9 @@ class EmvViewModel : BaseViewModel() {
         }
     }
 
-    private fun saveODAData(jsonString: String) {
-        val jsonObject = jsonString.toDataClass<JsonObject>()
-        jsonObject.findByKey("70").also {
-            if (it.isNotEmpty()) {
-                odaData += TlvUtil.encodeTLV(it.first().asJsonObject)
-                Log.d("saveODAData", "odaData: $odaData")
-            }
-        }
+    private fun saveODAData(rAPDU: String) {
+        odaData += TlvUtil.findByTag(rAPDU, "70")?.first() ?: ""
+        Log.d("saveODAData", "odaData: $odaData")
     }
 
     private fun processPDOLFromGPO(cAPDU: String): String {
@@ -252,15 +247,17 @@ class EmvViewModel : BaseViewModel() {
                         val lastRecord = it.substring(4, 6).toInt(16)
                         var odaLabel = it.substring(7).toInt(16)
                         for (i in firstRecord..lastRecord) {
-                            val p1 = String.format("%02d", i)
+                            val p1 = i.toHexString()
                             val cmd = "$cla$ins$p1$p2$le"
                             if (cmd == apdu) {
                                 logBuilder.append("Short File Identifier (SFI): $sfi")
-                                if (odaLabel > 0) {
+                            }
+                            if (odaLabel > 0) {
+                                if (cmd == apdu) {
                                     logBuilder.append(", ODA data: true")
                                     nextIsODAData = true
-                                    odaLabel--
                                 }
+                                odaLabel--
                             }
                         }
                     }
@@ -311,7 +308,7 @@ class EmvViewModel : BaseViewModel() {
                                             logBuilder.append("\n[9F26]: $cryptogram")
                                         } catch (ex: Exception) {
                                             Log.d("getInspectLog", "Exception: $ex")
-                                            logBuilder.append("\n[9F26]: ${ex.message}")
+                                            logBuilder.append("\n[9F26]: Error: ${ex.message}")
                                         }
                                     }
 
@@ -327,7 +324,7 @@ class EmvViewModel : BaseViewModel() {
                                     saveRequiredTransactionData(jsonString, "8C8F90929F329F389F469F479F489F4A")
 
                                     if (nextIsODAData) {
-                                        saveODAData(jsonString)
+                                        saveODAData(apdu)
                                         nextIsODAData = false
                                     }
                                 }

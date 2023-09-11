@@ -23,7 +23,9 @@ object ODAUtil {
                 data.append(dataMap[tag] ?: "")
             }
         }
-        return "$staticData$data"
+        val staticAuthData = "$staticData$data"
+        Log.d("ODAUtil", "staticAuthData: $staticAuthData")
+        return staticAuthData
     }
 
     //    required data [8F, 90, 92, 9F32]

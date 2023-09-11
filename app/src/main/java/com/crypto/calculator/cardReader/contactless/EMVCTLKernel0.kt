@@ -211,7 +211,6 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         val isTerminalSupportCDA = getTerminalTag(EMVTags.TERMINAL_CAPABILITIES.getHexTag())?.takeLast(1)?.hexToBinary()?.get(0) == '1'
         Log.d("generateAC", "isTerminalSupportCDA: $isTerminalSupportCDA")
         val isCardSupportCDA = getICCTag(EMVTags.APPLICATION_INTERCHANGE_PROFILE.getHexTag())?.hexToBinary()?.get(7) == '1'
-//                && EMVUtils.getPaymentMethodByAID(getICCTag(EMVTags.APPLICATION_IDENTIFIER_CARD.getHexTag()) ?: "") != PaymentMethod.JCB
         // 00:(AAC), 40:(TC) (offline transaction), 80:(ARQC)
         val p1 = if (isTerminalSupportCDA && isCardSupportCDA) ("80".toInt(16) + "10000".toInt(2)).toHexString() else "80"
         val p2 = "00"

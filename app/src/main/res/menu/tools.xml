@@ -17,6 +17,7 @@
         android:id="@+id/tool_info"
         android:icon="@drawable/ic_baseline_info"
         android:title="@string/label_info"
+        android:visible="false"
         app:showAsAction="ifRoom" />
 
     <item

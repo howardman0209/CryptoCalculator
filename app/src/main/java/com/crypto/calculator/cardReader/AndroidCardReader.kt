@@ -5,6 +5,9 @@ import android.app.Activity
 import android.content.Context
 import android.nfc.NfcAdapter
 import android.util.Log
+import com.crypto.calculator.cardReader.model.CardReaderStatus
+import com.crypto.calculator.cardReader.nfc.EmvNfcAdapterCallback
+import com.crypto.calculator.extension.hexToAscii
 import com.crypto.calculator.model.EMVTags
 import com.crypto.calculator.model.EmvConfig
 import com.crypto.calculator.model.getHexTag
@@ -16,8 +19,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class AndroidCardReader(context: Context, val activity: Activity) : BasicCardReader(context), BasicNFCKernel.NfcDelegate {
+class AndroidCardReader(context: Context, val activity: Activity) : BasicCardReader(context), CardReaderDelegate {
     private var nfcAdapter: NfcAdapter? = null
+    private var emvKernel: BasicEmvKernel? = null
 
     private val requiredTagList = listOf(
         EMVTags.APPLICATION_LABEL.getHexTag(),
@@ -64,16 +68,24 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
         nfcAdapter = NfcAdapter.getDefaultAdapter(context)
     }
 
-    private fun enableReader(kernel: BasicEMVKernel) {
+    private fun enableReader(terminalConfig: HashMap<String, String>) {
+        val callback = EmvNfcAdapterCallback(this) {
+            Log.d("AndroidCR", "emvProcess")
+            emvKernel = AndroidEmvKernel(context, this, terminalConfig, it).apply {
+                onTapEmvProcess()
+            }
+        }
+        status.postValue(CardReaderStatus.READY)
+
         nfcAdapter?.enableReaderMode(
-            activity, kernel,
+            activity, callback,
             NfcAdapter.FLAG_READER_NFC_A or NfcAdapter.FLAG_READER_SKIP_NDEF_CHECK,
             null
         )
     }
 
     private fun disableReader() {
-        if(!activity.isDestroyed){
+        if (!activity.isDestroyed) {
             nfcAdapter?.disableReaderMode(activity)
         }
     }
@@ -102,14 +114,8 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
         getCurrentTime(DATE_TIME_PATTERN_EMV_9A)?.let { tmp[EMVTags.TRANSACTION_DATE.getHexTag()] = it }
         getCurrentTime(DATE_TIME_PATTERN_EMV_9F21)?.let { tmp[EMVTags.TRANSACTION_TIME.getHexTag()] = it }
         Log.d("AndroidCR", "startEMV - data: $tmp")
-        EMVCore(context,
-            this.apply {
-                onStatusChange(BasicCardReader.Companion.CardReaderStatus.READY)
-            }
-        ).apply {
-            saveTerminalData(tmp)
-            enableReader(this)
-        }
+
+        enableReader(tmp)
     }
 
     override fun cancelCheckCard() {
@@ -118,10 +124,13 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
 
     override fun sendOnlineReply(replyTLV: String?) {
         Log.d("AndroidCR", "sendOnlineReply")
-        val txnResult = if (replyTLV?.startsWith("8A023030", ignoreCase = true) == true) {
-            Log.d("AndroidCR", "APPROVED")
-        } else {
-            Log.d("AndroidCR", "DECLINED")
+        replyTLV?.also {
+            val authResponseCode = TlvUtil.findByTag(it, "8A")?.first()?.hexToAscii()
+            Log.d("AndroidCR", "authResponseCode: $authResponseCode")
+            when (authResponseCode) {
+                "00" -> Log.d("AndroidCR", "APPROVED")
+                else -> Log.d("AndroidCR", "DECLINED")
+            }
         }
     }
 
@@ -129,12 +138,15 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
         Log.d("AndroidCR", "pollCardRemove")
     }
 
-    override fun onStatusChange(status: BasicCardReader.Companion.CardReaderStatus) {
+    override fun onStatusChange(status: CardReaderStatus) {
         Log.d("AndroidCR", "CardReaderStatus: $status")
+        emvKernel?.onStatusChange(status)
         this.status.postValue(status)
         when (status) {
-            BasicCardReader.Companion.CardReaderStatus.SUCCESS -> {
-//                EMVKernel._apdu.postValue(null)
+            CardReaderStatus.CARD_READ_OK -> {
+                emvKernel?.postTapEmvProcess()
+                this.status.postValue(CardReaderStatus.SUCCESS)
+                emvKernel?.onStatusChange(CardReaderStatus.SUCCESS)
             }
 
             else -> {}

@@ -1,27 +1,26 @@
 package com.crypto.calculator.cardReader.contactless
 
-import android.nfc.tech.IsoDep
 import android.util.Log
-import com.crypto.calculator.cardReader.EMVCore
+import com.crypto.calculator.cardReader.BasicEmvKernel
 import com.crypto.calculator.cardReader.contactless.delegate.EMVCTLProcess
 
-abstract class BasicCTLKernel(private val core: EMVCore) : EMVCTLProcess {
+abstract class BasicCTLKernel(private val core: BasicEmvKernel) : EMVCTLProcess {
     val context = core.context
 
-    fun communicator(isoDep: IsoDep, cAPDU: String): String {
-        return core.communicator(isoDep, cAPDU)
+    fun communicator(cAPDU: String): String {
+        return core.communicator(cAPDU)
     }
 
     fun processTLV(rAPDU: String) {
         core.processTlv(rAPDU)
     }
 
-    open fun onCommunication(isoDep: IsoDep) {
-        Log.d("BaseCTLKernel", "onCommunication start")
+    open fun onTapEmvProcess() {
+        Log.d("BaseCTLKernel", "onTapEmvProcess start")
     }
 
-    open fun postCommunication() {
-        Log.d("BaseCTLKernel", "postCommunication start")
+    open fun postTapEmvProcess() {
+        Log.d("BaseCTLKernel", "postTapEmvProcess start")
     }
 
     fun saveICCData(data: Map<String, String>) {

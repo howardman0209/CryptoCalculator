@@ -1,13 +1,10 @@
 package com.crypto.calculator.cardReader.contactless.delegate
-
-import android.nfc.tech.IsoDep
-
 interface EMVCTLProcess {
-    fun selectAID(isoDep: IsoDep)
-    fun executeGPO(isoDep: IsoDep)
-    fun readRecord(isoDep: IsoDep)
-    fun getChallenge(isoDep: IsoDep): String?
-    fun generateAC(isoDep: IsoDep)
+    fun selectAID()
+    fun executeGPO()
+    fun readRecord()
+    fun getChallenge(): String?
+    fun generateAC()
     fun performODA()
     fun performCVM()
 }

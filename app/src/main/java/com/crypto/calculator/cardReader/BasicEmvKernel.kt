@@ -1,59 +1,69 @@
 package com.crypto.calculator.cardReader
 
-import android.nfc.tech.IsoDep
+import android.content.Context
 import android.util.Log
-import com.crypto.calculator.extension.sendAPDU
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.crypto.calculator.cardReader.contactless.BasicCTLKernel
+import com.crypto.calculator.cardReader.contactless.CTLKernelFactory
+import com.crypto.calculator.cardReader.contactless.EMVCTLKernel0
+import com.crypto.calculator.cardReader.model.CardReaderStatus
+import com.crypto.calculator.handler.Event
 import com.crypto.calculator.model.EMVTags
 import com.crypto.calculator.model.getHexTag
 import com.crypto.calculator.util.APDU_COMMAND_2PAY_SYS_DDF01
 import com.crypto.calculator.util.APDU_RESPONSE_CODE_OK
 import com.crypto.calculator.util.TlvUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-abstract class BasicEMVKernel(nfcDelegate: NfcDelegate) : BasicNFCKernel(nfcDelegate) {
+abstract class BasicEmvKernel(val context: Context, private val readerDelegate: CardReaderDelegate) {
     private var cardData: HashMap<String, String> = hashMapOf()
     private var terminalData: HashMap<String, String> = hashMapOf()
     private var odaData = ""
-    private val classTag = "BasicEMVKernel"
+    private var ctlKernel: BasicCTLKernel? = null
 
-    override fun onStarted() {
-        Log.d(classTag, "onStarted")
+    companion object {
+        private val _apdu = MutableLiveData<Event<String>>()
+        val apdu: LiveData<Event<String>>
+            get() = _apdu
     }
 
-    override fun onCommunication(isoDep: IsoDep) {
-        Log.d(classTag, "onCommunication")
-        nfcDelegate.onStatusChange(BasicCardReader.Companion.CardReaderStatus.PROCESSING)
+    fun onStatusChange(status: CardReaderStatus) {
+        Log.d("BasicEmvKernel", "onStatusChange, status: $status")
+        when (status) {
+            CardReaderStatus.SUCCESS -> {
+                readerDelegate.onCardDataReceived(getICCData() + getTerminalData())
+                clearICCData()
+                clearOdaData()
+                clearTerminalData()
+            }
+
+            CardReaderStatus.FAIL -> {
+                clearICCData()
+                clearOdaData()
+            }
+
+            else -> {}
+        }
     }
 
-    override fun postCommunication() {
-        Log.d(classTag, "postCommunication")
-        nfcDelegate.onStatusChange(BasicCardReader.Companion.CardReaderStatus.CARD_READ_OK)
-    }
+    abstract fun sendCommand(cmd: String): String
 
-    override fun onCompleted() {
-        Log.d(classTag, "onCompleted")
-        nfcDelegate.onCardDataReceived(getICCData() + getTerminalData())
-        clearICCData()
-        clearOdaData()
-        clearTerminalData()
-        nfcDelegate.onStatusChange(BasicCardReader.Companion.CardReaderStatus.SUCCESS)
-    }
-
-    override fun onError(e: Exception) {
-        Log.e(classTag, "onError: $e")
-        nfcDelegate.onStatusChange(BasicCardReader.Companion.CardReaderStatus.FAIL)
-        clearICCData()
-        clearOdaData()
-    }
-
-    open fun communicator(isoDep: IsoDep, cmd: String): String {
+    open fun communicator(cmd: String): String {
         val cAPDU = cmd.uppercase()
-        val rAPDU = isoDep.sendAPDU(cAPDU)
+        val rAPDU = sendCommand(cmd).uppercase()
+        CoroutineScope(Dispatchers.Main).launch {
+            _apdu.value = Event(cAPDU)
+            _apdu.value = Event(rAPDU)
+        }
         if (rAPDU.endsWith(APDU_RESPONSE_CODE_OK)) {
-            Log.i("communicator", "cAPDU ->>: $cAPDU")
-            Log.i("communicator", "rAPDU <<-: $rAPDU")
+            Log.i("communicator", "cAPDU ->> $cAPDU")
+            Log.i("communicator", "rAPDU <<- $rAPDU")
         } else {
-            Log.e("communicator", "cAPDU ->>: $cAPDU")
-            Log.e("communicator", "rAPDU <<-: $rAPDU")
+            Log.e("communicator", "cAPDU ->> $cAPDU")
+            Log.e("communicator", "rAPDU <<- $rAPDU")
             throw Exception("Command not supported") // TODO: read sw1, sw2 to throw exception message
         }
         return rAPDU
@@ -109,8 +119,8 @@ abstract class BasicEMVKernel(nfcDelegate: NfcDelegate) : BasicNFCKernel(nfcDele
         odaData = ""
     }
 
-    open fun ppse(isoDep: IsoDep) {
-        val tlv = communicator(isoDep, APDU_COMMAND_2PAY_SYS_DDF01)
+    open fun ppse() {
+        val tlv = communicator(APDU_COMMAND_2PAY_SYS_DDF01)
         val appTemplates = TlvUtil.findByTag(tlv, tag = EMVTags.APPLICATION_TEMPLATE.getHexTag())
         Log.d("ppse", "appTemplates: $appTemplates")
         val finalTlv = appTemplates?.let { appList ->
@@ -128,5 +138,20 @@ abstract class BasicEMVKernel(nfcDelegate: NfcDelegate) : BasicNFCKernel(nfcDele
         finalTlv?.let {
             processTlv(it)
         }
+    }
+
+    fun onTapEmvProcess() {
+        ppse()
+        ctlKernel = CTLKernelFactory.create(this)?.apply {
+            when (this) {
+                is EMVCTLKernel0 -> Log.d("BasicEmvKernel", "Kernel 0 is selected")
+            }
+            onTapEmvProcess()
+        }
+    }
+
+    fun postTapEmvProcess() {
+        ctlKernel?.postTapEmvProcess()
+        readerDelegate.onStatusChange(CardReaderStatus.SUCCESS)
     }
 }

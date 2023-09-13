@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.R
-import com.crypto.calculator.cardReader.BasicCardReader
-import com.crypto.calculator.cardReader.EMVCore
+import com.crypto.calculator.cardReader.BasicEmvKernel
+import com.crypto.calculator.cardReader.model.CardReaderStatus
 import com.crypto.calculator.databinding.FragmentEmvBinding
 import com.crypto.calculator.extension.applyPadding
 import com.crypto.calculator.extension.getColorIconResId
@@ -269,11 +269,11 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.operationBtn2.text = getString(R.string.label_operation_abort)
         binding.operationBtn2.isEnabled = false
         binding.operationBtn2.setOnClickListener {
-            viewModel.cardReader?.status?.postValue(BasicCardReader.Companion.CardReaderStatus.ABORT)
+            viewModel.cardReader?.status?.postValue(CardReaderStatus.ABORT)
             viewModel.cardReader?.disconnect()
         }
 
-        EMVCore.apdu.observe(viewLifecycleOwner) { event ->
+        BasicEmvKernel.apdu.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { apdu ->
                 Log.d("emvKernel", "apdu: $apdu")
                 if (!binding.opt1CheckBox.isChecked) {
@@ -288,14 +288,14 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             it?.let {
                 viewModel.promptMessage.set(it.name)
                 when (it) {
-                    BasicCardReader.Companion.CardReaderStatus.READY -> {
+                    CardReaderStatus.READY -> {
                         binding.operationBtn1.isEnabled = false
                         binding.operationBtn2.isEnabled = true
                     }
 
-                    BasicCardReader.Companion.CardReaderStatus.FAIL,
-                    BasicCardReader.Companion.CardReaderStatus.ABORT,
-                    BasicCardReader.Companion.CardReaderStatus.SUCCESS -> {
+                    CardReaderStatus.FAIL,
+                    CardReaderStatus.ABORT,
+                    CardReaderStatus.SUCCESS -> {
                         viewModel.resetTransactionData()
                         viewModel.cardReader?.disconnect()
                         binding.operationBtn1.isEnabled = true
@@ -667,7 +667,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         viewModel.inputData2Label.set("")
 
         CreditCardService.apdu.removeObservers(viewLifecycleOwner)
-        EMVCore.apdu.removeObservers(viewLifecycleOwner)
+        BasicEmvKernel.apdu.removeObservers(viewLifecycleOwner)
         viewModel.cardReader?.status?.removeObservers(viewLifecycleOwner)
 
         binding.tilCondition1.visibility = View.GONE

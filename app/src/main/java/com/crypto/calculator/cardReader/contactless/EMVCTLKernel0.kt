@@ -1,8 +1,7 @@
 package com.crypto.calculator.cardReader.contactless
 
-import android.nfc.tech.IsoDep
 import android.util.Log
-import com.crypto.calculator.cardReader.EMVCore
+import com.crypto.calculator.cardReader.BasicEmvKernel
 import com.crypto.calculator.extension.hexToBinary
 import com.crypto.calculator.extension.hexToByteArray
 import com.crypto.calculator.extension.toHexString
@@ -25,14 +24,14 @@ import java.security.MessageDigest
 /**
  * A General contactless kernel for demo use only
  */
-class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
-    override fun onCommunication(isoDep: IsoDep) {
-        super.onCommunication(isoDep)
-        Log.d("Kernel0", "--- onCommunication emvProcess ---")
-        selectAID(isoDep)
+class EMVCTLKernel0(core: BasicEmvKernel) : BasicCTLKernel(core) {
+    override fun onTapEmvProcess() {
+        super.onTapEmvProcess()
+        Log.d("Kernel0", "--- onTapEmvProcess ---")
+        selectAID()
         kernelSpecificConfiguring()
-        executeGPO(isoDep)
-        readRecord(isoDep)
+        executeGPO()
+        readRecord()
         when (EMVUtils.getPaymentMethodByAID(getICCTag(EMVTags.APPLICATION_IDENTIFIER_CARD.getHexTag()) ?: "")) {
             PaymentMethod.VISA,
             PaymentMethod.DISCOVER,
@@ -41,18 +40,18 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
                 Log.d("Kernel0", "skip generate AC")
             }
 
-            else -> generateAC(isoDep)
+            else -> generateAC()
         }
     }
 
-    override fun postCommunication() {
-        super.postCommunication()
-        Log.d("Kernel0", "--- postCommunication emvProcess ---")
+    override fun postTapEmvProcess() {
+        super.postTapEmvProcess()
+        Log.d("Kernel0", "--- postTapEmvProcess ---")
         performODA()
         performCVM()
     }
 
-    override fun selectAID(isoDep: IsoDep) {
+    override fun selectAID() {
         Log.d("Kernel0", "selectAID")
         getICCTag(EMVTags.APPLICATION_IDENTIFIER_CARD.getHexTag())?.also { aid ->
             val cla = "00"
@@ -64,7 +63,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
             val le = "00"
             val apduCommand = "$cla$ins$p1$p2$aidSize$aid$le"
 
-            val tlv = communicator(isoDep, apduCommand)
+            val tlv = communicator(apduCommand)
             processTLV(tlv)
 
             getICCTag(EMVTags.APPLICATION_PROGRAM_IDENTIFIER.getHexTag())?.let {
@@ -105,7 +104,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         }
     }
 
-    override fun executeGPO(isoDep: IsoDep) {
+    override fun executeGPO() {
         Log.d("Kernel0", "executeGPO")
         val tlv = getICCTag(EMVTags.PDOL.getHexTag())?.let { pdol ->
             val cla = "80"
@@ -119,7 +118,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
             pdolMap.forEach {
                 when (it.key) {
                     EMVTags.ICC_DYNAMIC_NUMBER.getHexTag() -> {
-                        val iccDynamicNumber = getChallenge(isoDep)
+                        val iccDynamicNumber = getChallenge()
                         Log.d("executeGPO", "iccDynamicNumber: $iccDynamicNumber")
                         sb.append(iccDynamicNumber ?: "00".repeat(it.value.toInt(16)))
                     }
@@ -142,9 +141,9 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
             val le = "00"
 
             val apduCommand = "$cla$ins$p1$p2$lc$fixByte$dataSizeHex$data$le"
-            communicator(isoDep, apduCommand)
+            communicator(apduCommand)
         } ?: run {
-            communicator(isoDep, APDU_COMMAND_GPO_WITHOUT_PDOL)
+            communicator(APDU_COMMAND_GPO_WITHOUT_PDOL)
         }
 
         // handle Format 1 data
@@ -165,7 +164,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         }
     }
 
-    override fun readRecord(isoDep: IsoDep) {
+    override fun readRecord() {
         Log.d("Kernel0", "readRecord")
         val cla = "00"
         val ins = "B2"
@@ -186,7 +185,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
                     for (i in firstRecord..lastRecord) {
                         val p1 = String.format("%02d", i)
                         val cmd = "$cla$ins$p1$p2$le"
-                        val tlv = communicator(isoDep, cmd)
+                        val tlv = communicator(cmd)
                         Log.d("readRecord", "tlv: $tlv")
                         if (tlv.endsWith(APDU_RESPONSE_CODE_OK)) {
                             if (odaLabel > 0) {
@@ -205,7 +204,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         }
     }
 
-    override fun generateAC(isoDep: IsoDep) {
+    override fun generateAC() {
         Log.d("Kernel0", "generateAC")
         val cla = "80"
         val ins = "AE"
@@ -223,7 +222,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
             cdolMap.forEach {
                 when (it.key) {
                     EMVTags.ICC_DYNAMIC_NUMBER.getHexTag() -> {
-                        val iccDynamicNumber = getChallenge(isoDep)
+                        val iccDynamicNumber = getChallenge()
                         Log.d("generateAC", "iccDynamicNumber: $iccDynamicNumber")
                         sb.append(iccDynamicNumber ?: "00".repeat(it.value.toInt(16)))
                     }
@@ -240,7 +239,7 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
             val le = "00"
 
             val apduCommand = "$cla$ins$p1$p2$lc$data$le"
-            val tlv = communicator(isoDep, apduCommand)
+            val tlv = communicator(apduCommand)
 
             // handle Format 1 data
             if (tlv.startsWith(EMVTags.RESPONSE_MESSAGE_TEMPLATE_1.getHexTag())) {
@@ -277,8 +276,8 @@ class EMVCTLKernel0(core: EMVCore) : BasicCTLKernel(core) {
         return unpredictableNum
     }
 
-    override fun getChallenge(isoDep: IsoDep): String? {
-        val tlv = communicator(isoDep, APDU_COMMAND_GET_CHALLENGE)
+    override fun getChallenge(): String? {
+        val tlv = communicator(APDU_COMMAND_GET_CHALLENGE)
         val challenge = if (tlv.endsWith(APDU_RESPONSE_CODE_OK)) {
             tlv.dropLast(4)
         } else null

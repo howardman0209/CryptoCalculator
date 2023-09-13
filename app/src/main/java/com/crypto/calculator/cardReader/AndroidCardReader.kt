@@ -70,12 +70,11 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
 
     private fun enableReader(terminalConfig: HashMap<String, String>) {
         val callback = EmvNfcAdapterCallback(this) {
-            Log.d("AndroidCR", "emvProcess")
             emvKernel = AndroidEmvKernel(context, this, terminalConfig, it).apply {
                 onTapEmvProcess()
             }
         }
-        status.postValue(CardReaderStatus.READY)
+        onStatusChange(CardReaderStatus.READY)
 
         nfcAdapter?.enableReaderMode(
             activity, callback,
@@ -145,8 +144,6 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
         when (status) {
             CardReaderStatus.CARD_READ_OK -> {
                 emvKernel?.postTapEmvProcess()
-                this.status.postValue(CardReaderStatus.SUCCESS)
-                emvKernel?.onStatusChange(CardReaderStatus.SUCCESS)
             }
 
             else -> {}

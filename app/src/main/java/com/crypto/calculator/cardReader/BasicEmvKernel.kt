@@ -152,5 +152,6 @@ abstract class BasicEmvKernel(val context: Context, private val readerDelegate: 
 
     fun postTapEmvProcess() {
         ctlKernel?.postTapEmvProcess()
+        readerDelegate.onStatusChange(CardReaderStatus.SUCCESS)
     }
 }

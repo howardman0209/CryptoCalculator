@@ -1,7 +1,7 @@
 package com.crypto.calculator.cardReader.contactless
 
 import android.util.Log
-import com.crypto.calculator.cardReader.BasicEmvKernel
+import com.crypto.calculator.cardReader.EmvKernel
 import com.crypto.calculator.extension.hexToBinary
 import com.crypto.calculator.extension.hexToByteArray
 import com.crypto.calculator.extension.toHexString
@@ -24,7 +24,7 @@ import java.security.MessageDigest
 /**
  * A General contactless kernel for demo use only
  */
-class EMVCTLKernel0(core: BasicEmvKernel) : BasicCTLKernel(core) {
+class EMVCTLKernel0(core: EmvKernel) : BasicCTLKernel(core) {
     override fun onTapEmvProcess() {
         super.onTapEmvProcess()
         Log.d("Kernel0", "--- onTapEmvProcess ---")

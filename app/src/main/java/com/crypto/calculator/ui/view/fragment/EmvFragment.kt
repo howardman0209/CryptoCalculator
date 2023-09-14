@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.R
-import com.crypto.calculator.cardReader.BasicEmvKernel
+import com.crypto.calculator.cardReader.EmvKernel
 import com.crypto.calculator.cardReader.model.CardReaderStatus
 import com.crypto.calculator.databinding.FragmentEmvBinding
 import com.crypto.calculator.extension.applyPadding
@@ -273,7 +273,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             viewModel.cardReader?.disconnect()
         }
 
-        BasicEmvKernel.apdu.observe(viewLifecycleOwner) { event ->
+        EmvKernel.apdu.observe(viewLifecycleOwner) { event ->
             event.getContentIfNotHandled()?.let { apdu ->
                 Log.d("emvKernel", "apdu: $apdu")
                 if (!binding.opt1CheckBox.isChecked) {
@@ -667,7 +667,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         viewModel.inputData2Label.set("")
 
         CreditCardService.apdu.removeObservers(viewLifecycleOwner)
-        BasicEmvKernel.apdu.removeObservers(viewLifecycleOwner)
+        EmvKernel.apdu.removeObservers(viewLifecycleOwner)
         viewModel.cardReader?.status?.removeObservers(viewLifecycleOwner)
 
         binding.tilCondition1.visibility = View.GONE

@@ -36,27 +36,6 @@ class EmvKernel(val context: Context, private val readerDelegate: CardReaderDele
             get() = _apdu
     }
 
-    fun onStatusChange(status: CardReaderStatus) {
-        Log.d("BasicEmvKernel", "onStatusChange, status: $status")
-        when (status) {
-            CardReaderStatus.SUCCESS -> {
-                readerDelegate.onCardDataReceived(getICCData() + getTerminalData())
-                clearICCData()
-                clearOdaData()
-                clearTerminalData()
-            }
-
-            CardReaderStatus.FAIL -> {
-                clearICCData()
-                clearOdaData()
-            }
-
-            else -> {}
-        }
-    }
-
-//    abstract fun sendCommand(cmd: String): String
-
     fun communicator(cmd: String): String {
         val cAPDU = cmd.uppercase()
         val rAPDU = sendCommand(cmd).uppercase()
@@ -125,7 +104,7 @@ class EmvKernel(val context: Context, private val readerDelegate: CardReaderDele
         odaData = ""
     }
 
-    fun ppse() {
+    private fun ppse() {
         val tlv = communicator(APDU_COMMAND_2PAY_SYS_DDF01)
         val appTemplates = TlvUtil.findByTag(tlv, tag = EMVTags.APPLICATION_TEMPLATE.getHexTag())
         Log.d("ppse", "appTemplates: $appTemplates")
@@ -143,10 +122,11 @@ class EmvKernel(val context: Context, private val readerDelegate: CardReaderDele
         Log.d("ppse", "finalTlv: $finalTlv")
         finalTlv?.let {
             processTlv(it)
-        }
+        } ?: throw Exception("NO_EMV_APP")
     }
 
     override fun onTapEmvProcess(sendCommand: (cAPDU: String) -> String) {
+        readerDelegate.onStatusChange(CardReaderStatus.PROCESSING)
         this.sendCommand = sendCommand
         ppse()
         ctlKernel = CTLKernelFactory.create(this)?.apply {
@@ -155,10 +135,25 @@ class EmvKernel(val context: Context, private val readerDelegate: CardReaderDele
             }
             onTapEmvProcess()
         }
+        readerDelegate.onStatusChange(CardReaderStatus.CARD_READ_OK)
     }
 
-    fun postTapEmvProcess() {
+    override fun postTapEmvProcess() {
         ctlKernel?.postTapEmvProcess()
+        onEmvProcessCompleted()
+    }
+
+    override fun onError(exception: Exception) {
+        clearICCData()
+        clearOdaData()
+        readerDelegate.onStatusChange(CardReaderStatus.FAIL)
+    }
+
+    private fun onEmvProcessCompleted() {
+        readerDelegate.onCardDataReceived(getICCData() + getTerminalData())
+        clearICCData()
+        clearOdaData()
+        clearTerminalData()
         readerDelegate.onStatusChange(CardReaderStatus.SUCCESS)
     }
 }

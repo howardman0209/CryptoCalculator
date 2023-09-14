@@ -69,7 +69,7 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
     }
 
     private fun enableReader() {
-        val callback = emvKernel?.let { EmvNfcAdapterCallback(this, it) }
+        val callback = emvKernel?.let { EmvNfcAdapterCallback(it) }
         onStatusChange(CardReaderStatus.READY)
 
         nfcAdapter?.enableReaderMode(
@@ -135,10 +135,10 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
 
     override fun onStatusChange(status: CardReaderStatus) {
         Log.d("AndroidCR", "CardReaderStatus: $status")
-        emvKernel?.onStatusChange(status)
         this.status.postValue(status)
         when (status) {
             CardReaderStatus.CARD_READ_OK -> {
+                disableReader()
                 emvKernel?.postTapEmvProcess()
             }
 

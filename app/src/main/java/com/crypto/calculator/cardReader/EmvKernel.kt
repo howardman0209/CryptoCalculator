@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.crypto.calculator.cardReader.contactless.BasicCTLKernel
 import com.crypto.calculator.cardReader.contactless.CTLKernelFactory
 import com.crypto.calculator.cardReader.contactless.EMVCTLKernel0
+import com.crypto.calculator.cardReader.emv.EmvKernelProvider
 import com.crypto.calculator.cardReader.model.CardReaderStatus
 import com.crypto.calculator.handler.Event
 import com.crypto.calculator.model.EMVTags
@@ -18,11 +19,16 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-abstract class BasicEmvKernel(val context: Context, private val readerDelegate: CardReaderDelegate) {
+class EmvKernel(val context: Context, private val readerDelegate: CardReaderDelegate, terminalConfig: HashMap<String, String>) : EmvKernelProvider {
     private var cardData: HashMap<String, String> = hashMapOf()
     private var terminalData: HashMap<String, String> = hashMapOf()
     private var odaData = ""
     private var ctlKernel: BasicCTLKernel? = null
+    lateinit var sendCommand: (cAPDU: String) -> String
+
+    init {
+        saveTerminalData(terminalConfig)
+    }
 
     companion object {
         private val _apdu = MutableLiveData<Event<String>>()
@@ -49,9 +55,9 @@ abstract class BasicEmvKernel(val context: Context, private val readerDelegate: 
         }
     }
 
-    abstract fun sendCommand(cmd: String): String
+//    abstract fun sendCommand(cmd: String): String
 
-    open fun communicator(cmd: String): String {
+    fun communicator(cmd: String): String {
         val cAPDU = cmd.uppercase()
         val rAPDU = sendCommand(cmd).uppercase()
         CoroutineScope(Dispatchers.Main).launch {
@@ -119,7 +125,7 @@ abstract class BasicEmvKernel(val context: Context, private val readerDelegate: 
         odaData = ""
     }
 
-    open fun ppse() {
+    fun ppse() {
         val tlv = communicator(APDU_COMMAND_2PAY_SYS_DDF01)
         val appTemplates = TlvUtil.findByTag(tlv, tag = EMVTags.APPLICATION_TEMPLATE.getHexTag())
         Log.d("ppse", "appTemplates: $appTemplates")
@@ -140,7 +146,8 @@ abstract class BasicEmvKernel(val context: Context, private val readerDelegate: 
         }
     }
 
-    fun onTapEmvProcess() {
+    override fun onTapEmvProcess(sendCommand: (cAPDU: String) -> String) {
+        this.sendCommand = sendCommand
         ppse()
         ctlKernel = CTLKernelFactory.create(this)?.apply {
             when (this) {

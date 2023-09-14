@@ -21,7 +21,7 @@ import java.util.Locale
 
 class AndroidCardReader(context: Context, val activity: Activity) : BasicCardReader(context), CardReaderDelegate {
     private var nfcAdapter: NfcAdapter? = null
-    private var emvKernel: BasicEmvKernel? = null
+    private var emvKernel: EmvKernel? = null
 
     private val requiredTagList = listOf(
         EMVTags.APPLICATION_LABEL.getHexTag(),
@@ -68,12 +68,8 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
         nfcAdapter = NfcAdapter.getDefaultAdapter(context)
     }
 
-    private fun enableReader(terminalConfig: HashMap<String, String>) {
-        val callback = EmvNfcAdapterCallback(this) {
-            emvKernel = AndroidEmvKernel(context, this, terminalConfig, it).apply {
-                onTapEmvProcess()
-            }
-        }
+    private fun enableReader() {
+        val callback = emvKernel?.let { EmvNfcAdapterCallback(this, it) }
         onStatusChange(CardReaderStatus.READY)
 
         nfcAdapter?.enableReaderMode(
@@ -106,15 +102,15 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
     }
 
     override fun startEMV(authorizedAmount: String?, cashbackAmount: String?, emvConfig: EmvConfig) {
-        val tmp = emvConfig.data
-        tmp[EMVTags.AUTHORISED_AMOUNT.getHexTag()] = authorizedAmount?.padStart(12, '0')
+        val terminalConfig = emvConfig.data
+        terminalConfig[EMVTags.AUTHORISED_AMOUNT.getHexTag()] = authorizedAmount?.padStart(12, '0')
             ?: throw Exception("INVALID_AUTHORISED_AMOUNT")
-        tmp[EMVTags.AMOUNT_OTHER.getHexTag()] = cashbackAmount ?: "0".padStart(12, '0')
-        getCurrentTime(DATE_TIME_PATTERN_EMV_9A)?.let { tmp[EMVTags.TRANSACTION_DATE.getHexTag()] = it }
-        getCurrentTime(DATE_TIME_PATTERN_EMV_9F21)?.let { tmp[EMVTags.TRANSACTION_TIME.getHexTag()] = it }
-        Log.d("AndroidCR", "startEMV - data: $tmp")
-
-        enableReader(tmp)
+        terminalConfig[EMVTags.AMOUNT_OTHER.getHexTag()] = cashbackAmount ?: "0".padStart(12, '0')
+        getCurrentTime(DATE_TIME_PATTERN_EMV_9A)?.let { terminalConfig[EMVTags.TRANSACTION_DATE.getHexTag()] = it }
+        getCurrentTime(DATE_TIME_PATTERN_EMV_9F21)?.let { terminalConfig[EMVTags.TRANSACTION_TIME.getHexTag()] = it }
+        Log.d("AndroidCR", "startEMV - data: $terminalConfig")
+        emvKernel = EmvKernel(context, this, terminalConfig)
+        enableReader()
     }
 
     override fun cancelCheckCard() {

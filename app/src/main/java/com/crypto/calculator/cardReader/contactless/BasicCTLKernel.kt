@@ -1,10 +1,10 @@
 package com.crypto.calculator.cardReader.contactless
 
 import android.util.Log
-import com.crypto.calculator.cardReader.BasicEmvKernel
+import com.crypto.calculator.cardReader.EmvKernel
 import com.crypto.calculator.cardReader.contactless.delegate.EMVCTLProcess
 
-abstract class BasicCTLKernel(private val core: BasicEmvKernel) : EMVCTLProcess {
+abstract class BasicCTLKernel(private val core: EmvKernel) : EMVCTLProcess {
     val context = core.context
 
     fun communicator(cAPDU: String): String {

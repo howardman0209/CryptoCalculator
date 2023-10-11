@@ -26,7 +26,7 @@ class UnionPayDelegate(context: Context, private val iccData: HashMap<String, St
                         "BF0C" to mapOf(
                             "61" to mapOf(
                                 "4F" to "A000000333010102",
-                                "50" to "5649534120435245444954"
+                                "50" to "5549435320435245444954"
                             )
                         )
                     )

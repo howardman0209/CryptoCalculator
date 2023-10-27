@@ -35,6 +35,7 @@ import com.crypto.calculator.util.EMVUtils
 import com.crypto.calculator.util.Encryption
 import com.crypto.calculator.util.LogPanelUtil
 import com.crypto.calculator.util.ODAUtil
+import com.crypto.calculator.util.PinBlockUtil
 import com.crypto.calculator.util.PreferencesUtil
 import com.crypto.calculator.util.TlvUtil
 import com.crypto.calculator.util.assetsPathCardMaster
@@ -98,6 +99,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             Tool.EMV_KERNEL -> emvKernel()
             Tool.ARQC -> arqcCalculator()
             Tool.ODA -> odaCalculator()
+            Tool.PIN_BLOCK -> pinBlockCalculator()
             else -> {}
         }
     }
@@ -628,6 +630,112 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         }
     }
 
+    private fun pinBlockCalculator() {
+        Log.d("EmvFragment", "pinBlockCalculator")
+        var selectedPinBlockFormat: PinBlockUtil.PinBlockFormat? = null
+        var selectedOperation = 0
+        binding.tilData1.visibility = View.VISIBLE
+        viewModel.inputData1Label.set("Clear PIN Block")
+        viewModel.setInputData1Filter(16, inputFormat = DataFormat.HEXADECIMAL)
+
+        binding.tilData2.visibility = View.VISIBLE
+        viewModel.inputData2Label.set("PAN")
+        viewModel.setInputData2Filter(19, inputFormat = DataFormat.DECIMAL)
+
+        binding.tilCondition2.hint = "Format"
+        val pinBlockFormatList = listOf(
+            PinBlockUtil.PinBlockFormat.Format0,
+            PinBlockUtil.PinBlockFormat.Format1,
+            PinBlockUtil.PinBlockFormat.Format2,
+            PinBlockUtil.PinBlockFormat.Format3,
+            PinBlockUtil.PinBlockFormat.Format4,
+        )
+        binding.autoTvCondition2.setAdapter(
+            DropDownMenuAdapter(
+                requireContext(),
+                R.layout.view_drop_down_menu_item,
+                pinBlockFormatList,
+            )
+        )
+        binding.autoTvCondition2.setOnItemClickListener { _, _, i, _ ->
+            try {
+                selectedPinBlockFormat = pinBlockFormatList[i]
+            } catch (ex: Exception) {
+                Log.d("pinBlockCalculator", "")
+            }
+        }
+
+        binding.tilCondition3.visibility = View.VISIBLE
+        binding.tilCondition3.hint = "Operation"
+        val operationList = listOf("CLear PIN Block to PIN", "PIN to Clear PIN Block")
+        binding.autoTvCondition3.setAdapter(
+            DropDownMenuAdapter(
+                requireContext(),
+                R.layout.view_drop_down_menu_item,
+                operationList,
+            )
+        )
+        binding.autoTvCondition3.setText(operationList[selectedOperation])
+        binding.autoTvCondition3.setOnItemClickListener { _, _, selected, _ ->
+            try {
+                selectedOperation = selected
+                when (selected) {
+                    0 -> {
+                        binding.tilCondition2.visibility = View.GONE
+                        viewModel.inputData1Label.set("Clear PIN Block")
+                        viewModel.setInputData1Filter(16, inputFormat = DataFormat.HEXADECIMAL)
+                    }
+
+                    1 -> {
+                        binding.tilCondition2.visibility = View.VISIBLE
+                        viewModel.inputData1Label.set("PIN")
+                        viewModel.setInputData1Filter(12, inputFormat = DataFormat.DECIMAL)
+                    }
+                }
+            } catch (ex: Exception) {
+                Log.d("pinBlockCalculator", "")
+            }
+        }
+
+        binding.operationBtn1.visibility = View.VISIBLE
+        binding.operationBtn1.text = getString(R.string.label_operation_compute)
+        binding.operationBtn1.isEnabled = true
+        binding.operationBtn1.setOnClickListener {
+            val logBuilder = StringBuilder()
+            logBuilder.append("PIN Block calculator - ${operationList[selectedOperation]}\n")
+            Log.d("pinBlockCalculator", "operation: ${operationList[selectedOperation]}")
+            when (selectedOperation) {
+                0 -> {
+                    val clearPinBlock = viewModel.inputData1.get() ?: ""
+                    Log.d("pinBlockCalculator", "clearPinBlock: $clearPinBlock")
+                    logBuilder.append("Clear PIN Block: $clearPinBlock\n")
+                    val pan = viewModel.inputData2.get()
+                    Log.d("pinBlockCalculator", "pan: $pan\n")
+                    logBuilder.append("PAN: $pan\n")
+                    val result = LogPanelUtil.safeExecute { PinBlockUtil.pinBlockToPin(clearPinBlock, pan) } // (pin)
+                    logBuilder.append("result (PIN): $result\n")
+                    LogPanelUtil.printLog(logBuilder.toString())
+                }
+
+                1 -> {
+                    val pin = viewModel.inputData1.get() ?: ""
+                    Log.d("pinBlockCalculator", "PIN: $pin")
+                    logBuilder.append("Input PIN: $pin\n")
+                    val pan = viewModel.inputData2.get()
+                    Log.d("pinBlockCalculator", "pan: $pan\n")
+                    logBuilder.append("PAN: $pan\n")
+                    val pinBlockFormat = selectedPinBlockFormat ?: let {
+                        binding.autoTvCondition2.setText(pinBlockFormatList[0].name)
+                        PinBlockUtil.PinBlockFormat.Format0
+                    }
+                    val result = LogPanelUtil.safeExecute { PinBlockUtil.pinToPinBlock(pinBlockFormat, pin, pan) } // (pin block)
+                    logBuilder.append("result (PIN Block): $result\n")
+                    LogPanelUtil.printLog(logBuilder.toString())
+                }
+            }
+        }
+    }
+
     private fun resetLayout() {
         viewModel.finishCardReader()
         binding.tvPrompt.visibility = View.GONE
@@ -677,6 +785,10 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         binding.tilCondition2.visibility = View.GONE
         binding.autoTvCondition2.onItemClickListener = null
         binding.autoTvCondition2.text.clear()
+
+        binding.tilCondition3.visibility = View.GONE
+        binding.autoTvCondition3.onItemClickListener = null
+        binding.autoTvCondition3.text.clear()
 
         viewModel.resetTransactionData()
     }

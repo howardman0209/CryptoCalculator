@@ -164,11 +164,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/space_default"
-                tools:hint="condition1"
+                tools:hint="condition2"
                 tools:visibility="visible">
 
                 <AutoCompleteTextView
                     android:id="@+id/autoTvCondition2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"
+                    android:singleLine="true"
+                    tools:ignore="LabelFor" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCondition3"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/space_default"
+                tools:hint="condition3"
+                tools:visibility="visible">
+
+                <AutoCompleteTextView
+                    android:id="@+id/autoTvCondition3"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="none"

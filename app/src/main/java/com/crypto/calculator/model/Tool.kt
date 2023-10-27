@@ -16,6 +16,7 @@ enum class Tool(val id: Int, val resourceId: Int) {
     EMV_KERNEL(10, R.string.label_tool_emv_kernel),
     ARQC(11, R.string.label_tool_arqc),
     ODA(12, R.string.label_tool_oda),
+    PIN_BLOCK(13, R.string.label_tool_pin_block)
     ;
 
     companion object {
@@ -33,6 +34,7 @@ enum class Tool(val id: Int, val resourceId: Int) {
                 10 -> EMV_KERNEL
                 11 -> ARQC
                 12 -> ODA
+                13 -> PIN_BLOCK
                 else -> UNKNOWN
             }
         }

@@ -39,7 +39,8 @@ class MainApplication : Application(), ActivityLifecycleCallbacks {
                         Tool.CARD_SIMULATOR,
                         Tool.EMV_KERNEL,
                         Tool.ARQC,
-                        Tool.ODA
+                        Tool.ODA,
+                        Tool.PIN_BLOCK
                     )
                 )
             )

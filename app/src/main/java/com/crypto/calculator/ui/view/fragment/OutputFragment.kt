@@ -36,7 +36,7 @@ class OutputFragment : MVVMFragment<OutputViewModel, FragmentOutputBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        LogPanelUtil.navigateToDetails.observe(viewLifecycleOwner) {
+        LogPanelUtil.messageToLog.observe(viewLifecycleOwner) {
             it.getContentIfNotHandled()?.let { message -> // Only proceed if the event has never been handled
                 printLog(message)
             }

@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 object LogPanelUtil {
     private val _messageToLog = MutableLiveData<Event<String>>()
-    val navigateToDetails: LiveData<Event<String>>
+    val messageToLog: LiveData<Event<String>>
         get() = _messageToLog
 
     fun printLog(message: String) {

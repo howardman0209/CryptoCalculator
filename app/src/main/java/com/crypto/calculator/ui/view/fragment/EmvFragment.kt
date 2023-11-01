@@ -215,7 +215,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     private fun selectMasterCardProfile() {
         arrayItemDialog(
             context = requireContext(),
-            items = arrayOf("Without PIN", "With PIN"),
+            items = arrayOf("Signature", "PIN"),
             title = getString(R.string.label_select_card),
         ) { selected ->
             val cardProfilePath = when (selected) {

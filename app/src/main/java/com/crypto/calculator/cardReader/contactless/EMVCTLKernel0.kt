@@ -93,7 +93,7 @@ class EMVCTLKernel0(core: EmvKernel) : BasicCTLKernel(core) {
                 PaymentMethod.JCB -> {
                     saveTerminalData(
                         hashMapOf(
-                            "9F52" to "02",// Terminal Compatibility Indicator for C5
+                            "9F52" to (getTerminalTag("9F52") ?: "00"),// Terminal Compatibility Indicator for C5
                             "9F53" to "D00000" // Terminal Interchange Profile for C5
                         )
                     )

@@ -38,6 +38,7 @@ import com.crypto.calculator.util.ODAUtil
 import com.crypto.calculator.util.PinBlockUtil
 import com.crypto.calculator.util.PreferencesUtil
 import com.crypto.calculator.util.TlvUtil
+import com.crypto.calculator.util.assetsPathCardJcb
 import com.crypto.calculator.util.assetsPathCardMaster
 import com.crypto.calculator.util.assetsPathCardVisa
 import com.crypto.calculator.util.bindInputFilters
@@ -186,6 +187,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
                 when (PreferencesUtil.getCardPreference(requireContext().applicationContext)) {
                     PaymentMethod.VISA -> selectVisaCardProfile()
                     PaymentMethod.MASTER -> selectMasterCardProfile()
+                    PaymentMethod.JCB -> selectJCBCardProfile()
                     else -> {}
                 }
                 true
@@ -224,6 +226,21 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             }
             val cardProfile = AssetsUtil.readFile<CardProfile>(requireContext().applicationContext, cardProfilePath)
             PreferencesUtil.saveCardProfile(requireContext().applicationContext, cardProfile, PaymentMethod.MASTER)
+        }
+    }
+
+    private fun selectJCBCardProfile() {
+        arrayItemDialog(
+            context = requireContext(),
+            items = arrayOf("EMV Mode", "Legacy Mode"),
+            title = getString(R.string.label_select_card),
+        ) { selected ->
+            val cardProfilePath = when (selected) {
+                0 -> "${assetsPathCardJcb}_emv.json"
+                else -> "${assetsPathCardJcb}_legacy.json"
+            }
+            val cardProfile = AssetsUtil.readFile<CardProfile>(requireContext().applicationContext, cardProfilePath)
+            PreferencesUtil.saveCardProfile(requireContext().applicationContext, cardProfile, PaymentMethod.JCB)
         }
     }
 

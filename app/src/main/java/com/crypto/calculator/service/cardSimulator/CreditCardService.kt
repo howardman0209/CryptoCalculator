@@ -74,7 +74,7 @@ class CreditCardService : BasicEMVService() {
                 PaymentMethod.VISA -> "${assetsPathCardVisa}_cvn10.json"
                 PaymentMethod.MASTER -> "${assetsPathCardMaster}.json"
                 PaymentMethod.UNIONPAY -> assetsPathCardUnionPay
-                PaymentMethod.JCB -> assetsPathCardJcb
+                PaymentMethod.JCB -> "${assetsPathCardJcb}_emv.json"
                 PaymentMethod.DISCOVER -> assetsPathCardDiscover
                 PaymentMethod.AMEX -> assetsPathCardAmex
                 else -> ""

@@ -762,6 +762,7 @@
 
     <!--CoreFragment-->
     <string name="label_information_board_title_tips" translatable="false">Tips</string>
+    <string name="button_got_it" translatable="false">Got it!</string>
 
     <!--EmvFragment-->
     <string name="label_present_card_to_reader" translatable="false">Present card to reader</string>

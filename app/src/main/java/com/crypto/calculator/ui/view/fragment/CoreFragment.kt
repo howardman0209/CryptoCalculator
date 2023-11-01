@@ -130,11 +130,8 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
                     .setTitle(R.string.label_information_board_title_tips)
                     .setMessage(viewModel.infoMessage)
                     .setCancelable(false)
-                    .setPositiveButton(R.string.button_confirm) { _, _ ->
-                        Log.d("settingFont", "confirm")
-                    }
-                    .setNegativeButton(R.string.button_cancel) { _, _ ->
-                        Log.d("settingFont", "cancel")
+                    .setPositiveButton(R.string.button_got_it) { _, _ ->
+                        Log.d("Tip dialog", "Ok")
                     }
                     .show()
             }

@@ -40,6 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:visibility="gone"
                 tools:visibility="gone">
 
                 <androidx.appcompat.widget.AppCompatImageView
@@ -120,8 +121,10 @@
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="@dimen/space_default"
                     android:textAppearance="?textAppearanceSubtitle1"
+                    android:visibility="gone"
                     tools:ignore="MissingConstraints"
-                    tools:text="option1" />
+                    tools:text="option1"
+                    tools:visibility="visible" />
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivSetting"
@@ -134,8 +137,10 @@
                     android:padding="@dimen/space_default"
                     android:src="@drawable/ic_baseline_settings"
                     android:tint="@color/secondary"
+                    android:visibility="gone"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:visibility="visible" />
 
             </LinearLayout>
 
@@ -146,6 +151,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/space_default"
                 android:enabled="@{!viewModel.inputData1.empty}"
+                android:visibility="gone"
                 tools:hint="condition1"
                 tools:visibility="visible">
 
@@ -164,6 +170,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/space_default"
+                android:visibility="gone"
                 tools:hint="condition2"
                 tools:visibility="visible">
 
@@ -183,6 +190,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/space_default"
+                android:visibility="gone"
                 tools:hint="condition3"
                 tools:visibility="visible">
 

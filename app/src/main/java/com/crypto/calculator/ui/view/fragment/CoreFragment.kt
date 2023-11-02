@@ -19,6 +19,7 @@ import com.crypto.calculator.model.NavigationMenuData
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.model.getGroupList
 import com.crypto.calculator.ui.base.MVVMFragment
+import com.crypto.calculator.ui.view.activity.MainActivity
 import com.crypto.calculator.ui.view.activity.SettingActivity
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.util.LogPanelUtil
@@ -80,6 +81,11 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
         selectedFragment?.let {
             currentCorePanel = selectedFragment
             pushFragment(selectedFragment, target, isAddToBackStack = false)
+        }
+
+        binding.corePanel.post {
+            Log.d("@@", "corePanel.post")
+            (requireActivity() as MainActivity).closeNavigationMenu()
         }
     }
 

@@ -14,6 +14,7 @@ import com.crypto.calculator.model.DataFormat
 import com.crypto.calculator.model.PaddingMethod
 import com.crypto.calculator.model.Tool
 import com.crypto.calculator.ui.base.MVVMFragment
+import com.crypto.calculator.ui.view.activity.MainActivity
 import com.crypto.calculator.ui.viewAdapter.DropDownMenuAdapter
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.ui.viewModel.InputViewModel
@@ -74,6 +75,7 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
         coreViewModel.currentTool.observe(viewLifecycleOwner) {
             Log.d("InputFragment", "currentTool: $it")
             setLayout(it)
+            (requireActivity() as MainActivity).closeNavigationMenu()
         }
     }
 

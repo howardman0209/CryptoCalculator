@@ -47,13 +47,17 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
             navigationMenuData.data[selectedGroup]?.get(childPosition)?.also {
                 setAppbarTitle(it)
             }
-            binding.drawerLayout.close()
             false
         }
 
         mainFragment = CoreFragment()
+        pushFragment(mainFragment, getMainFragmentContainer(), isAddToBackStack = false)
         switchTool()
         setAppbarTitle(PreferencesUtil.getLastUsedTool(applicationContext))
+    }
+
+    fun closeNavigationMenu() {
+        binding.drawerLayout.close()
     }
 
     private fun setAppbarTitle(tool: Tool = Tool.TLV_PARSER) {
@@ -74,7 +78,6 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
                 val lastUsedParentGroup = it.getGroupList().find { group -> it.data[group]?.contains(PreferencesUtil.getLastUsedTool(applicationContext)) == true }
                 binding.expandableMenu.expandGroup(it.getGroupList().indexOf(lastUsedParentGroup))
             }
-            pushFragment(mainFragment, getMainFragmentContainer(), isAddToBackStack = false)
         }
     }
 

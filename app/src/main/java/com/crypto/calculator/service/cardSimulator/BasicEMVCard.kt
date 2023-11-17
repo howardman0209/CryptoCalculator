@@ -16,7 +16,7 @@ import com.crypto.calculator.util.TlvUtil
 import java.security.MessageDigest
 
 abstract class BasicEMVCard(val context: Context, private val iccData: HashMap<String, String>) {
-    val terminalData: HashMap<String, String> = hashMapOf()
+    private val terminalData: HashMap<String, String> = hashMapOf()
     private var odaData = ""
     var transactionData = ""
 

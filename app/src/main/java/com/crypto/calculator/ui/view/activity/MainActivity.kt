@@ -2,6 +2,8 @@ package com.crypto.calculator.ui.view.activity
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.crypto.calculator.MainApplication
@@ -21,6 +23,7 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
     private lateinit var mainFragment: Fragment
     private lateinit var menuAdapter: ExpandableMenuAdapter
     private lateinit var navigationMenuData: NavigationMenuData
+    private var currentTools: Tool? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -43,17 +46,39 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
             val selectedGroup = navigationMenuData.getGroupList()[groupPosition]
             Log.d("expandableMenu", "Selected group: $selectedGroup, child: $childPosition")
 
-            switchTool(groupPosition, childPosition)
-            navigationMenuData.data[selectedGroup]?.get(childPosition)?.also {
-                setAppbarTitle(it)
+            navigationMenuData.data[selectedGroup]?.get(childPosition)?.also { selectedTool ->
+                currentTools = selectedTool
+                PreferencesUtil.saveLastUsedTool(applicationContext, selectedTool)
+                setAppbarTitle(selectedTool)
+                binding.drawerLayout.close()
             }
             false
         }
 
+        binding.drawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+
+            override fun onDrawerOpened(drawerView: View) {}
+
+            override fun onDrawerClosed(drawerView: View) {
+                currentTools?.let { (mainFragment as CoreFragment).setCurrentTool(it) }
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {}
+        })
+
         mainFragment = CoreFragment()
         pushFragment(mainFragment, getMainFragmentContainer(), isAddToBackStack = false)
-        switchTool()
-        setAppbarTitle(PreferencesUtil.getLastUsedTool(applicationContext))
+
+        // Push to last used tool and expand corresponding tab by default
+        PreferencesUtil.getLastUsedTool(applicationContext).also { lastUsedTool ->
+            navigationMenuData.also {
+                val lastUsedParentGroup = it.getGroupList().find { group -> it.data[group]?.contains(lastUsedTool) == true }
+                binding.expandableMenu.expandGroup(it.getGroupList().indexOf(lastUsedParentGroup))
+            }
+            setAppbarTitle(lastUsedTool)
+//            (mainFragment as CoreFragment).setCurrentTool(lastUsedTool)
+        }
     }
 
     fun closeNavigationMenu() {
@@ -65,19 +90,10 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
         viewModel.title.set(title)
     }
 
-    private fun switchTool(groupId: Int? = null, itemId: Int? = null) {
+    private fun findTool(groupId: Int, itemId: Int): Tool? {
         navigationMenuData.also {
-            if (groupId != null && itemId != null) {
-                val group = it.getGroupList()[groupId]
-                it.data[group]?.get(itemId)?.let { selectedTool ->
-                    (mainFragment as CoreFragment).setCurrentTool(selectedTool)
-                    PreferencesUtil.saveLastUsedTool(applicationContext, selectedTool)
-                }
-            } else {
-                // Expand Generic tab by default
-                val lastUsedParentGroup = it.getGroupList().find { group -> it.data[group]?.contains(PreferencesUtil.getLastUsedTool(applicationContext)) == true }
-                binding.expandableMenu.expandGroup(it.getGroupList().indexOf(lastUsedParentGroup))
-            }
+            val group = it.getGroupList()[groupId]
+            return it.data[group]?.get(itemId)
         }
     }
 

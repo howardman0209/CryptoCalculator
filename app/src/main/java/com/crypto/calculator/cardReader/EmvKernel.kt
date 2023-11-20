@@ -19,16 +19,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class EmvKernel(val context: Context, private val readerDelegate: CardReaderDelegate, terminalConfig: HashMap<String, String>) : EmvKernelProvider {
+class EmvKernel(val context: Context, private val readerDelegate: CardReaderDelegate) : EmvKernelProvider {
     private var cardData: HashMap<String, String> = hashMapOf()
     private var terminalData: HashMap<String, String> = hashMapOf()
     private var odaData = ""
     private var ctlKernel: BasicCTLKernel? = null
     lateinit var sendCommand: (cAPDU: String) -> String
-
-    init {
-        saveTerminalData(terminalConfig)
-    }
 
     companion object {
         private val _apdu = MutableLiveData<Event<String>>()
@@ -78,7 +74,7 @@ class EmvKernel(val context: Context, private val readerDelegate: CardReaderDele
         cardData.clear()
     }
 
-    fun getICCData() = cardData
+    private fun getICCData() = cardData
 
     fun saveTerminalData(data: Map<String, String>) {
         terminalData += data
@@ -88,7 +84,7 @@ class EmvKernel(val context: Context, private val readerDelegate: CardReaderDele
         return terminalData[tag]
     }
 
-    fun getTerminalData() = terminalData
+    private fun getTerminalData() = terminalData
 
     private fun clearTerminalData() {
         terminalData.clear()
@@ -123,6 +119,10 @@ class EmvKernel(val context: Context, private val readerDelegate: CardReaderDele
         finalTlv?.let {
             processTlv(it)
         } ?: throw Exception("NO_EMV_APP")
+    }
+
+    override fun loadTerminalConfig(terminalConfig: HashMap<String, String>) {
+        terminalData = terminalConfig
     }
 
     override fun onTapEmvProcess(sendCommand: (cAPDU: String) -> String) {

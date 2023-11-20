@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.nfc.NfcAdapter
 import android.util.Log
+import com.crypto.calculator.cardReader.emv.EmvKernelProvider
 import com.crypto.calculator.cardReader.model.CardReaderStatus
 import com.crypto.calculator.cardReader.nfc.EmvNfcAdapterCallback
 import com.crypto.calculator.extension.hexToAscii
@@ -21,7 +22,7 @@ import java.util.Locale
 
 class AndroidCardReader(context: Context, val activity: Activity) : BasicCardReader(context), CardReaderDelegate {
     private var nfcAdapter: NfcAdapter? = null
-    private var emvKernel: EmvKernel? = null
+    private var emvKernel: EmvKernelProvider? = null
 
     private val requiredTagList = listOf(
         EMVTags.APPLICATION_LABEL.getHexTag(),
@@ -109,7 +110,9 @@ class AndroidCardReader(context: Context, val activity: Activity) : BasicCardRea
         getCurrentTime(DATE_TIME_PATTERN_EMV_9A)?.let { terminalConfig[EMVTags.TRANSACTION_DATE.getHexTag()] = it }
         getCurrentTime(DATE_TIME_PATTERN_EMV_9F21)?.let { terminalConfig[EMVTags.TRANSACTION_TIME.getHexTag()] = it }
         Log.d("AndroidCR", "startEMV - data: $terminalConfig")
-        emvKernel = EmvKernel(context, this, terminalConfig)
+        emvKernel = EmvKernel(context, this).apply {
+            loadTerminalConfig(terminalConfig)
+        }
         enableReader()
     }
 

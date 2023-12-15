@@ -64,7 +64,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
         coreViewModel.currentTool.observe(viewLifecycleOwner) {
             Log.d("EmvFragment", "currentTool: $it")
-            CreditCardService.enablePaymentService(requireContext().applicationContext, false)
+            CreditCardService.enablePaymentService(false)
             setLayout(it)
         }
 
@@ -106,7 +106,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
     }
 
     private fun cardSimulator() {
-        CreditCardService.enablePaymentService(requireContext().applicationContext, true)
+        CreditCardService.enablePaymentService(true)
         binding.tvPrompt.visibility = View.VISIBLE
 
         (requireActivity() as BaseActivity).requireDefaultPaymentServicePermission {
@@ -814,14 +814,14 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
         super.onResume()
         Log.d("EmvFragment", "onResume")
         if (coreViewModel.currentTool.value == Tool.CARD_SIMULATOR) {
-            CreditCardService.enablePaymentService(requireContext().applicationContext, true)
+            CreditCardService.enablePaymentService(true)
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.d("EmvFragment", "onDestroy")
-        CreditCardService.enablePaymentService(requireContext().applicationContext, false)
+        CreditCardService.enablePaymentService(false)
         viewModel.finishCardReader()
     }
 

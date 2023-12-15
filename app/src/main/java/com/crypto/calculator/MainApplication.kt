@@ -85,7 +85,7 @@ class MainApplication : Application(), ActivityLifecycleCallbacks {
         Log.d(LIFECYCLE, "${activity.javaClass.name} onStopped")
 
         if (activity is MainActivity) {
-            CreditCardService.enablePaymentService(applicationContext, false)
+            CreditCardService.enablePaymentService( false)
         }
     }
 

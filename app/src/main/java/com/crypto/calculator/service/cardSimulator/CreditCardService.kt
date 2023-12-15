@@ -31,6 +31,7 @@ import kotlinx.coroutines.launch
 
 class CreditCardService : BasicEMVService() {
     companion object {
+        var enable = false
         private val _apdu = MutableLiveData<Event<String>>()
         val apdu: LiveData<Event<String>>
             get() = _apdu
@@ -60,6 +61,7 @@ class CreditCardService : BasicEMVService() {
             return cardEmulation.isDefaultServiceForCategory(paymentServiceName, CardEmulation.CATEGORY_PAYMENT)
         }
 
+        // invoke NFC payment service, bug appear after device updated to Android 14, One UI version: 6.0 (SAMSUNG), Deprecate it
         fun enablePaymentService(context: Context, enable: Boolean = true) {
             val flag = if (enable) PackageManager.COMPONENT_ENABLED_STATE_ENABLED else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
             context.packageManager.setComponentEnabledSetting(
@@ -67,6 +69,10 @@ class CreditCardService : BasicEMVService() {
                 flag,
                 PackageManager.DONT_KILL_APP
             )
+        }
+
+        fun enablePaymentService(enable: Boolean = true) {
+            this.enable = enable
         }
 
         fun getDefaultCardAssetsPath(cardType: PaymentMethod): String {
@@ -109,10 +115,12 @@ class CreditCardService : BasicEMVService() {
     }
 
     override fun responseConstructor(cAPDU: String?): String {
-        val rAPDU = super.responseConstructor(cAPDU)
-        CoroutineScope(Dispatchers.Main).launch {
-            cAPDU?.also { _apdu.value = Event(it) }
-            _apdu.value = Event(rAPDU)
+        val rAPDU = if (enable) super.responseConstructor(cAPDU) else "6A82"
+        if (enable) {
+            CoroutineScope(Dispatchers.Main).launch {
+                cAPDU?.also { _apdu.value = Event(it) }
+                _apdu.value = Event(rAPDU)
+            }
         }
         return rAPDU
     }

@@ -81,10 +81,6 @@ class MainActivity : MVVMActivity<MainViewModel, ActivityMainBinding>() {
         }
     }
 
-    fun closeNavigationMenu() {
-        binding.drawerLayout.close()
-    }
-
     private fun setAppbarTitle(tool: Tool = Tool.TLV_PARSER) {
         val title = getString(tool.resourceId)
         viewModel.title.set(title)

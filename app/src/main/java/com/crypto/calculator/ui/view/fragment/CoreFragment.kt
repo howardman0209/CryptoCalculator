@@ -82,11 +82,6 @@ class CoreFragment : MVVMFragment<CoreViewModel, FragmentCoreBinding>() {
             currentCorePanel = selectedFragment
             pushFragment(selectedFragment, target, isAddToBackStack = false)
         }
-
-        binding.corePanel.post {
-            Log.d("@@", "corePanel.post")
-            (requireActivity() as MainActivity).closeNavigationMenu()
-        }
     }
 
     private fun switchBottomPanel(target: Int = R.id.bottomPanel) {

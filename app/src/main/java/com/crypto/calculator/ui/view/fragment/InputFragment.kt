@@ -75,7 +75,6 @@ class InputFragment : MVVMFragment<InputViewModel, FragmentInputBinding>() {
         coreViewModel.currentTool.observe(viewLifecycleOwner) {
             Log.d("InputFragment", "currentTool: $it")
             setLayout(it)
-            (requireActivity() as MainActivity).closeNavigationMenu()
         }
     }
 

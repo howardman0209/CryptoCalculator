@@ -27,7 +27,6 @@ import com.crypto.calculator.service.cardSimulator.CreditCardService
 import com.crypto.calculator.service.model.CardProfile
 import com.crypto.calculator.ui.base.BaseActivity
 import com.crypto.calculator.ui.base.MVVMFragment
-import com.crypto.calculator.ui.view.activity.MainActivity
 import com.crypto.calculator.ui.viewAdapter.DropDownMenuAdapter
 import com.crypto.calculator.ui.viewModel.CoreViewModel
 import com.crypto.calculator.ui.viewModel.EmvViewModel
@@ -67,7 +66,6 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
             Log.d("EmvFragment", "currentTool: $it")
             CreditCardService.enablePaymentService(requireContext().applicationContext, false)
             setLayout(it)
-            (requireActivity() as MainActivity).closeNavigationMenu()
         }
 
         viewModel.inputData1InputType.observe(viewLifecycleOwner) {
@@ -814,6 +812,7 @@ class EmvFragment : MVVMFragment<EmvViewModel, FragmentEmvBinding>() {
 
     override fun onResume() {
         super.onResume()
+        Log.d("EmvFragment", "onResume")
         if (coreViewModel.currentTool.value == Tool.CARD_SIMULATOR) {
             CreditCardService.enablePaymentService(requireContext().applicationContext, true)
         }

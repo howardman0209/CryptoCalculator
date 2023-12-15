@@ -94,9 +94,10 @@ class JcbDelegate(context: Context, private val iccData: HashMap<String, String>
                         "5F34" to iccData["5F34"],
                         "5F28" to iccData["5F28"],
                         "8C" to iccData["8C"],
-                        if (isLegacyMode) ("8E" to iccData["8E"]) else ("" to ""),
                         "9F42" to iccData["9F42"],
-                    )
+                    ).let {
+                        if (isLegacyMode) (it.plus("8E" to iccData["8E"])) else it
+                    }
                 )
             )
 

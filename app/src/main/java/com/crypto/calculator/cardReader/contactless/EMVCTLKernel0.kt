@@ -117,11 +117,11 @@ class EMVCTLKernel0(core: EmvKernel) : BasicCTLKernel(core) {
             val sb = StringBuilder()
             pdolMap.forEach {
                 when (it.key) {
-                    EMVTags.ICC_DYNAMIC_NUMBER.getHexTag() -> {
-                        val iccDynamicNumber = getChallenge()
-                        Log.d("executeGPO", "iccDynamicNumber: $iccDynamicNumber")
-                        sb.append(iccDynamicNumber ?: "00".repeat(it.value.toInt(16)))
-                    }
+//                    EMVTags.ICC_DYNAMIC_NUMBER.getHexTag() -> {
+//                        val iccDynamicNumber = getChallenge()
+//                        Log.d("executeGPO", "iccDynamicNumber: $iccDynamicNumber")
+//                        sb.append(iccDynamicNumber ?: "00".repeat(it.value.toInt(16)))
+//                    }
 
                     EMVTags.UNPREDICTABLE_NUMBER.getHexTag() -> sb.append(getUnpredictableNum(it.value.toInt(16) * 2))
                     else -> sb.append(getICCTag(it.key) ?: getTerminalTag(it.key) ?: "00".repeat(it.value.toInt(16)))
@@ -221,11 +221,11 @@ class EMVCTLKernel0(core: EmvKernel) : BasicCTLKernel(core) {
             val sb = StringBuilder()
             cdolMap.forEach {
                 when (it.key) {
-                    EMVTags.ICC_DYNAMIC_NUMBER.getHexTag() -> {
-                        val iccDynamicNumber = getChallenge()
-                        Log.d("generateAC", "iccDynamicNumber: $iccDynamicNumber")
-                        sb.append(iccDynamicNumber ?: "00".repeat(it.value.toInt(16)))
-                    }
+//                    EMVTags.ICC_DYNAMIC_NUMBER.getHexTag() -> {
+//                        val iccDynamicNumber = getChallenge()
+//                        Log.d("generateAC", "iccDynamicNumber: $iccDynamicNumber")
+//                        sb.append(iccDynamicNumber ?: "00".repeat(it.value.toInt(16)))
+//                    }
 
                     EMVTags.UNPREDICTABLE_NUMBER.getHexTag() -> sb.append(getUnpredictableNum(it.value.toInt(16) * 2))
                     else -> sb.append(getICCTag(it.key) ?: getTerminalTag(it.key) ?: "00".repeat(it.value.toInt(16)))

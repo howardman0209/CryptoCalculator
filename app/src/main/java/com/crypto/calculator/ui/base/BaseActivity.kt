@@ -294,6 +294,12 @@ abstract class BaseActivity : LocalizationActivity() {
         hideKeyboard(currentFocus ?: View(this))
     }
 
+    fun View.hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(windowToken, 0)
+        clearFocus()
+    }
+
     fun singleInputDialog(context: Context, title: String?, fieldName: String, fieldValue: String? = null, onConfirmCallBack: (editText: String) -> Unit) {
         val dialogBinding: DialogContentSingleInputBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.dialog_content_single_input, null, false)
         dialogBinding.tiInputBox1.hint = fieldName
@@ -304,13 +310,14 @@ abstract class BaseActivity : LocalizationActivity() {
             .setTitle(title)
             .setView(dialogBinding.root)
             .setPositiveButton(R.string.button_confirm) { _, _ ->
-                onConfirmCallBack(dialogBinding.tiInputBox1.editText?.text.toString())
                 Log.d(TAG, "confirm")
-                context.hideKeyboard(dialogBinding.root)
+                dialogBinding.tiInputBox1.hideKeyboard()
+                dialogBinding.tiInputBox1.post {
+                    onConfirmCallBack(dialogBinding.tiInputBox1.editText?.text.toString())
+                }
             }
             .setNegativeButton(R.string.button_cancel) { _, _ ->
                 Log.d(TAG, "cancel")
-                context.hideKeyboard(dialogBinding.root)
             }
             .show()
     }
